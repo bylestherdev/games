@@ -1,8 +1,14 @@
 import "./globals.css";
+import Navbar from "@/components/global/Navbar";
+import Footer from "@/components/global/Footer";
 
 export const metadata = {
-  title: "Games - bylesther.dev",
-  description: "Text RPGs por decisiones",
+  title: {
+    default: "ByLestherGames | Text RPGs de decisiones",
+    template: "%s | ByLestherGames",
+  },
+  description:
+    "Simulaciones de texto donde cada decisión tiene consecuencias: atención al cliente, negociación, ventas. Juega, decide, aprende.",
 };
 
 export default function RootLayout({
@@ -11,11 +17,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className="bg-[var(--color-canvas)] text-[var(--color-text-primary)] min-h-screen flex flex-col">
+    <html lang="es-CL">
       <body className="bg-[var(--color-canvas)] text-[var(--color-text-primary)] antialiased min-h-screen flex flex-col">
-        <main className="flex-grow flex flex-col w-full">
-          {children}
-        </main>
+        <Navbar />
+        <main className="flex-grow flex flex-col w-full">{children}</main>
+        <Footer />
       </body>
     </html>
   );
