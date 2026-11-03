@@ -197,9 +197,6 @@ export default function TextGame({ game }: { game: GameData }) {
       setEnding(fin);
       setPhase("ending");
 
-      const metricaPrincipal = finalStats[escenario.stats[0]?.key] ?? 0;
-      registrarPartida(game.slug, fin.rank, metricaPrincipal);
-
       const ctx = {
         rank: fin.rank,
         stats: finalStats,
@@ -212,6 +209,9 @@ export default function TextGame({ game }: { game: GameData }) {
       const idsNuevos = desbloqueables.map((l) => l.id);
       const registrados = registrarLogros(game.slug, idsNuevos);
       setNuevosLogros(registrados);
+
+      const metricaPrincipal = finalStats[escenario.stats[0]?.key] ?? 0;
+      registrarPartida(game.slug, fin.rank, metricaPrincipal, registrados.length);
 
       clearProgress(game.slug, escenarioId);
     },

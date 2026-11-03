@@ -107,8 +107,56 @@ export const LOGROS: Logro[] = [
     icono: "🩺",
     condiciones: { statMin: { sat: 55 }, statMax: { sat: 75 } },
   },
+  {
+    id: "ac-rapido",
+    juego: "atencion-cliente",
+    nombre: "Respuesta Rápida",
+    descripcion: "Resuelves un escenario en 3 decisiones o menos.",
+    icono: "⚡",
+    condiciones: { decisionesMax: 3 },
+  },
+  {
+    id: "ac-paciente-extrema",
+    juego: "atencion-cliente",
+    nombre: "Paciente Eterna",
+    descripcion: "Termina un escenario con paciencia en 90 o más.",
+    icono: "🧘",
+    condiciones: { statMin: { pac: 90 } },
+  },
+  {
+    id: "ac-queja-vip",
+    juego: "atencion-cliente",
+    nombre: "Queja VIP",
+    descripcion: "Termina un escenario con satisfacción en 90 o más.",
+    icono: "👑",
+    condiciones: { statMin: { sat: 90 } },
+  },
 
   // --- Negociación ---
+  {
+    id: "neg-rapido",
+    juego: "negociacion",
+    nombre: "Negociación Rápida",
+    descripcion: "Cierras un escenario en 5 decisiones o menos.",
+    icono: "⏱️",
+    condiciones: { decisionesMax: 5 },
+  },
+  {
+    id: "neg-alto-margen",
+    juego: "negociacion",
+    nombre: "Alto Margen",
+    descripcion: "Cierras conservando 85 de margen o más.",
+    icono: "💰",
+    condiciones: { statMin: { mar: 85 } },
+  },
+  {
+    id: "neg-rel-pura",
+    juego: "negociacion",
+    nombre: "Relación Pura",
+    descripcion: "Terminas con relación en 90 o más sin importar el margen.",
+    icono: "💝",
+    condiciones: { statMin: { rel: 90 } },
+  },
   {
     id: "neg-s-rank",
     juego: "negociacion",
@@ -199,6 +247,22 @@ export const LOGROS: Logro[] = [
     icono: "🪶",
     condiciones: { statMax: { slotsUsados: 8 } },
   },
+  {
+    id: "lead-top-cliente",
+    juego: "cazador-leads",
+    nombre: "Cliente Top",
+    descripcion: "Calificas 10 leads o más en un escenario.",
+    icono: "🌟",
+    condiciones: { statMin: { calificados: 10 } },
+  },
+  {
+    id: "lead-magnate",
+    juego: "cazador-leads",
+    nombre: "Magnate del pipeline",
+    descripcion: "Cierras un escenario con pipeline de $250.000 o más.",
+    icono: "💎",
+    condiciones: { statMin: { pipeline: 250000 } },
+  },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -207,6 +271,7 @@ export const LOGROS: Logro[] = [
 
 const LOGROS_KEY = "games:logros";
 const RECORDS_KEY = "games:records";
+const HISTORIAL_KEY = "games:historial";
 const CHANGE_EVENT = "games:progress-change";
 
 export interface LogroRegistrado {
@@ -221,6 +286,26 @@ export interface RecordJuego {
   partidas: number;
   mejorMetrica: number;
   actualizado: number;
+}
+
+/** Una partida terminada, con fecha y resultado. Se guardan las últimas 50. */
+export interface PartidaHistorial {
+  slug: string;
+  rank: Rank;
+  metrica: number;
+  fecha: number;
+  logrosNuevos: number;
+}
+
+/** Estadísticas agregadas del jugador, calculadas desde el almacenamiento local. */
+export interface EstadisticasJugador {
+  totalPartidas: number;
+  distribucionRanks: Record<Rank, number>;
+  logrosDesbloqueados: number;
+  logrosTotales: number;
+  partidasUltimos7Dias: number;
+  ultimaPartida: number | null;
+  juegoFavorito: string | null;
 }
 
 function leer<T>(key: string, fallback: T): T {
@@ -295,7 +380,8 @@ export function registrarLogros(juego: string, ids: string[]): LogroRegistrado[]
 export function registrarPartida(
   slug: string,
   rank: Rank,
-  metrica: number
+  metrica: number,
+  logrosNuevos = 0
 ): RecordJuego[] {
   const actuales = leer<RecordJuego[]>(RECORDS_KEY, []);
   const previo = actuales.find((r) => r.slug === slug);
@@ -312,13 +398,64 @@ export function registrarPartida(
     actualizado: Date.now(),
   };
   const nuevos = [...actuales.filter((r) => r.slug !== slug), registro];
+
+  // Historial de las últimas 50 partidas.
+  const historial = leer<PartidaHistorial[]>(HISTORIAL_KEY, []);
+  historial.push({ slug, rank, metrica, fecha: Date.now(), logrosNuevos });
+  const historialRecortado = historial.slice(-50);
+
   guardar(RECORDS_KEY, nuevos);
+  guardar(HISTORIAL_KEY, historialRecortado);
   return nuevos;
+}
+
+/** Últimas partidas jugadas (máximo 50, la más reciente al final). */
+export function useHistorial(): PartidaHistorial[] {
+  const fallback = useMemo<PartidaHistorial[]>(() => [], []);
+  return useAlmacen<PartidaHistorial[]>(HISTORIAL_KEY, fallback);
+}
+
+/** Estadísticas agregadas del jugador, calculadas desde logros, records e historial. */
+export function useEstadisticas(): EstadisticasJugador {
+  const logros = useLogrosDesbloqueados();
+  const records = useRecords();
+  const historial = useHistorial();
+
+  return useMemo(() => {
+    const distribucionRanks: Record<Rank, number> = { S: 0, A: 0, B: 0, C: 0, D: 0 };
+    for (const p of historial) {
+      distribucionRanks[p.rank] = (distribucionRanks[p.rank] ?? 0) + 1;
+    }
+
+    const hace7Dias = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const partidasUltimos7Dias = historial.filter((p) => p.fecha >= hace7Dias).length;
+
+    // Juego favorito: el que más partidas acumula en los records.
+    let juegoFavorito: string | null = null;
+    let maxPartidas = 0;
+    for (const r of records) {
+      if (r.partidas > maxPartidas) {
+        maxPartidas = r.partidas;
+        juegoFavorito = r.slug;
+      }
+    }
+
+    return {
+      totalPartidas: historial.length,
+      distribucionRanks,
+      logrosDesbloqueados: logros.length,
+      logrosTotales: LOGROS.length,
+      partidasUltimos7Dias,
+      ultimaPartida: historial.length > 0 ? historial[historial.length - 1].fecha : null,
+      juegoFavorito,
+    };
+  }, [logros, records, historial]);
 }
 
 export function reiniciarRecords() {
   guardar(RECORDS_KEY, []);
   guardar(LOGROS_KEY, []);
+  guardar(HISTORIAL_KEY, []);
 }
 
 /* ------------------------------------------------------------------ */

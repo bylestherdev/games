@@ -2,6 +2,7 @@ import Link from "next/link";
 import { atencionCliente } from "@/lib/games/atencion-cliente";
 import { negociacion } from "@/lib/games/negociacion";
 import { cazadorLeads } from "@/lib/games/cazador-leads";
+import PerfilJugador from "@/components/PerfilJugador";
 
 const upcoming = [
   { icon: "📊", title: "Gestor de Cartera", desc: "20 clientes, recursos limitados. ¿A quién salvas primero?" },
@@ -58,6 +59,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* PERFIL DEL JUGADOR (solo visible con partidas jugadas) */}
+      <PerfilJugador />
 
       {/* COLECCIÓN */}
       <section id="coleccion" className="max-w-[1100px] mx-auto px-6 pb-24">

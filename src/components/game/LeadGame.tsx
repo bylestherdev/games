@@ -89,8 +89,6 @@ export default function LeadGame({ game }: { game: LeadGameData }) {
       setFinal(fin);
       setPhase("ending");
 
-      registrarPartida(game.slug, fin.rank, pipeFinal);
-
       const ctx = {
         rank: fin.rank,
         stats: { pipeline: pipeFinal, calificados: contarCalificados(enfriados), slotsUsados: 20 - slotsRestantes },
@@ -102,6 +100,8 @@ export default function LeadGame({ game }: { game: LeadGameData }) {
       const desbloqueables = LOGROS.filter((l) => l.juego === game.slug && cumpleLogro(l, ctx));
       const registrados = registrarLogros(game.slug, desbloqueables.map((l) => l.id));
       setNuevosLogros(registrados);
+
+      registrarPartida(game.slug, fin.rank, pipeFinal, registrados.length);
     } else {
       const proxDia = escenario.dias[siguienteIdx];
       const nuevosLeads = generarLeadsDia(proxDia, escenario.id);
