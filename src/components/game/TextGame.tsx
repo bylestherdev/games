@@ -16,6 +16,7 @@ import {
   registrarLogros,
   registrarPartida,
   compartir,
+  compartirComoImagen,
   linkWhatsApp,
   linkX,
   type LogroRegistrado,
@@ -98,6 +99,7 @@ export default function TextGame({ game }: { game: GameData }) {
   const [nuevosLogros, setNuevosLogros] = useState<LogroRegistrado[]>([]);
   const [compartidoMsg, setCompartidoMsg] = useState<string | null>(null);
 
+  const shareCardRef = useRef<HTMLDivElement>(null);
   const typer = useRef<ReturnType<typeof setInterval> | null>(null);
   const scene: Scene = escenario.escenas.find((s) => s.id === sceneId) ?? escenario.escenas[0];
   const fullText = phase === "scene" ? scene?.text?.join("\n\n") ?? "" : "";
@@ -145,7 +147,6 @@ export default function TextGame({ game }: { game: GameData }) {
 
   const checkSurpriseEvent = useCallback(
     (nextStats: Record<string, number>, currentFlags: string[], nextScene: string) => {
-      // Máximo 1 evento sorpresa por partida para evitar fatiga o bucles
       if (!escenario.eventos || escenario.eventos.length === 0 || eventosDisparados >= 1) return false;
       const probBase = 0.25;
       if (Math.random() > probBase) return false;
@@ -669,6 +670,45 @@ export default function TextGame({ game }: { game: GameData }) {
           {/* ENDING */}
           {phase === "ending" && ending && (
             <div className="text-center py-6 animate-[fadeUp_.6s_ease-out]">
+              {/* Tarjeta ocultamente renderizada para captura de imagen */}
+              <div className="absolute -left-[9999px] top-0 pointer-events-none">
+                <div
+                  ref={shareCardRef}
+                  style={{ width: "600px", background: "#0E0F1A", color: "#FFFFFF", padding: "40px", fontFamily: "Inter, sans-serif", border: "1px solid rgba(217,70,239,0.3)", borderRadius: "24px" }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "16px" }}>
+                    <span style={{ fontSize: "20px", fontWeight: "750", letterSpacing: "-0.02em" }}>
+                      ByLesther<span style={{ color: "#D946EF" }}>Games</span>
+                    </span>
+                    <span style={{ fontFamily: "monospace", fontSize: "12px", color: "#C084FC", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                      {game.title} · {escenario.etiqueta}
+                    </span>
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "24px", marginBottom: "24px" }}>
+                    <div style={{ width: "90px", height: "90px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "42px", fontWeight: "bold", background: "linear-gradient(135deg, #6B21A8 0%, #D946EF 100%)", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.2)" }}>
+                      {ending.rank}
+                    </div>
+                    <div>
+                      <div style={{ fontFamily: "monospace", fontSize: "11px", color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "0.15em", marginBottom: "4px" }}>
+                        Resultado de Simulación
+                      </div>
+                      <div style={{ fontFamily: "Georgia, serif", fontSize: "26px", marginBottom: "8px" }}>
+                        {ending.title}
+                      </div>
+                      <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.7)", lineHeight: "1.4" }}>
+                        {ending.text.slice(0, 110)}...
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "20px", borderTop: "1px solid rgba(255,255,255,0.1)", fontFamily: "monospace", fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>
+                    <span>Decisiones tomadas: {log.length}</span>
+                    <span style={{ color: "#D946EF" }}>games.bylesther.dev</span>
+                  </div>
+                </div>
+              </div>
+
               <div className="rank-badge mb-6" style={{ boxShadow: `0 0 60px ${game.accent}66` }}>
                 {ending.rank}
               </div>
@@ -730,6 +770,17 @@ export default function TextGame({ game }: { game: GameData }) {
                 <div className="flex flex-wrap gap-2 justify-center">
                   <button
                     onClick={async () => {
+                      if (!shareCardRef.current) return;
+                      const res = await compartirComoImagen(shareCardRef.current, `${game.slug}-resultado-rank-${ending.rank}.png`);
+                      setCompartidoMsg(res.modo === "compartido" ? "¡Imagen compartida!" : res.modo === "descargado" ? "¡Tarjeta de imagen descargada!" : "No se pudo generar la imagen");
+                      setTimeout(() => setCompartidoMsg(null), 3500);
+                    }}
+                    className="btn-primary text-xs py-2 px-4"
+                  >
+                    📸 Descargar tarjeta de resultado (PNG)
+                  </button>
+                  <button
+                    onClick={async () => {
                       const res = await compartir({
                         titulo: `${game.title} — Rank ${ending.rank}`,
                         texto: `¡Terminé "${game.title}" en games.bylesther.dev con rango ${ending.rank} (${ending.title})! 🚀`,
@@ -739,7 +790,7 @@ export default function TextGame({ game }: { game: GameData }) {
                     }}
                     className="btn-tertiary text-xs py-2 px-4"
                   >
-                    📋 Copiar resultado
+                    📋 Copiar texto
                   </button>
                   <a
                     href={linkWhatsApp(`¡Terminé "${game.title}" en games.bylesther.dev con rango ${ending.rank} (${ending.title})! 🚀`)}

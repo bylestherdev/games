@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useSyncExternalStore } from "react";
+import { toBlob } from "html-to-image";
 
 export type Rank = "S" | "A" | "B" | "C" | "D";
 
@@ -14,7 +15,7 @@ export interface CondicionesLogro {
   decisionesMax?: number;
   eventosMin?: number;
   eventosMax?: number;
-  /** El jugador debe haber activates todas estas marcas. */
+  /** El jugador debe haber activado todas estas marcas. */
   flags?: string[];
 }
 
@@ -119,7 +120,7 @@ export const LOGROS: Logro[] = [
   {
     id: "neg-margen",
     juego: "negociacion",
-    nombre: "Sin concessions",
+    nombre: "Sin concesiones",
     descripcion: "Cierras conservando 70 de margen o más.",
     icono: "📈",
     condiciones: { statMin: { mar: 70 } },
@@ -218,7 +219,6 @@ export interface RecordJuego {
   slug: string;
   mejorRank: Rank;
   partidas: number;
-  /** Mejor métrica lograda (pipeline, cuentas salvadas, etc.). */
   mejorMetrica: number;
   actualizado: number;
 }
@@ -238,7 +238,7 @@ function guardar(key: string, value: unknown) {
     window.localStorage.setItem(key, JSON.stringify(value));
     window.dispatchEvent(new Event(CHANGE_EVENT));
   } catch {
-    // Sin persistencia: el juego sigue funcionando.
+    // Sin persistencia
   }
 }
 
@@ -279,7 +279,6 @@ export function useRecords(): RecordJuego[] {
   return useAlmacen<RecordJuego[]>(RECORDS_KEY, fallback);
 }
 
-/** Registra los logros newly desbloqueados y devuelve solo los nuevos. */
 export function registrarLogros(juego: string, ids: string[]): LogroRegistrado[] {
   const actuales = leer<LogroRegistrado[]>(LOGROS_KEY, []);
   const yaTenidos = new Set(actuales.map((l) => l.id));
@@ -323,11 +322,11 @@ export function reiniciarRecords() {
 }
 
 /* ------------------------------------------------------------------ */
-/*  COMPARTIR                                                           */
+/*  COMPARTIR (TEXTO E IMAGEN)                                          */
 /* ------------------------------------------------------------------ */
 
 export interface ResultadoCompartir {
-  modo: "nativo" | "copiado" | "fallo";
+  modo: "nativo" | "copiado" | "descargado" | "compartido" | "fallo";
 }
 
 export async function compartir({ titulo, texto }: { titulo: string; texto: string }): Promise<ResultadoCompartir> {
@@ -339,12 +338,50 @@ export async function compartir({ titulo, texto }: { titulo: string; texto: stri
       await navigator.share({ title: titulo, text: texto, url });
       return { modo: "nativo" };
     } catch {
-      // El usuario canceló o el share nativo falló: caemos al portapapeles.
+      // Cancelado o error de share nativo
     }
   }
   try {
     await navigator.clipboard.writeText(cuerpo);
     return { modo: "copiado" };
+  } catch {
+    return { modo: "fallo" };
+  }
+}
+
+/** Convierte un nodo DOM en tarjeta de imagen PNG para descargar o compartir como archivo. */
+export async function compartirComoImagen(
+  node: HTMLElement,
+  filename = "bylesthergames-resultado.png"
+): Promise<ResultadoCompartir> {
+  try {
+    const blob = await toBlob(node, { cacheBust: true, pixelRatio: 2 });
+    if (!blob) throw new Error("No se pudo generar la imagen");
+
+    const file = new File([blob], filename, { type: "image/png" });
+
+    if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          title: "Mi resultado en ByLestherGames",
+          text: "¡Mira mi desempeño en este Text RPG de negocios!",
+          files: [file],
+        });
+        return { modo: "compartido" };
+      } catch {
+        // Fallback a descarga
+      }
+    }
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    return { modo: "descargado" };
   } catch {
     return { modo: "fallo" };
   }
