@@ -8,7 +8,7 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      // Colores base iguales al sitio principal
+      // Colores base iguales al sitio principal bylesther.dev
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -35,25 +35,20 @@ const config: Config = {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-      },
-      keyframes: {
-        accordionDown: {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-height)" },
+        // Colores personalizados para reemplazar el gray theme de Tailwind
+        gray: {
+          0: "hsl(var(--gray-0, 0 0% 100%))",
+          100: "hsl(var(--gray-100, 0 0% 96%))",
+          200: "hsl(var(--gray-200, 0 0% 90%))",
+          300: "hsl(var(--gray-300, 0 0% 84%))",
+          400: "hsl(var(--gray-400, 0 0% 78%))",
+          500: "hsl(var(--gray-500, 0 0% 70%))",
+          600: "hsl(var(--gray-600, 0 0% 60%))",
+          700: "hsl(var(--gray-700, 0 0% 50%))",
+          800: "hsl(var(--gray-800, 0 0% 40%))",
+          900: "hsl(var(--gray-900, 0 0% 30%))",
+          950: "hsl(var(--gray-950, 0 0% 10%))",
         },
-        accordionUp: {
-          from: { height: "var(--radix-accordion-height)" },
-          to: { height: "0" },
-        },
-      },
-      animation: {
-        accordionDown: "accordionDown 0.2s ease-out",
-        accordionUp: "accordionUp 0.2s ease-out",
       },
     },
   },
