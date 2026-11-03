@@ -10,6 +10,7 @@ export default function Navbar() {
     { href: "/", label: "Colección" },
     { href: "/games/atencion-cliente", label: "Atención al Cliente" },
     { href: "/games/negociacion", label: "Negociación" },
+    { href: "/games/cazador-leads", label: "Cazador de Leads" },
   ];
 
   return (

@@ -1,23 +1,49 @@
-import type { GameData } from "./types";
+import type { GameData, Escenario } from "./types";
 
-export const negociacion: GameData = {
-  slug: "negociacion",
-  title: "Negociación Maestra",
-  tagline: "Un contrato. Cinco rondas. Una sola oportunidad.",
-  icon: "🤝",
-  category: "Ventas",
-  difficulty: 3,
-  minutes: 8,
-  accent: "#C084FC",
-  description:
+const escenarioVeronica: Escenario = {
+  id: "veronica",
+  titulo: "Negociación Maestra (Verónica Salas)",
+  etiqueta: "Caso Clásico",
+  contexto:
     "El contrato vale $120.000 anuales. Enfrente está Verónica Salas, directora de compras, que ha negociado con 40 vendedores este año y les ganó a 38. Tienes 5 rondas para cerrar sin regalar el margen.",
+  inicio: "r1",
   stats: [
     { key: "rel", label: "Relación", icon: "🤝", max: 100 },
     { key: "mar", label: "Margen", icon: "📈", max: 100 },
     { key: "pal", label: "Palanca", icon: "⚔️", max: 100 },
   ],
-  start: "r1",
-  scenes: [
+  eventos: [
+    {
+      id: "competencia-baja",
+      titulo: "Filtración de Competencia",
+      icono: "📉",
+      prob: 0.35,
+      texto: "A mitad de la negociación, Verónica recibe un mensaje en su portátil: un competidor menor bajó el precio un 40% de última hora.",
+      efectos: [{ stat: "pal", delta: -12 }, { stat: "mar", delta: -8 }],
+    },
+    {
+      id: "llamada-jefe",
+      titulo: "Presión del Director Financiero",
+      icono: "📞",
+      prob: 0.3,
+      texto: "Tu propio Director Financiero te llama por teléfono: 'No bajes del 50% de margen o prefiero perder el contrato'.",
+      opciones: [
+        {
+          label: "Defender tu estrategia de valor ante tu jefe",
+          hint: "Sostener criterio comercial",
+          effects: [{ stat: "pal", delta: 10 }],
+          resultado: "Convences a tu jefe de darte margen de maniobra.",
+        },
+        {
+          label: "Ceder ante la presión interna y endurecerte con Verónica",
+          hint: "Seguir la línea dura de la empresa",
+          effects: [{ stat: "mar", delta: 12 }, { stat: "rel", delta: -10 }],
+          resultado: "Te vuelves inflexible, lo que incomoda a Verónica.",
+        },
+      ],
+    },
+  ],
+  escenas: [
     {
       id: "r1",
       chapter: "Ronda 1 de 5",
@@ -38,6 +64,7 @@ export const negociacion: GameData = {
           ],
           next: "r2",
           result: "Verónica suelta el teléfono. \"Bien. Al menos uno de los cuatro hizo la tarea.\"",
+          flag: "certificacion-mostrada",
         },
         {
           label: "\"¿Cuánto más baratas? Yo igualo cualquiera de esas cifras\"",
@@ -49,6 +76,7 @@ export const negociacion: GameData = {
           ],
           next: "r2",
           result: "\"Igualar no gana licitaciones. Perder margen las gana… para ti, mal.\" Anota algo en su cuaderno.",
+          flag: "margen-regalado",
         },
         {
           label: "\"Antes de hablar de precio, cuénteme qué falló con su proveedor actual\"",
@@ -60,6 +88,7 @@ export const negociacion: GameData = {
           ],
           next: "r2",
           result: "Por primera vez te mira. \"…Nadie me había preguntado eso.\" Habla 7 minutos seguidos. Toma notas.",
+          flag: "escucha-activa",
         },
       ],
     },
@@ -78,120 +107,120 @@ export const negociacion: GameData = {
           effects: [
             { stat: "pal", delta: 14 },
             { stat: "rel", delta: -6 },
-            { stat: "mar", delta: 10 },
+            { stat: "mar", delta: 14 },
           ],
           next: "r3",
-          result: "\"Me gusta la firmeza. No me gusta la terquedad. Avancemos y veamos quién mueve primero.\"",
+          result: "Frunce el ceño. \"Tienes agallas para mantener el precio. Veamos si el producto lo vale.\"",
         },
         {
-          label: "Buscar el punto medio de inmediato: \"$102.000 y cerramos\"",
-          hint: "Concesión rápida, señal de debilidad",
+          label: "\"Podríamos cerrar en $105.000 si firmamos por tres años hoy\"",
+          hint: "Concesión inteligente a cambio de volumen",
           effects: [
-            { stat: "pal", delta: -14 },
-            { stat: "rel", delta: 8 },
-            { stat: "mar", delta: -12 },
-          ],
-          next: "r3",
-          result: "Verónica sonríe. \"Si moviste $18.000 en un minuto, ¿cuánto moverás en una hora?\" Presiona más.",
-        },
-        {
-          label: "\"El presupuesto es $84.000… ¿con qué alcance? Separemos lo esencial de lo deseable\"",
-          hint: "Cambiar el juego: alcance vs precio",
-          effects: [
-            { stat: "pal", delta: 8 },
-            { stat: "rel", delta: 14 },
+            { stat: "pal", delta: 6 },
+            { stat: "rel", delta: 12 },
             { stat: "mar", delta: 4 },
           ],
           next: "r3",
-          result: "\"Ahora hablamos en serio.\" Juntos arman dos paquetes: esencial $84.000, completo $120.000.",
+          result: "\"Tres años es compromiso a largo plazo… me interesa el volumen.\"",
+        },
+        {
+          label: "\"De acuerdo, aceptamos los $84.000 para cerrar rápido\"",
+          hint: "Ceder sin contrapartida",
+          effects: [
+            { stat: "pal", delta: -22 },
+            { stat: "rel", delta: 4 },
+            { stat: "mar", delta: -25 },
+          ],
+          next: "r3",
+          result: "\"Perfecto.\" Su sonrisa te hace sospechar que regalaste demasiado.",
         },
       ],
     },
     {
       id: "r3",
       chapter: "Ronda 3 de 5",
-      title: "El buen policía",
+      title: "La objeción oculta",
       text: [
-        "Cambia el tono: \"Escucha, te voy a ayudar. Si firmas HOY te consigo el OK con el CFO. Es mi palabra.\"",
-        "La urgencia artificial. El clásico. Pero también es cierto que su ventana de firma es esta semana.",
+        "\"El precio me cuadra, pero mi equipo técnico dice que su integración toma dos meses y medio. Eso destruye nuestro cronograma.\"",
+        "Es un punto crítico de fricción.",
       ],
       choices: [
         {
-          label: "\"Valoro la ayuda. Mi contrapropuesta: firmo hoy si el contrato es de 24 meses\"",
-          hint: "Condiciones por descuento",
+          label: "\"Asignamos un ingeniero senior dedicado exclusivamente a su integración en 3 semanas\"",
+          hint: "Aportar recursos propios",
           effects: [
-            { stat: "pal", delta: 10 },
-            { stat: "rel", delta: 10 },
-            { stat: "mar", delta: 8 },
+            { stat: "pal", delta: 12 },
+            { stat: "rel", delta: 14 },
+            { stat: "mar", delta: -6 },
           ],
           next: "r4",
-          result: "\"Negocio de adulto: yo te doy velocidad, tú me das permanencia. Lo llevo al CFO.\"",
+          result: "\"Eso sí cambia las cosas. ¿Ingeniero dedicado? Muy buen punto.\"",
         },
         {
-          label: "\"Firmo hoy, tal cual, con la lista completa de $120.000\"",
-          hint: "Exigir la urgencia SIN regalar nada",
+          label: "\"Nuestra documentación estándar es excelente, su equipo puede hacerlo solo\"",
+          hint: "Evasiva técnica",
           effects: [
-            { stat: "pal", delta: 6 },
-            { stat: "rel", delta: -10 },
-            { stat: "mar", delta: 14 },
-          ],
-          next: "r4",
-          result: "\"¿Todo el riesgo es mío y toda la ganancia tuya?\" Verónica se enfría. La sala también.",
-        },
-        {
-          label: "\"¿Qué obtiene ELLA si firmo hoy? Hablemos de sus incentivos\"",
-          hint: "Negociar con la persona, no con el puesto",
-          effects: [
-            { stat: "pal", delta: 4 },
-            { stat: "rel", delta: 18 },
+            { stat: "pal", delta: -10 },
+            { stat: "rel", delta: -14 },
             { stat: "mar", delta: 0 },
           ],
           next: "r4",
-          result: "Verónica guarda silencio… y luego admite: \"Si cierro esta semana, quedo bien con la gerencia. Tú me caes bien. Ayúdame a ayudarte.\"",
+          result: "\"Su documentación no escribe código por nosotros\", responde fría.",
+        },
+        {
+          label: "\"Ofrecemos un sandbox gratuito y capacitación express para acelerar el despliegue\"",
+          hint: "Compromiso equilibrado",
+          effects: [
+            { stat: "pal", delta: 6 },
+            { stat: "rel", delta: 10 },
+            { stat: "mar", delta: 0 },
+          ],
+          next: "r4",
+          result: "\"Aceptable. Si la capacitación funciona, el tiempo se reduce.\"",
         },
       ],
     },
     {
       id: "r4",
       chapter: "Ronda 4 de 5",
-      title: "El ultimátum",
+      title: "La prueba de fuerza",
       text: [
-        "El CFO rechaza el paquete completo. Verónica regresa con la cifra final: \"$96.000. Ni un peso más, ni una semana más de espera.\"",
-        "Tu margen aceptable llega hasta $104.000. Puedes aceptar, empatar, o arriesgarte.",
+        "\"Quiero cláusula de salida sin penalización a los 6 meses si las métricas no suben un 15%.\"",
+        "Verónica busca transferir todo el riesgo comercial de su lado al tuyo.",
       ],
       choices: [
         {
-          label: "Aceptar $96.000: contrato asegurado, margen sano",
-          hint: "Cierre seguro",
+          label: "\"Acepto la cláusula si medimos el éxito con KPIs conjuntos acordados por escrito\"",
+          hint: "Compartir el riesgo con método",
           effects: [
-            { stat: "pal", delta: -6 },
-            { stat: "rel", delta: 10 },
-            { stat: "mar", delta: -8 },
+            { stat: "pal", delta: 10 },
+            { stat: "rel", delta: 12 },
+            { stat: "mar", delta: 4 },
           ],
           next: "r5",
-          result: "\"Aceptado. Prepararé la minuta.\" Apretón de manos firme. El trato está virtualmente cerrado.",
+          result: "\"Me parece justo. Si cumplimos los KPIs, nos quedamos todos felices.\"",
         },
         {
-          label: "\"$100.000 y me comprometo a soporte prioritario por 12 meses\"",
-          hint: "Empatar con valor agregado",
+          label: "\"Imposible. Nuestras políticas prohíben cláusulas de salida anticipada\"",
+          hint: "Negativa rígida",
           effects: [
-            { stat: "pal", delta: 2 },
-            { stat: "rel", delta: 6 },
-            { stat: "mar", delta: 2 },
+            { stat: "pal", delta: 4 },
+            { stat: "rel", delta: -16 },
+            { stat: "mar", delta: 0 },
           ],
           next: "r5",
-          result: "\"Soporte prioritario… eso vale mi tiempo.\" Verónica duda tres segundos: \"Lleva la propuesta al CFO tú mismo.\"",
+          result: "\"Las políticas de su empresa no mandan en mi presupuesto.\"",
         },
         {
-          label: "\"No puedo bajar de $104.000. Es lo que sostiene el servicio que usted necesita\"",
-          hint: "Límite firme: alto riesgo, alta recompensa",
+          label: "\"Acepto sin condiciones la cláusula a los 6 meses para destrabar el acuerdo\"",
+          hint: "Ceder en el riesgo final",
           effects: [
-            { stat: "pal", delta: 12 },
-            { stat: "rel", delta: -14 },
-            { stat: "mar", delta: 10 },
+            { stat: "pal", delta: -14 },
+            { stat: "rel", delta: 8 },
+            { stat: "mar", delta: -10 },
           ],
           next: "r5",
-          result: "Silencio largo. \"Eres el primer vendedor en un año que me dice que no. No sé si felicitarte o echarte.\"",
+          result: "Asiente. \"Tienes confianza en tu producto, eso es bueno.\"",
         },
       ],
     },
@@ -241,7 +270,7 @@ export const negociacion: GameData = {
       ],
     },
   ],
-  endings: [
+  finales: [
     {
       id: "legend",
       rank: "S",
@@ -270,4 +299,133 @@ export const negociacion: GameData = {
       text: "La frase que en compras significa no. Verónica cerró con tu competidor por $91.000. Revisa tus rondas: ceder sin exigir nada a cambio no construye relación — construye desprecio. La próxima vez, cada concesión se compra, nunca se regala.",
     },
   ],
+};
+
+const escenarioLicitacion: Escenario = {
+  id: "licitacion",
+  titulo: "Licitación Pública (B2G)",
+  etiqueta: "Modo Licitación",
+  contexto:
+    "Te enfrentas a una licitación de software gubernamental por $300.000. Las reglas son estrictas, el comité de adjudicación es imparcial y cada coma en la propuesta cuenta.",
+  inicio: "l1",
+  stats: [
+    { key: "rel", label: "Relación", icon: "🤝", max: 100 },
+    { key: "mar", label: "Margen", icon: "📈", max: 100 },
+    { key: "pal", label: "Palanca", icon: "⚔️", max: 100 },
+  ],
+  eventos: [
+    {
+      id: "observacion-legal",
+      titulo: "Impugnación de Bases",
+      icono: "⚖️",
+      prob: 0.4,
+      texto: "Un competidor impugna las bases de la licitación alegando requisitos direccionados.",
+      efectos: [{ stat: "pal", delta: -10 }, { stat: "rel", delta: -5 }],
+    },
+  ],
+  escenas: [
+    {
+      id: "l1",
+      chapter: "Fase 1 · Antecedentes",
+      title: "La admisibilidad",
+      text: [
+        "El comité de compras públicas publica los pliegos. Un pequeño error en el formulario de garantías notariales puede dejarte fuera sin derecho a apelación.",
+      ],
+      choices: [
+        {
+          label: "Revisar los documentos tres veces con asesoría legal externa",
+          hint: "Cero margen de error formal",
+          effects: [{ stat: "pal", delta: 15 }, { stat: "mar", delta: -5 }, { stat: "rel", delta: 5 }],
+          next: "l2",
+          result: "Admisibilidad aprobada sin observaciones. Eres uno de los 3 finalistas.",
+        },
+        {
+          label: "Presentar el formato estándar anterior de prisa para ganar tiempo",
+          hint: "Riesgo legal alto",
+          effects: [{ stat: "pal", delta: -20 }, { stat: "mar", delta: 0 }, { stat: "rel", delta: -10 }],
+          next: "l2",
+          result: "El comité observa un timbre vencido. Te salvas por un tecnicismo pero pierdes puntos de confianza.",
+        },
+      ],
+    },
+    {
+      id: "l2",
+      chapter: "Fase 2 · Evaluación técnica",
+      title: "La defensa de propuesta",
+      text: [
+        "El comité técnico te convoca a una sesión de preguntas y respuestas sobre ciberseguridad y soberanía de datos.",
+      ],
+      choices: [
+        {
+          label: "Llevar al CTO a la audiencia y demostrar arquitectura en servidores locales",
+          hint: "Solidez técnica indiscutible",
+          effects: [{ stat: "pal", delta: 20 }, { stat: "mar", delta: 0 }, { stat: "rel", delta: 12 }],
+          next: "l3",
+          result: "El comité técnico ovaciona la arquitectura propuesta.",
+        },
+        {
+          label: "Enviar un video pregrabado con respuestas generales",
+          hint: "Falta de compromiso presencial",
+          effects: [{ stat: "pal", delta: -10 }, { stat: "mar", delta: 0 }, { stat: "rel", delta: -15 }],
+          next: "l3",
+          result: "El comité considera que faltó profundidad en las respuestas.",
+        },
+      ],
+    },
+    {
+      id: "l3",
+      chapter: "Fase 3 · Adjudicación",
+      title: "La apertura de sobres económicos",
+      text: [
+        "Se abren las ofertas económicas. Tu propuesta está 12% por encima del presupuesto referencial del Estado, pero incluye soporte 24/7.",
+      ],
+      choices: [
+        {
+          label: "Argumentar valor social y continuidad operativa superior para justificar el precio",
+          hint: "Venta de valor institucional",
+          effects: [{ stat: "pal", delta: 12 }, { stat: "mar", delta: 10 }, { stat: "rel", delta: 10 }],
+          next: "END",
+          result: "El comité valora el impacto a largo plazo y adjudica a tu favor.",
+        },
+        {
+          label: "Ofrecer rebaja de último minuto por carta notarial",
+          hint: "Desesperación que rompe reglas de licitación",
+          effects: [{ stat: "pal", delta: -25 }, { stat: "mar", delta: -20 }, { stat: "rel", delta: -20 }],
+          next: "END",
+          result: "La ley de compras públicas prohíbe modificar ofertas tras la apertura. Quedas descalificado.",
+        },
+      ],
+    },
+  ],
+  finales: [
+    {
+      id: "lic-best",
+      rank: "S",
+      title: "Adjudicación Pública",
+      conditions: [{ stat: "pal", min: 65 }, { stat: "rel", min: 55 }],
+      text: "Licitación ganada por mérito técnico y legal. El Estado firma el contrato por $300.000 y te posiciona como referente en tecnología gubernamental.",
+    },
+    {
+      id: "lic-bad",
+      rank: "D",
+      title: "Descalificado por forma",
+      text: "Los errores formales o la falta de rigor técnico impidieron ganar el contrato. En compras públicas, el diablo está en los detalles.",
+    },
+  ],
+};
+
+export const negociacion: GameData = {
+  slug: "negociacion",
+  title: "Negociación Maestra",
+  tagline: "Un contrato. Cinco rondas. Una sola oportunidad.",
+  icon: "🤝",
+  category: "Ventas",
+  difficulty: 3,
+  minutes: 8,
+  accent: "#C084FC",
+  imagen: "/img/negociacion.jpg",
+  description:
+    "Simuladores de negociación compleja. Desde contratos corporativos de alto margen con Verónica Salas hasta licitaciones públicas B2G.",
+  escenarioInicial: "veronica",
+  escenarios: [escenarioVeronica, escenarioLicitacion],
 };

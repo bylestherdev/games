@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { atencionCliente } from "@/lib/games/atencion-cliente";
 import { negociacion } from "@/lib/games/negociacion";
+import { cazadorLeads } from "@/lib/games/cazador-leads";
 
 const upcoming = [
   { icon: "📊", title: "Gestor de Cartera", desc: "20 clientes, recursos limitados. ¿A quién salvas primero?" },
-  { icon: "🎯", title: "Cazador de Leads", desc: "Califica con BANT y no quemes tu embudo." },
   { icon: "💡", title: "Desarrollo de Producto", desc: "Features, presupuesto y un roadmap que grita." },
   { icon: "🚀", title: "Expansión Internacional", desc: "Un mercado nuevo decide si tu producto es global." },
   { icon: "💼", title: "Lider de Equipo", desc: "Motiva, asigna y sostén a tu escuadrón de ventas." },
@@ -20,7 +20,7 @@ function Dots({ n }: { n: number }) {
 }
 
 export default function HomePage() {
-  const games = [atencionCliente, negociacion];
+  const games = [atencionCliente, negociacion, cazadorLeads];
 
   return (
     <div className="w-full">

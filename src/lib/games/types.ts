@@ -20,6 +20,8 @@ export interface Choice {
   effects: Effect[];
   next: string;
   result: string;
+  /** Marca opcional que queda registrada y puede desbloquear logros. */
+  flag?: string;
 }
 
 export interface Scene {
@@ -45,6 +47,50 @@ export interface Ending {
   conditions?: EndingCondition[];
 }
 
+/** Opción ofrecida dentro de un evento inesperado. */
+export interface EventChoice {
+  label: string;
+  hint?: string;
+  effects: Effect[];
+  resultado: string;
+}
+
+/**
+ * Evento inesperado: algo que pasa en la vida real y cambia el juego
+ * (una lesión, una caída del mercado, un cliente que se pone nervioso).
+ */
+export interface GameEvent {
+  id: string;
+  titulo: string;
+  texto: string;
+  icono: string;
+  /** Probabilidad de disparo (0 a 1). */
+  prob: number;
+  /** Solo puede dispararse si se cumplen estas condiciones sobre los stats. */
+  requiere?: EndingCondition[];
+  /** Efectos aplicados al dispararse el evento. */
+  efectos?: Effect[];
+  /** Si tiene opciones, el jugador decide cómo responder. */
+  opciones?: EventChoice[];
+  /** Un evento de un solo uso no se repite en la misma partida. */
+  unaVez?: boolean;
+}
+
+/** Un escenario es una partida base distinta (cliente, campaña, semana). */
+export interface Escenario {
+  id: string;
+  titulo: string;
+  contexto: string;
+  /** Etiqueta corta del escenario (ej: "Incidente"). */
+  etiqueta: string;
+  /** Id de la escena inicial. */
+  inicio: string;
+  stats: Stat[];
+  escenas: Scene[];
+  eventos: GameEvent[];
+  finales: Ending[];
+}
+
 export interface GameData {
   slug: string;
   title: string;
@@ -55,9 +101,8 @@ export interface GameData {
   minutes: number;
   description: string;
   accent: string;
-  stats: Stat[];
-  start: string;
-  scenes: Scene[];
-  /** Se evalúan en orden; gana la primera que cumple. La última sin condiciones es el fallback. */
-  endings: Ending[];
+  /** Ruta de la imagen de portada en /public. */
+  imagen?: string;
+  escenarioInicial: string;
+  escenarios: Escenario[];
 }
