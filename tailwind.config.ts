@@ -8,8 +8,8 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      // Colores base iguales al sitio principal bylesther.dev
       colors: {
+        // Colores base del sitio bylesther.dev
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -35,7 +35,23 @@ const config: Config = {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
-        // Colores personalizados para reemplazar el gray theme de Tailwind
+        // Colores personalizados igual al sitio principal
+        // (sin 'border' para evitar conflicto con la definición base)
+        canvas: "#09090E",
+        surface: "#13141E",
+        "surface-hover": "#1A1B28",
+        "surface-elevated": "#1A1B28",
+        "text-primary": "#FFFFFF",
+        "text-secondary": "#94A3B8",
+        "text-tertiary": "#94A3B8",
+        "text-accent": "#C084FC",
+        "kinetic-start": "#C026D3",
+        "kinetic-end": "#D946EF",
+        leather: "#A66E38",
+        whatsapp: "#25D366",
+        "gradient-kinetic": "linear-gradient(135deg, #C026D3 0%, #D946EF 100%)",
+        "gradient-whatsapp": "linear-gradient(135deg, #059669 0%, #25D366 100%)",
+        // Gray personalizado para reemplazar grayTheme de Tailwind v4
         gray: {
           0: "hsl(var(--gray-0, 0 0% 100%))",
           100: "hsl(var(--gray-100, 0 0% 96%))",
@@ -49,6 +65,11 @@ const config: Config = {
           900: "hsl(var(--gray-900, 0 0% 30%))",
           950: "hsl(var(--gray-950, 0 0% 10%))",
         },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
     },
   },
