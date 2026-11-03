@@ -368,6 +368,50 @@ body {
   transform: translateX(6px);
 }
 
+.choice:focus-visible {
+  outline: 2px solid var(--color-accent-kinetic);
+  outline-offset: 2px;
+  background: rgba(217, 70, 239, 0.08);
+  border-color: rgba(217, 70, 239, 0.5);
+}
+
+/* Teclas de atajo */
+.kbd {
+  display: inline-block;
+  font-family: ui-monospace, monospace;
+  font-size: 0.65rem;
+  line-height: 1.4;
+  padding: 0.05rem 0.35rem;
+  border-radius: 0.3rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* Foco visible para navegación por teclado */
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--color-accent-kinetic);
+  outline-offset: 3px;
+  border-radius: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret,
+  .delta-chip,
+  .rank-badge {
+    animation: none;
+  }
+
+  .choice,
+  .game-card,
+  .btn-primary,
+  .btn-tertiary {
+    transition: none;
+  }
+}
+
 .choice-idx {
   font-family: ui-monospace, monospace;
   font-size: 0.8rem;

@@ -7,6 +7,9 @@ node_modules/
 # Ignore Next.js build artifacts
 .next/
 *.log
+*.tsbuildinfo
 
 # Ignore environment files
 .env
+# Auto-generated por Next.js
+next-env.d.ts

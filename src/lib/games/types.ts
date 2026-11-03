@@ -5,6 +5,8 @@ export interface Stat {
   max: number;
   /** Valor inicial; si se omite, arranca en 50% del máximo. */
   initial?: number;
+  /** "money" muestra el valor como pesos chilenos ($48.000). */
+  format?: "money" | "number";
 }
 
 export interface Effect {

@@ -14,7 +14,7 @@ export const atencionCliente: GameData = {
   stats: [
     { key: "sat", label: "Satisfacción", icon: "😊", max: 100 },
     { key: "pac", label: "Paciencia", icon: "⏳", max: 100 },
-    { key: "cta", label: "Valor de cuenta", icon: "💰", max: 60000, initial: 48000 },
+    { key: "cta", label: "Valor de cuenta", icon: "💰", max: 60000, initial: 48000, format: "money" },
   ],
   start: "s1",
   scenes: [
