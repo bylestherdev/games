@@ -16,12 +16,11 @@ import {
   registrarLogros,
   registrarPartida,
   compartir,
-  compartirComoImagen,
+  compartirTarjetaConTexto,
   linkWhatsApp,
   linkX,
   type LogroRegistrado,
 } from "@/lib/games/achievements";
-import { toBlob } from "html-to-image";
 
 type Phase = "intro" | "scene" | "event" | "feedback" | "ending";
 
@@ -703,6 +702,34 @@ export default function TextGame({ game }: { game: GameData }) {
                     </div>
                   </div>
 
+                  {nuevosLogros.length > 0 && (
+                    <div style={{ marginBottom: "24px", padding: "14px 18px", background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.3)", borderRadius: "14px" }}>
+                      <div style={{ fontFamily: "monospace", fontSize: "11px", color: "#FBBF24", textTransform: "uppercase", letterSpacing: "0.15em", marginBottom: "10px" }}>
+                        🏆 Logros desbloqueados
+                      </div>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                        {nuevosLogros.map((nl) => {
+                          const item = LOGROS.find((l) => l.id === nl.id);
+                          if (!item) return null;
+                          return (
+                            <span key={nl.id} style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "5px 12px", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "999px", fontSize: "12px" }}>
+                              <span>{item.icono}</span> {item.nombre}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  <div style={{ marginTop: "20px", padding: "16px 18px", background: "linear-gradient(135deg, rgba(217,70,239,0.12) 0%, rgba(107,33,168,0.12) 100%)", border: "1px dashed rgba(217,70,239,0.4)", borderRadius: "14px", marginBottom: "20px", textAlign: "center" }}>
+                    <div style={{ fontSize: "15px", fontWeight: "600", marginBottom: "4px" }}>
+                      🎮 ¿Puedes conseguir un rank mejor que {ending.rank}?
+                    </div>
+                    <div style={{ fontFamily: "monospace", fontSize: "12px", color: "#D946EF", letterSpacing: "0.05em" }}>
+                      Juega gratis en games.bylesther.dev/games/{game.slug}
+                    </div>
+                  </div>
+
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "20px", borderTop: "1px solid rgba(255,255,255,0.1)", fontFamily: "monospace", fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>
                     <span>Decisiones tomadas: {log.length}</span>
                     <span style={{ color: "#D946EF" }}>games.bylesther.dev</span>
@@ -772,64 +799,61 @@ export default function TextGame({ game }: { game: GameData }) {
                   <button
                     onClick={async () => {
                       if (!shareCardRef.current) return;
-                      const res = await compartirComoImagen(shareCardRef.current, `${game.slug}-resultado-rank-${ending.rank}.png`);
-                      if (res.modo === "compartido") {
-                        setCompartidoMsg("¡Imagen compartida!");
-                      } else if (res.modo === "descargado") {
-                        setCompartidoMsg("¡Tarjeta de imagen generada!");
-
-                        // Fallback: intentar compartir nativa después de generar la imagen
-                        try {
-                          const blob = await toBlob(shareCardRef.current, { cacheBust: true, pixelRatio: 2 });
-                          if (blob && navigator.canShare && navigator.canShare({ files: [new File([blob], `${game.slug}-resultado-rank-${ending.rank}.png`, { type: "image/png" })] })) {
-                            const file = new File([blob], `${game.slug}-resultado-rank-${ending.rank}.png`, { type: "image/png" });
-                            await navigator.share({
-                              title: `${game.title} — Rank ${ending.rank}`,
-                              text: `¡Terminé "${game.title}" en games.bylesther.dev con rango ${ending.rank} (${ending.title})! 🚀`,
-                              files: [file],
-                            });
-                          }
-                        } catch {
-                          // Ignorar errores de fallback
-                        }
+                      const url = `${window.location.origin}/games/${game.slug}`;
+                      const texto = `🎮 ¡Terminé "${game.title}" con rango ${ending.rank} — "${ending.title}"! ¿Te atreves a superarme? Juega gratis: ${url}`;
+                      const res = await compartirTarjetaConTexto(shareCardRef.current, texto, `${game.slug}-resultado-rank-${ending.rank}.png`);
+                      if (res === "compartido") {
+                        setCompartidoMsg("¡Imagen y texto compartidos!");
+                      } else if (res === "cancelado") {
+                        setCompartidoMsg(null);
+                        return;
                       } else {
-                        setCompartidoMsg("No se pudo generar la imagen");
+                        // El navegador no puede adjuntar archivos: solo texto por WhatsApp.
+                        window.open(linkWhatsApp(texto), "_blank", "noopener");
+                        setCompartidoMsg("Tu navegador no permite adjuntar la imagen; se abrió WhatsApp con el texto.");
                       }
                       setTimeout(() => setCompartidoMsg(null), 3500);
                     }}
-                    className="btn-primary text-xs py-2 px-4"
+                    className="btn-whatsapp text-xs py-2 px-4"
                   >
-                    📸 Compartir tarjeta de resultado
+                    💬 Compartir en WhatsApp
                   </button>
                   <button
                     onClick={async () => {
+                      if (!shareCardRef.current) return;
+                      const url = `${window.location.origin}/games/${game.slug}`;
+                      const texto = `🎮 ¡Terminé "${game.title}" con rango ${ending.rank} — "${ending.title}"! ¿Te atreves a superarme? Juega gratis: ${url}`;
+                      const res = await compartirTarjetaConTexto(shareCardRef.current, texto, `${game.slug}-resultado-rank-${ending.rank}.png`);
+                      if (res === "compartido") {
+                        setCompartidoMsg("¡Imagen y texto compartidos!");
+                      } else if (res === "cancelado") {
+                        setCompartidoMsg(null);
+                        return;
+                      } else {
+                        // Fallback: solo texto vía intent de X.
+                        window.open(linkX(texto), "_blank", "noopener");
+                        setCompartidoMsg("Tu navegador no permite adjuntar la imagen; se abrió X con el texto.");
+                      }
+                      setTimeout(() => setCompartidoMsg(null), 3500);
+                    }}
+                    className="btn-tertiary text-xs py-2 px-4"
+                  >
+                    𝕏 Compartir en X
+                  </button>
+                  <button
+                    onClick={async () => {
+                      const url = `${window.location.origin}/games/${game.slug}`;
                       const res = await compartir({
                         titulo: `${game.title} — Rank ${ending.rank}`,
-                        texto: `¡Terminé "${game.title}" en games.bylesther.dev con rango ${ending.rank} (${ending.title})! 🚀`,
+                        texto: `🎮 ¡Terminé "${game.title}" con rango ${ending.rank} — "${ending.title}"! ¿Te atreves a superarme? Juega gratis: ${url}`,
                       });
-                      setCompartidoMsg(res.modo === "copiado" ? "¡Enlace copiado al portapapeles!" : res.modo === "nativo" ? "¡Compartido con éxito!" : "No se pudo compartir");
+                      setCompartidoMsg(res.modo === "copiado" ? "¡Texto copiado al portapapeles!" : res.modo === "nativo" ? "¡Compartido con éxito!" : "No se pudo compartir");
                       setTimeout(() => setCompartidoMsg(null), 3000);
                     }}
                     className="btn-tertiary text-xs py-2 px-4"
                   >
                     📋 Copiar texto
                   </button>
-                  <a
-                    href={linkWhatsApp(`¡Terminé "${game.title}" en games.bylesther.dev con rango ${ending.rank} (${ending.title})! 🚀`)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="btn-whatsapp text-xs py-2 px-4"
-                  >
-                    💬 WhatsApp ↗
-                  </a>
-                  <a
-                    href={linkX(`¡Terminé "${game.title}" en games.bylesther.dev con rango ${ending.rank} (${ending.title})! 🚀`)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="btn-tertiary text-xs py-2 px-4"
-                  >
-                    𝕏 Twitter ↗
-                  </a>
                 </div>
                 {compartidoMsg && (
                   <p className="mt-2 font-mono text-xs text-emerald-400 animate-pulse">{compartidoMsg}</p>

@@ -486,41 +486,49 @@ export async function compartir({ titulo, texto }: { titulo: string; texto: stri
   }
 }
 
-/** Convierte un nodo DOM en tarjeta de imagen PNG para descargar o compartir como archivo. */
-export async function compartirComoImagen(
+/**
+ * Genera la tarjeta PNG del resultado y la comparte junto al texto vía Web Share API.
+ * El sistema operativo abre el menú de compartir (WhatsApp, X, Instagram, etc.)
+ * y recibe imagen + texto juntos. NO descarga la imagen bajo ninguna circunstancia.
+ *
+ * Devuelve:
+ *  - "compartido": el share sheet se completó (o el usuario lo cerró a propósito).
+ *  - "fallo": el navegador no puede compartir archivos o falló la generación.
+ *    En ese caso el componente debe abrir el link de la plataforma solo con texto.
+ */
+export async function compartirTarjetaConTexto(
   node: HTMLElement,
+  texto: string,
   filename = "bylesthergames-resultado.png"
-): Promise<ResultadoCompartir> {
+): Promise<"compartido" | "cancelado" | "fallo"> {
   try {
     const blob = await toBlob(node, { cacheBust: true, pixelRatio: 2 });
-    if (!blob) throw new Error("No se pudo generar la imagen");
+    if (!blob) return "fallo";
 
     const file = new File([blob], filename, { type: "image/png" });
 
-    if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
+    if (
+      typeof navigator !== "undefined" &&
+      typeof navigator.share === "function" &&
+      navigator.canShare &&
+      navigator.canShare({ files: [file] })
+    ) {
       try {
         await navigator.share({
-          title: "Mi resultado en ByLestherGames",
-          text: "¡Mira mi desempeño en este Text RPG de negocios!",
+          title: "ByLestherGames",
+          text: texto,
           files: [file],
         });
-        return { modo: "compartido" };
-      } catch {
-        // Fallback a descarga
+        return "compartido";
+      } catch (err) {
+        // El usuario cerró el menú de compartir: no es un error ni un fallo.
+        if (err instanceof DOMException && err.name === "AbortError") return "cancelado";
+        return "fallo";
       }
     }
-
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    return { modo: "descargado" };
+    return "fallo";
   } catch {
-    return { modo: "fallo" };
+    return "fallo";
   }
 }
 
