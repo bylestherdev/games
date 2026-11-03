@@ -23,6 +23,7 @@ import {
   linkWhatsApp,
   type LogroRegistrado,
 } from "@/lib/games/achievements";
+import { toBlob } from "html-to-image";
 
 type Phase = "intro" | "juego" | "ending";
 
@@ -356,12 +357,33 @@ export default function LeadGame({ game }: { game: LeadGameData }) {
                     onClick={async () => {
                       if (!shareCardRef.current) return;
                       const res = await compartirComoImagen(shareCardRef.current, `cazador-leads-rank-${final.rank}.png`);
-                      setCompartidoMsg(res.modo === "compartido" ? "¡Imagen compartida!" : res.modo === "descargado" ? "¡Tarjeta de imagen descargada!" : "No se pudo generar la imagen");
+                      if (res.modo === "compartido") {
+                        setCompartidoMsg("¡Imagen compartida!");
+                      } else if (res.modo === "descargado") {
+                        setCompartidoMsg("¡Tarjeta de imagen generada!");
+
+                        // Fallback: intentar compartir nativa después de generar la imagen
+                        try {
+                          const blob = await toBlob(shareCardRef.current, { cacheBust: true, pixelRatio: 2 });
+                          if (blob && navigator.canShare && navigator.canShare({ files: [new File([blob], `cazador-leads-rank-${final.rank}.png`, { type: "image/png" })] })) {
+                            const file = new File([blob], `cazador-leads-rank-${final.rank}.png`, { type: "image/png" });
+                            await navigator.share({
+                              title: `${game.title} — Rank ${final.rank}`,
+                              text: `¡Conseguí un pipeline de $${Math.round(pipeline).toLocaleString("es-CL")} en "${game.title}" con rango ${final.rank}! 🎯`,
+                              files: [file],
+                            });
+                          }
+                        } catch {
+                          // Ignorar errores de fallback
+                        }
+                      } else {
+                        setCompartidoMsg("No se pudo generar la imagen");
+                      }
                       setTimeout(() => setCompartidoMsg(null), 3500);
                     }}
                     className="btn-primary text-xs py-2 px-4"
                   >
-                    📸 Descargar tarjeta de resultado (PNG)
+                    📸 Compartir tarjeta de resultado
                   </button>
                   <button
                     onClick={async () => {
