@@ -82,6 +82,7 @@ export default function TextGame({ game }: { game: GameData }) {
   const [flags, setFlags] = useState<string[]>([]);
   const [eventosDisparados, setEventosDisparados] = useState<number>(0);
   const [currentEvent, setCurrentEvent] = useState<GameEvent | null>(null);
+  const [pendingNextSceneId, setPendingNextSceneId] = useState<string>(escenario.inicio);
   const [eventResultText, setEventResultText] = useState<string | null>(null);
 
   const [feedback, setFeedback] = useState<{
@@ -102,7 +103,6 @@ export default function TextGame({ game }: { game: GameData }) {
   const fullText = phase === "scene" ? scene?.text?.join("\n\n") ?? "" : "";
   const isTyping = phase === "scene" && typed < fullText.length;
 
-  // Cambiar de escenario limpia estados
   const cambiarEscenario = (id: string) => {
     setEscenarioId(id);
     const esc = escenarios.find((e) => e.id === id) ?? escenarios[0];
@@ -144,15 +144,14 @@ export default function TextGame({ game }: { game: GameData }) {
   );
 
   const checkSurpriseEvent = useCallback(
-    (nextStats: Record<string, number>, currentFlags: string[]) => {
-      if (!escenario.eventos || escenario.eventos.length === 0) return false;
-      // Probabilidad de evento sorpresa entre escenas (ej. 35%)
-      const probBase = 0.35;
+    (nextStats: Record<string, number>, currentFlags: string[], nextScene: string) => {
+      // Máximo 1 evento sorpresa por partida para evitar fatiga o bucles
+      if (!escenario.eventos || escenario.eventos.length === 0 || eventosDisparados >= 1) return false;
+      const probBase = 0.25;
       if (Math.random() > probBase) return false;
 
-      // Filtrar eventos elegibles
       const disponibles = escenario.eventos.filter((ev) => {
-        if (ev.unaVez && currentFlags.includes(`event-seen:${ev.id}`)) return false;
+        if (currentFlags.includes(`event-seen:${ev.id}`)) return false;
         if (ev.requiere) {
           return ev.requiere.every((c) => {
             const v = nextStats[c.stat] ?? 0;
@@ -168,10 +167,10 @@ export default function TextGame({ game }: { game: GameData }) {
       const ev = disponibles[Math.floor(Math.random() * disponibles.length)];
       setCurrentEvent(ev);
       setEventResultText(null);
+      setPendingNextSceneId(nextScene);
       setFlags((f) => [...f, `event-seen:${ev.id}`]);
       setEventosDisparados((n) => n + 1);
 
-      // Aplicar efectos automáticos si no tiene opciones
       if (!ev.opciones || ev.opciones.length === 0) {
         const updated = { ...nextStats };
         if (ev.efectos) {
@@ -187,7 +186,7 @@ export default function TextGame({ game }: { game: GameData }) {
       setPhase("event");
       return true;
     },
-    [escenario]
+    [escenario, eventosDisparados]
   );
 
   const gotoEnding = useCallback(
@@ -196,7 +195,6 @@ export default function TextGame({ game }: { game: GameData }) {
       setEnding(fin);
       setPhase("ending");
 
-      // Registrar métrica y logros
       const metricaPrincipal = finalStats[escenario.stats[0]?.key] ?? 0;
       registrarPartida(game.slug, fin.rank, metricaPrincipal);
 
@@ -257,15 +255,13 @@ export default function TextGame({ game }: { game: GameData }) {
     [scene.choices, stats, escenario.stats, flags, log]
   );
 
-  // Avanzar desde el feedback (ahora controlado manualmente por el usuario para leer sin prisa)
   const avanzarDesdeFeedback = useCallback(() => {
     if (!feedback) return;
     if (feedback.isEnd) {
       gotoEnding(stats, log, flags, eventosDisparados);
     } else {
       const nextSId = feedback.nextSceneId;
-      // Comprobar evento sorpresa antes de pasar a la siguiente escena
-      const huboEvento = checkSurpriseEvent(stats, flags);
+      const huboEvento = checkSurpriseEvent(stats, flags, nextSId);
       if (!huboEvento) {
         setTyped(0);
         setSceneId(nextSId);
@@ -284,7 +280,6 @@ export default function TextGame({ game }: { game: GameData }) {
     }
   }, [feedback, stats, log, flags, eventosDisparados, checkSurpriseEvent, game.slug, escenarioId, gotoEnding]);
 
-  // Avanzar desde un evento sorpresa
   const manejarOpcionEvento = (efectos: { stat: string; delta: number }[], resultado: string) => {
     const next = { ...stats };
     for (const ef of efectos) {
@@ -301,7 +296,17 @@ export default function TextGame({ game }: { game: GameData }) {
     setCurrentEvent(null);
     setEventResultText(null);
     setTyped(0);
+    setSceneId(pendingNextSceneId);
     setPhase("scene");
+    saveProgress({
+      slug: game.slug,
+      scope: escenarioId,
+      phase: "scene",
+      sceneId: pendingNextSceneId,
+      stats,
+      log,
+      savedAt: Date.now(),
+    });
   };
 
   const skipToEndOfText = useCallback(() => {
@@ -466,7 +471,6 @@ export default function TextGame({ game }: { game: GameData }) {
               <h1 className="font-serif text-4xl md:text-5xl text-white mb-3">{game.title}</h1>
               <p className="text-[var(--color-text-accent)] font-mono text-sm mb-6 tracking-wide">{game.tagline}</p>
               
-              {/* Selector de escenarios si hay varios */}
               {escenarios.length > 1 && (
                 <div className="mb-8 max-w-md mx-auto">
                   <p className="text-xs font-mono text-white/40 mb-3 uppercase tracking-wider">Selecciona el escenario:</p>
@@ -630,7 +634,7 @@ export default function TextGame({ game }: { game: GameData }) {
             </div>
           )}
 
-          {/* FEEDBACK (ahora con botón Siguiente manual para leer sin prisa) */}
+          {/* FEEDBACK */}
           {phase === "feedback" && feedback && (
             <div className="animate-[fadeUp_.3s_ease-out]" key={shake}>
               <div className="font-mono text-xs text-white/40 tracking-widest uppercase mb-4">
@@ -680,7 +684,6 @@ export default function TextGame({ game }: { game: GameData }) {
               <h2 className="font-serif text-4xl md:text-5xl text-white mb-6">{ending.title}</h2>
               <p className="text-white/80 leading-relaxed max-w-xl mx-auto mb-8">{ending.text}</p>
 
-              {/* Logros desbloqueados en esta partida */}
               {nuevosLogros.length > 0 && (
                 <div className="max-w-md mx-auto mb-8 p-4 rounded-xl border border-amber-400/30 bg-amber-400/10 text-left animate-[fadeUp_.5s_ease-out]">
                   <p className="font-mono text-xs tracking-wider text-amber-400 uppercase mb-2">
@@ -704,7 +707,6 @@ export default function TextGame({ game }: { game: GameData }) {
                 </div>
               )}
 
-              {/* Historial de decisiones */}
               {log.length > 0 && (
                 <details className="text-left max-w-xl mx-auto mb-8 rounded-xl border border-white/10 bg-white/[0.02]">
                   <summary className="cursor-pointer px-5 py-3.5 font-mono text-xs text-white/50 hover:text-white transition-colors select-none">
@@ -723,7 +725,6 @@ export default function TextGame({ game }: { game: GameData }) {
                 </details>
               )}
 
-              {/* Compartir logro */}
               <div className="mb-8 max-w-md mx-auto p-4 rounded-xl border border-white/10 bg-white/[0.02]">
                 <p className="font-mono text-xs text-white/50 mb-3 uppercase tracking-wider">Compartir tu resultado:</p>
                 <div className="flex flex-wrap gap-2 justify-center">
