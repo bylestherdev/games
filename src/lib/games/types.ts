@@ -24,6 +24,33 @@ export interface Choice {
   flag?: string;
 }
 
+/** Tipo de ronda dentro de la baraja dinámica */
+export type RoundType =
+  | "apertura"
+  | "investigacion"
+  | "tecnica"
+  | "precio"
+  | "contraoferta"
+  | "cierre"
+  | "alianza"
+  | "riesgo"
+  | "validacion"
+  | "sorpresa";
+
+/** Configuración de una ronda del mazo */
+export interface RoundConfig {
+  type: RoundType;
+  title: string;
+  text: string[];
+  choices: Choice[];
+  positionRestrictions: {
+    minPosition: number;
+    maxPosition: number;
+    requiredStats?: { stat: string; min: number };
+    forbiddenAfter?: RoundType[];
+  };
+}
+
 export interface Scene {
   id: string;
   chapter: string;

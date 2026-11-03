@@ -77,6 +77,7 @@ export default function TextGame({ game }: { game: GameData }) {
 
   const [phase, setPhase] = useState<Phase>("intro");
   const [sceneId, setSceneId] = useState(escenario.inicio);
+  const [rondaActual, setRondaActual] = useState(0); // 1-7, 0 = aún no empieza
   const [stats, setStats] = useState<Record<string, number>>(() => initStats(escenario.stats));
   const [log, setLog] = useState<DecisionLogEntry[]>([]);
   const [typed, setTyped] = useState(0);
@@ -253,7 +254,7 @@ export default function TextGame({ game }: { game: GameData }) {
       });
       setPhase("feedback");
     },
-    [scene.choices, stats, escenario.stats, flags, log]
+    [rondaActual, stats, escenario.stats, flags, log]
   );
 
   const avanzarDesdeFeedback = useCallback(() => {
