@@ -1,0 +1,12 @@
+# Ignore IDEAS.md - it's a reference document, not part of the codebase
+IDEAS.md
+
+# Ignore node_modules
+node_modules/
+
+# Ignore Next.js build artifacts
+.next/
+*.log
+
+# Ignore environment files
+.env
