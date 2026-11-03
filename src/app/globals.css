@@ -1,0 +1,325 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--sans);
+  --font-serif: var(--serif);
+}
+
+:root {
+  /* BASE: GAMBITO - NEGRO CARBÓN Y GRIS ACERO */
+  --color-canvas:           #09090E;
+  --color-surface:          #13141E;
+  --color-surface-hover:    #1A1B28;
+  --color-surface-elevated: #1A1B28;
+  --color-border:           rgba(255, 255, 255, 0.08);
+  
+  /* TEXTO */
+  --color-text-primary:     #FFFFFF;
+  --color-text-secondary:   #94A3B8;
+  --color-text-tertiary:    #94A3B8;
+  
+  /* ACENTOS Y COLORES */
+  --color-text-accent:      #C084FC;
+  --color-kinetic-start:    #C026D3;
+  --color-kinetic-end:      #D946EF;
+  --color-leather:          #A66E38;
+  --color-whatsapp:         #25D366;
+  
+  /* COMPATIBILIDAD DE VARIABLES */
+  --color-border-neutral:   var(--color-border);
+  --color-border-rest:      var(--color-border);
+  --color-border-active:    rgba(255, 255, 255, 0.12);
+  --color-accent-kinetic:   #D946EF;
+  --color-accent-glow:      rgba(217, 70, 239, 0.35);
+  --color-accent-lavender:  #C084FC;
+  --color-accent-leather:   #A66E38;
+  
+  /* DEGRADADOS */
+  --gradient-kinetic:       linear-gradient(135deg, #C026D3 0%, #D946EF 100%);
+  --gradient-whatsapp:      linear-gradient(135deg, #059669 0%, #25D366 100%);
+  
+  /* TIPOGRAFÍA */
+  --sans:      'Inter', system-ui, sans-serif;
+  --serif:     'DM Serif Display', Georgia, serif;
+}
+
+html { 
+  scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-text-primary);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* =========================================
+   SCROLLBAR GLOBAL
+   ========================================= */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-canvas); 
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border); 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-accent); 
+}
+
+/* =========================================
+   SELECCIÓN DE TEXTO
+   ========================================= */
+::selection {
+  background-color: rgba(192, 132, 252, 0.20);
+  color: var(--color-text-primary);
+}
+
+/* =========================================
+   CONTENEDORES PRINCIPALES DE PÁGINAS
+   ========================================= */
+.cont-servicios,
+.cont-contacto,
+.cont-privacidad,
+.cont-terminos,
+.cont-calculadora,
+.cont-demo,
+.cont-construccion {
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  
+  padding-top: 8rem;
+  padding-bottom: 4rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .cont-servicios,
+  .cont-contacto,
+  .cont-privacidad,
+  .cont-terminos,
+  .cont-calculadora,
+  .cont-demo,
+  .cont-construccion {
+    padding-top: 10rem;
+    padding-bottom: 6rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+.cont-contacto { max-width: 900px; }
+.cont-privacidad, .cont-terminos { max-width: 800px; }
+.cont-construccion { max-width: 700px; }
+
+/* =========================================
+   SISTEMA HOMOLOGADO DE BOTONES
+   ========================================= */
+
+/* Estructura Base compartida: misma altura, radio y transición */
+.btn-primary,
+.btn-action,
+.btn-secondary,
+.btn-whatsapp,
+.btn-tertiary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-align: center;
+  border-radius: 9999px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0.7rem 1.6rem;
+  line-height: 1.4;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+@media (min-width: 768px) {
+  .btn-primary,
+  .btn-action,
+  .btn-secondary,
+  .btn-whatsapp,
+  .btn-tertiary {
+    padding: 0.75rem 2rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Botón Principal — Píldora con degradado magenta y volumen */
+.btn-primary,
+.btn-action {
+  background: linear-gradient(135deg, #6B21A8 0%, #D946EF 100%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+  box-shadow: 0 8px 24px rgba(217, 70, 239, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  font-weight: 700;
+}
+
+.btn-primary:hover,
+.btn-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(217, 70, 239, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.30);
+}
+
+.btn-primary:active,
+.btn-action:active {
+  transform: translateY(0px);
+}
+
+/* Botón WhatsApp — Píldora con degradado verde esmeralda */
+.btn-secondary,
+.btn-whatsapp {
+  background: linear-gradient(135deg, #059669 0%, #25D366 100%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  font-weight: 700;
+}
+
+.btn-secondary:hover,
+.btn-whatsapp:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(37, 211, 102, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.30);
+}
+
+.btn-secondary:active,
+.btn-whatsapp:active {
+  transform: translateY(0px);
+}
+
+/* Botón Terciario (Alternativo) */
+.btn-tertiary {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+
+.btn-tertiary:hover {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-border-active);
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(217, 70, 239, 0.15);
+}
+
+.btn-tertiary:active {
+  transform: translateY(0px);
+}
+
+/* =========================================
+   CARRUSEL DE TECNOLOGÍAS
+   ========================================= */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee-container {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  gap: 2rem;
+  min-width: max-content;
+  animation: marquee var(--animation-duration, 25s) linear infinite;
+}
+
+.marquee-track:hover,
+.marquee-track:active {
+  animation-play-state: paused;
+}
+
+/* Reducir animación en modo reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
+/* =========================================
+   SISTEMA HOMOLOGADO DE CARDS Y CONTENEDORES
+   ========================================= */
+
+/* Card Base */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (min-width: 768px) {
+  .card {
+    padding: 2rem;
+  }
+}
+
+/* Card Interactiva (Hover Effect - Efecto Cinético) */
+.card-interactive {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (min-width: 768px) {
+  .card-interactive {
+    padding: 2rem;
+  }
+}
+
+.card-interactive:hover {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-border-active);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px -10px var(--color-accent-glow);
+}
+
+/* Card Destacada */
+.card-featured {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (min-width: 768px) {
+  .card-featured {
+    padding: 2rem;
+  }
+}
+
+.card-featured:hover {
+  border-color: var(--color-border-active);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 35px var(--color-accent-glow);
+}
