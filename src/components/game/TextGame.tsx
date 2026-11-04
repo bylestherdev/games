@@ -734,6 +734,12 @@ export default function TextGame({ game }: { game: GameData }) {
 
   const visibleText = fullText.slice(0, typed);
 
+  // Calcular progreso de ronda para la UI
+  const rondaProgreso = escenario.escenas && escenario.escenas.length > 0 
+    ? null 
+    : Math.min(rondaActual, 7);
+  const totalRondas = 7;
+
   return (
     <div className="w-full max-w-3xl mx-auto px-4 pb-24 pt-28 md:pt-32">
       {/* Terminal shell */}
@@ -752,27 +758,55 @@ export default function TextGame({ game }: { game: GameData }) {
           </span>
         </div>
 
+        {/* Round Progress Indicator */}
+        {rondaProgreso && (
+          <div className="px-4 sm:px-5 py-3 border-b border-white/10 bg-[#0B0C15]">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[10px] text-white/40 uppercase tracking-wider">Ronda</span>
+                <span className="font-mono text-lg font-bold text-white">{rondaProgreso} / {totalRondas}</span>
+              </div>
+              <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-[#C026D3] to-[#D946EF] rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${(rondaProgreso / totalRondas) * 100}%` }}
+                />
+              </div>
+              <span className="font-mono text-[10px] text-white/40 uppercase tracking-wider shrink-0">
+                {rondaProgreso === totalRondas ? "FINAL" : `Ronda ${rondaProgreso}`}
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Stats bar */}
         {(phase === "scene" || phase === "feedback" || phase === "event") && (
           <div className="grid grid-cols-3 gap-2 sm:gap-3 px-4 sm:px-5 py-4 border-b border-white/10 bg-[#0B0C15]">
             {escenario.stats.map((st) => {
               const val = stats[st.key] ?? 0;
               const pct = Math.min(100, (val / st.max) * 100);
+              const isLow = pct < 30;
+              const isHigh = pct > 70;
               return (
-                <div key={st.key} className="min-w-0">
+                <div key={st.key} className="min-w-0 group">
                   <div className="flex items-baseline justify-between gap-1 text-[10px] sm:text-[11px] font-mono text-white/50 mb-1.5">
-                    <span className="truncate" title={st.label}>
-                      {st.icon} {st.label}
+                    <span className="truncate group-hover:text-white transition-colors" title={st.label}>
+                      <span className="mr-1">{st.icon}</span>{st.label}
                     </span>
-                    <span className="shrink-0 text-white/80">{formatValue(st, val)}</span>
+                    <span className={`shrink-0 font-mono ${isLow ? 'text-red-400' : isHigh ? 'text-emerald-400' : 'text-white/80'}`}>
+                      {formatValue(st, val)}
+                    </span>
                   </div>
-                  <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                  <div className="h-2 rounded-full bg-white/10 overflow-hidden">
                     <div
-                      className="h-full rounded-full transition-all duration-700 ease-out"
+                      className={`h-full rounded-full transition-all duration-700 ease-out ${
+                        isLow ? 'bg-gradient-to-r from-red-500 to-red-400' :
+                        isHigh ? 'bg-gradient-to-r from-emerald-500 to-emerald-400' :
+                        'bg-gradient-to-r from-[#C026D3] to-[#D946EF]'
+                      }`}
                       style={{
                         width: `${pct}%`,
-                        background: "linear-gradient(90deg,#C026D3,#D946EF)",
-                        boxShadow: "0 0 12px rgba(217,70,239,.5)",
+                        boxShadow: pct > 0 ? "0 0 8px rgba(217,70,239,.5)" : "none",
                       }}
                     />
                   </div>
@@ -893,18 +927,30 @@ export default function TextGame({ game }: { game: GameData }) {
                         choose(i);
                       }}
                       aria-keyshortcuts={String(i + 1)}
-                      className="choice group w-full text-left bg-white/[0.02] border-white/10 hover:border-white/30 rounded-lg"
+                      className="choice group w-full text-left bg-gradient-to-r from-white/[0.02] to-white/[0.01] border border-white/10 hover:border-[var(--color-accent-kinetic)]/50 hover:bg-gradient-to-r hover:from-white/[0.03] hover:to-white/[0.02] rounded-xl p-4 transition-all duration-200 ease-out hover:shadow-[0_0_20px_rgba(217,70,239,0.15)] hover:border-[var(--color-accent-kinetic)]/30"
                     >
-                      <span className="choice-idx">[{String(i + 1).padStart(2, "0")}]</span>
-                      <span className="flex-1 min-w-0">
-                        <span className="block text-white group-hover:text-white transition-colors">{c.label}</span>
-                        {c.hint && <span className="block text-xs text-white/35 mt-0.5 font-mono">↳ {c.hint}</span>}
-                      </span>
-                      <span className="choice-arrow">→</span>
+                      <div className="flex items-start gap-4">
+                        <span className="choice-idx font-mono text-[11px] text-white/40 shrink-0 w-10 text-right">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <span className="block text-white group-hover:text-white transition-colors text-base leading-relaxed">{c.label}</span>
+                          {c.hint && (
+                            <span className="block text-xs text-white/40 mt-1.5 font-mono flex items-center gap-1">
+                              <span className="text-[var(--color-accent-kinetic)]">↳</span>
+                              <span>{c.hint}</span>
+                            </span>
+                          )}
+                        </div>
+                        <span className="choice-arrow text-[var(--color-accent-kinetic)] group-hover:translate-x-1 transition-transform duration-200">→</span>
+                      </div>
                     </button>
                   ))}
-                  <p className="pt-1 font-mono text-[11px] text-white/25">
-                    atajo: teclas <span className="kbd">1</span> <span className="kbd">2</span> <span className="kbd">3</span> para elegir
+                  <p className="pt-3 font-mono text-[10px] text-white/20 flex items-center gap-1">
+                    <span className="kbd">1</span>
+                    <span className="kbd">2</span>
+                    <span className="kbd">3</span>
+                    <span className="text-white/30">para elegir</span>
                   </p>
                 </div>
               )}
@@ -930,8 +976,8 @@ export default function TextGame({ game }: { game: GameData }) {
                   <p className="font-serif text-xl text-white mb-6 border-l-2 border-amber-400 pl-4 py-1">
                     {eventResultText}
                   </p>
-                  <button onClick={cerrarEvento} className="btn-primary">
-                    Continuar simulación →
+                  <button onClick={cerrarEvento} className="btn-primary group">
+                    Continuar simulación <span className="group-hover:translate-x-1 transition-transform">→</span>
                   </button>
                 </div>
               ) : currentEvent.opciones && currentEvent.opciones.length > 0 ? (
@@ -940,20 +986,29 @@ export default function TextGame({ game }: { game: GameData }) {
                     <button
                       key={i}
                       onClick={() => manejarOpcionEvento(op.effects, op.resultado)}
-                      className="choice group w-full text-left border-amber-400/30 hover:border-amber-400"
+                      className="choice group w-full text-left bg-gradient-to-r from-amber-500/5 to-amber-500/2 border border-amber-400/30 hover:border-amber-400 hover:bg-gradient-to-r hover:from-amber-500/10 hover:to-amber-500/5 rounded-xl p-4 transition-all duration-200 ease-out hover:shadow-[0_0_20px_rgba(251,191,36,0.15)] hover:border-amber-400/50"
                     >
-                      <span className="choice-idx text-amber-400">[{String(i + 1).padStart(2, "0")}]</span>
-                      <span className="flex-1 min-w-0">
-                        <span className="block text-white">{op.label}</span>
-                        {op.hint && <span className="block text-xs text-white/40 mt-0.5 font-mono">↳ {op.hint}</span>}
-                      </span>
-                      <span className="choice-arrow text-amber-400">→</span>
+                      <div className="flex items-start gap-4">
+                        <span className="choice-idx font-mono text-[11px] text-amber-400 shrink-0 w-10 text-right">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <span className="block text-white group-hover:text-white transition-colors text-base leading-relaxed">{op.label}</span>
+                          {op.hint && (
+                            <span className="block text-xs text-white/40 mt-1.5 font-mono flex items-center gap-1">
+                              <span className="text-amber-400">↳</span>
+                              <span>{op.hint}</span>
+                            </span>
+                          )}
+                        </div>
+                        <span className="choice-arrow text-amber-400 group-hover:translate-x-1 transition-transform duration-200">→</span>
+                      </div>
                     </button>
                   ))}
                 </div>
               ) : (
-                <button onClick={cerrarEvento} className="btn-primary">
-                  Entendido, seguir →
+                <button onClick={cerrarEvento} className="btn-primary group">
+                  Entendido, seguir <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </button>
               )}
             </div>
@@ -962,9 +1017,16 @@ export default function TextGame({ game }: { game: GameData }) {
           {/* FEEDBACK */}
           {phase === "feedback" && feedback && (
             <div className="animate-[fadeUp_.3s_ease-out]" key={shake}>
-              <div className="font-mono text-xs text-white/40 tracking-widest uppercase mb-4">
-                {"> Decisión "}
-                {String(feedback.choiceIdx + 1).padStart(2, "0")} registrada
+              <div className="flex items-center gap-3 mb-6">
+                <span className="font-mono text-[11px] tracking-widest text-[var(--color-accent-kinetic)] uppercase">
+                  {" > "}Decisión {String(feedback.choiceIdx + 1).padStart(2, "0")} registrada
+                </span>
+                <span className="h-px flex-1 bg-white/10" />
+                {rondaProgreso && (
+                  <span className="font-mono text-[10px] text-white/30 shrink-0">
+                    Ronda {rondaProgreso} / {totalRondas}
+                  </span>
+                )}
               </div>
               <div role="status" aria-live="polite">
                 <p className="font-serif text-2xl md:text-3xl text-white leading-snug mb-8 border-l-2 border-[var(--color-accent-kinetic)] pl-5">
@@ -972,20 +1034,26 @@ export default function TextGame({ game }: { game: GameData }) {
                 </p>
                 <div className="flex flex-wrap gap-2.5 mb-8">
                   {feedback.deltas.map((d, i) => (
-                    <span key={i} className={`delta-chip ${d.delta >= 0 ? "delta-up" : "delta-down"}`}>
-                      {d.icon} {d.label} {d.delta >= 0 ? "+" : "−"}
-                      {d.money ? `$${Math.abs(d.delta).toLocaleString("es-CL")}` : Math.abs(d.delta)}
+                    <span key={i} className={`delta-chip ${d.delta >= 0 ? "delta-up" : "delta-down"} flex items-center gap-1.5`}>
+                      <span className="text-lg">{d.icon}</span>
+                      <span className="font-medium">{d.label}</span>
+                      <span className={`font-bold ${d.delta >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                        {d.delta >= 0 ? "+" : "−"}{d.money ? `$${Math.abs(d.delta).toLocaleString("es-CL")}` : Math.abs(d.delta)}
+                      </span>
                     </span>
                   ))}
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 pt-2 border-t border-white/10">
-                <button onClick={avanzarDesdeFeedback} className="btn-primary text-base px-8 py-3.5">
-                  Siguiente escena →
+              <div className="flex items-center gap-4 pt-4 border-t border-white/10">
+                <button onClick={avanzarDesdeFeedback} className="btn-primary text-base px-8 py-3.5 group">
+                  <span className="flex items-center gap-2">Siguiente escena</span>
+                  <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </button>
-                <span className="font-mono text-xs text-white/40">
-                  Pulsa <span className="kbd">Enter</span> o <span className="kbd">Espacio</span>
+                <span className="font-mono text-xs text-white/40 flex items-center gap-1">
+                  <kbd className="px-1.5 py-0.5 bg-white/5 rounded text-[10px]">Enter</kbd>
+                  <span className="text-white/30">o</span>
+                  <kbd className="px-1.5 py-0.5 bg-white/5 rounded text-[10px]">Espacio</kbd>
                 </span>
               </div>
             </div>
@@ -1061,7 +1129,7 @@ export default function TextGame({ game }: { game: GameData }) {
                 </div>
               </div>
 
-              <div className="rank-badge mb-6" style={{ boxShadow: `0 0 60px ${game.accent}66` }}>
+              <div className="rank-badge mb-6" style={{ boxShadow: `0 0 80px ${game.accent}88`, animation: "pulse 2s ease-in-out infinite" }}>
                 {ending.rank}
               </div>
               <p className="font-mono text-[11px] tracking-[0.3em] uppercase text-white/40 mb-2">
@@ -1185,11 +1253,11 @@ export default function TextGame({ game }: { game: GameData }) {
               </div>
 
               <div className="flex flex-wrap gap-3 justify-center">
-                <button onClick={restart} className="btn-primary">
-                  ↺ Jugar de nuevo
+                <button onClick={restart} className="btn-primary group">
+                  ↺ Jugar de nuevo <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </button>
-                <Link href="/" className="btn-tertiary">
-                  ← Volver a la colección
+                <Link href="/" className="btn-tertiary group">
+                  ← Volver a la colección <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
                 </Link>
               </div>
               <p className="mt-5 font-mono text-[11px] text-white/25">
