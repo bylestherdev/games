@@ -93,16 +93,8 @@ export default function TextGame({ game }: { game: GameData }) {
     // Si el escenario tiene escenas estáticas, usarlas; sino iniciar sistema de rondas
     return escenario.escenas && escenario.escenas.length > 0 ? 0 : 1;
   });
-  // Efecto: al cambiar rondaActual en modo dinámico, actualizar sceneId
-  useEffect(() => {
-    if (escenario.escenas?.length === 0 && phase === "scene") {
-      const tiposRonda: string[] = escenario.poolRondasDisponibles ?? [
-        "apertura", "investigacion", "tecnica", "precio", "contraoferta", "cierre", "alianza", "riesgo", "validacion", "sorpresa"
-      ];
-      const tipoActual = tiposRonda[rondaActual - 1] || "apertura";
-      setSceneId(tipoActual);
-    }
-  }, [rondaActual, phase, escenario]);
+  // El avance de ronda y sceneId se maneja síncronamente en avanzarDesdeFeedback
+  // No se necesita useEffect adicional
   const [stats, setStats] = useState<Record<string, number>>(() => initStats(escenario.stats));
   const [log, setLog] = useState<DecisionLogEntry[]>([]);
   const [typed, setTyped] = useState(0);
