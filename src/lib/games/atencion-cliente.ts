@@ -2,10 +2,10 @@ import type { GameData, Escenario, Stat, Choice, RoundType, RoundConfig } from "
 
 const escenarioVIP: Escenario = {
   id: "vip",
-  titulo: "Cliente VIP en Crisis",
-  etiqueta: "Caso Multiruta con Baraja Dinámica",
+  titulo: "Crisis VIP: El Lanzamiento de Ana Rojas",
+  etiqueta: "Gestión de Crisis - Cliente Estratégico",
   contexto:
-    "Eres agente senior de la cuenta más importante de la empresa. Ana Rojas, cliente VIP con $48.000 facturados este año, acaba de escribir un mensaje desesperado antes de su lanzamiento. Una crisis que pone en riesgo la cuenta y requiere una solución inmediata.",
+    "Son las 23:47 del viernes. Ana Rojas, CEO de una startup en hipercrecimiento (facturación $48K/año, proyección $200K), acaba de escribir: 'El pago falla en producción. Mi lanzamiento es el lunes. Si no resuelvo esto, pierdo 3 años de trabajo'. Es tu cuenta más grande. Tu paciencia, empatía y capacidad técnica decidirán si la retienes o la pierdes para la competencia. Tienes 7 interacciones para resolver la crisis y fortalecer la relación.",
   inicio: "apertura",
   stats: [
     { key: "sat", label: "Satisfacción", icon: "😊", max: 100 },
@@ -19,7 +19,7 @@ const escenarioVIP: Escenario = {
       icono: "👔",
       prob: 0.25,
       unaVez: true,
-      texto: "Tu director de ventas vio el chat de Ana y te manda un mensaje directo: '¿Qué pasa ahí? Llámalos y diles que cubrimos nosotros el envío exprés'.",
+      texto: "Tu Director de Ventas vio el hilo de Ana y te mandó un Slack directo: '¿Qué pasa ahí? Llámala YA y dile que cubrimos el envío exprés nosotros'. Su tono no admite réplica.",
       efectos: [{ stat: "pac", delta: -15 }],
     },
   ],
@@ -40,39 +40,39 @@ const escenarioVIP: Escenario = {
     {
       id: "best",
       rank: "S",
-      title: "Cliente para toda la vida",
+      title: "Cliente para Toda la Vida",
       conditions: [{ stat: "sat", min: 78 }, { stat: "pac", min: 68 }, { stat: "cta", min: 45000 }],
-      text: "Ana renueva por otros 3 años y te refiere a dos empresas de su red. Tu gerente pregunta cómo lo hiciste. La respuesta: tomaste propiedad, fuiste transparente y nunca dejaste sola a la cliente. $48.000 se convirtieron en $190.000 de valor de vida de cliente.",
+      text: "El lanzamiento del lunes fue impecable. Ana te escribió a las 6 AM: 'Gracias a ti dormí 4 horas. El pago fluye'. Renovó por 3 años ($144K) y te refirió a dos founders de su aceleradora. Tu director te ascendió a Senior Account Manager: 'Gestión de crisis de manual'. $48K se transformaron en $290K de valor de vida.",
     },
     {
       id: "good",
       rank: "A",
-      title: "Salvaste la cuenta",
+      title: "Crisis Resuelta, Confianza Ganada",
       conditions: [{ stat: "sat", min: 64 }, { stat: "pac", min: 52 }],
-      text: "Ana se queda. No todo quedó perfecto, y ella lo dice: 'Me quedo por ti, no por la empresa.' Es frágil, pero real. El plan de seguimiento trimestral que prometiste ahora es tu tarea más importante.",
+      text: "El pago se restableció a las 11 AM del lunes. Hubo tensión, pero Ana renovó por 1 año ($48K). 'Me quedo por cómo gestionaste esto, no por el producto', te dijo. El seguimiento trimestral que prometiste es ahora tu prioridad #1. La cuenta es frágil, pero recuperable.",
     },
     {
       id: "mid",
       rank: "B",
-      title: "Rescate parcial",
+      title: "Rescate Parcial",
       conditions: [{ stat: "sat", min: 44 }],
-      text: "El pedido llegó y el lanzamiento salió adelante. Pero Ana redujo su siguiente orden a la mitad. 'Siguen en prueba', escribió. La cuenta sobrevive, la confianza no: te tomará meses recuperarla.",
+      text: "El pago funcionó, pero el lanzamiento se retrasó 6 horas. Ana renovó 6 meses a precio reducido ($24K). 'Seguimos en evaluación', escribió. Tu equipo técnico debe entregar un post-mortem impecable este mes para recuperar la confianza plena.",
     },
     {
       id: "bad",
       rank: "D",
-      title: "Cancelación consumada",
-      text: "A las 9:00 AM llega el correo formal de cancelación. La competencia ofreció lo mismo que tú, pero con atención proactiva. La lección duele: en clientes premium, la relación vale más que el producto.",
+      title: "Cancelación Consumada",
+      text: "A las 9:00 AM del lunes llegó el correo: 'Cancelamos. La competencia nos ofreció migración en 48h y SLA real'. La lección duele: en cuentas enterprise, la velocidad de respuesta y la transparencia valen más que el producto. $48K perdidos y una referencia negativa en el mercado.",
     },
   ],
 };
 
 const escenarioEnterprise: Escenario = {
   id: "enterprise",
-  titulo: "Incidente Enterprise (SLA Roto)",
-  etiqueta: "Modo Difícil con Baraja Dinámica",
+  titulo: "Incidente Crítico: Black Friday GlobalCorp",
+  etiqueta: "Gestión de Incidentes - Cuenta Enterprise",
   contexto:
-    "Una corporación de 5,000 empleados sufre una caída de pasarela de pagos en pleno Black Friday. El contrato en riesgo es de $150.000 anuales. Una crisis que requiere una solución inmediata para estabilizar la cuenta.",
+    "Es viernes 24 de noviembre, 06:13 AM. La pasarela de pagos de GlobalCorp (5.000 empleados, $150K/año) cayó en pleno Black Friday. Cada minuto de caída son $47K en ventas perdidas. El CTO te exige resolución en 2 horas. El SLA estipula 99.9% uptime; ya vas en 94%. Tu equipo técnico trabaja en paralelo, pero la gestión de la comunicación, expectativas y confianza del cliente depende enteramente de ti. 7 puntos de contacto para estabilizar la cuenta.",
   inicio: "apertura",
   stats: [
     { key: "sat", label: "Satisfacción", icon: "😊", max: 100 },
@@ -82,11 +82,11 @@ const escenarioEnterprise: Escenario = {
   eventos: [
     {
       id: "hackermedia",
-      titulo: "Alerta de Prensa",
+      titulo: "Filtración a Prensa",
       icono: "📰",
       prob: 0.25,
       unaVez: true,
-      texto: "Un blog tecnológico publica que la pasarela de pagos está caída.",
+      texto: "TechCrunch acaba de publicar: 'GlobalCorp sufre outage crítico en Black Friday — clientes reportan pagos rechazados masivos'. El CTO te reenvía el enlace: 'Controla la narrativa AHORA'.",
       efectos: [{ stat: "pac", delta: -15 }],
     },
   ],
@@ -109,20 +109,20 @@ const escenarioEnterprise: Escenario = {
       rank: "S",
       title: "Resiliencia Enterprise",
       conditions: [{ stat: "sat", min: 75 }, { stat: "pac", min: 70 }],
-      text: "Convertiste una crisis catastrófica de Black Friday en un testimonio de confianza. GlobalCorp renovó por 2 años más y te nombró proveedor estratégico.",
+      text: "El servicio se restauró a las 08:47 AM. Ventas Black Friday: $2.3M recuperados de $2.4M proyectados. El CTO te llamó personalmente: 'No es la caída, es cómo la gestionaste'. GlobalCorp firmó 3 años a $450K/año con cláusula de co-inversión en redundancia. Te nombraron Strategic Partner.",
     },
     {
       id: "ent-good",
       rank: "A",
-      title: "Tormenta superada",
+      title: "Tormenta Superada",
       conditions: [{ stat: "sat", min: 55 }],
-      text: "El servicio se estabilizó y la cuenta sobrevivió, aunque con ciertos descuentos y costos operativos absorbidos. Buen manejo de crisis.",
+      text: "Servicio restablecido a las 11:20 AM. Ventas recuperadas: $1.9M de $2.4M. GlobalCorp renovó 1 año ($150K) con penalizaciones por SLA reducidas 40%. 'Buen manejo, pero esperamos que no se repita', dijo el VP Engineering. El plan de redundancia que prometiste es tu compromiso Q1.",
     },
     {
       id: "ent-bad",
       rank: "D",
-      title: "SLA Incumplido",
-      text: "La falta de tacto y los reembolsos mal gestionados llevaron a GlobalCorp a rescindir el contrato al finalizar el trimestre.",
+      title: "SLA Incumplido — Contrato Rescindido",
+      text: "Servicio caído 4 horas 47 minutos. Ventas perdidas: $1.1M. GlobalCorp ejecutó la cláusula de terminación por SLA incumplido. El correo del Legal llegó a las 3 PM: 'Efectivo inmediato'. La competencia ya está en fase de migración. La lección: en enterprise, la comunicación proactiva durante la crisis vale más que la resolución técnica tardía.",
     },
   ],
 };
