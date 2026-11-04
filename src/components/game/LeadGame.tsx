@@ -13,6 +13,7 @@ import {
   type Lead,
   type LeadGameData,
 } from "@/lib/games/cazador-leads";
+import type { TipoAccion } from "@/lib/games/cazador-leads";
 import {
   LOGROS,
   cumpleLogro,
@@ -70,7 +71,7 @@ export default function LeadGame({ game }: { game: LeadGameData }) {
     const target = leads.find((l) => l.id === leadId);
     if (!target) return;
 
-    const res = ejecutarAccionLead(target, accionId);
+    const res = ejecutarAccionLead(target, accionId as TipoAccion);
     const actualizado = res.lead ?? target;
 
     setLeads((prev) => prev.map((l) => (l.id === leadId ? actualizado : l)));
