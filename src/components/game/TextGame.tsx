@@ -93,6 +93,16 @@ export default function TextGame({ game }: { game: GameData }) {
     // Si el escenario tiene escenas estáticas, usarlas; sino iniciar sistema de rondas
     return escenario.escenas && escenario.escenas.length > 0 ? 0 : 1;
   });
+  // Efecto: al cambiar rondaActual en modo dinámico, actualizar sceneId
+  useEffect(() => {
+    if (escenario.escenas?.length === 0 && phase === "scene") {
+      const tiposRonda: string[] = escenario.poolRondasDisponibles ?? [
+        "apertura", "investigacion", "tecnica", "precio", "contraoferta", "cierre", "alianza", "riesgo", "validacion", "sorpresa"
+      ];
+      const tipoActual = tiposRonda[rondaActual - 1] || "apertura";
+      setSceneId(tipoActual);
+    }
+  }, [rondaActual, phase, escenario]);
   const [stats, setStats] = useState<Record<string, number>>(() => initStats(escenario.stats));
   const [log, setLog] = useState<DecisionLogEntry[]>([]);
   const [typed, setTyped] = useState(0);
@@ -316,12 +326,6 @@ export default function TextGame({ game }: { game: GameData }) {
           if (prev === 0) return 1; // Primera ronda
           return prev + 1; // Siguiente ronda
         });
-        // Calcular el próximo sceneId basado en el tipo de ronda
-        const tiposRonda: string[] = escenario.poolRondasDisponibles ?? [
-          "apertura", "investigacion", "tecnica", "precio", "contraoferta", "cierre", "alianza", "riesgo", "validacion", "sorpresa"
-        ];
-        const tipoActual = tiposRonda[rondaActual - 1] || "apertura";
-        setSceneId(tipoActual);
         setFeedback(null);
         setPhase("scene");
         // Guardar progreso con el número de ronda
@@ -329,14 +333,14 @@ export default function TextGame({ game }: { game: GameData }) {
           slug: game.slug,
           scope: escenarioId,
           phase: "scene",
-          sceneId: tipoActual,
+          sceneId: sceneId,
           stats,
           log,
           savedAt: Date.now(),
         });
       }
     }
-  }, [feedback, stats, log, flags, eventosDisparados, checkSurpriseEvent, game.slug, escenarioId, gotoEnding, rondaActual]);
+  }, [feedback, stats, log, flags, eventosDisparados, checkSurpriseEvent, game.slug, escenarioId, gotoEnding]);
 
   const manejarOpcionEvento = (efectos: { stat: string; delta: number }[], resultado: string) => {
     const next = { ...stats };
