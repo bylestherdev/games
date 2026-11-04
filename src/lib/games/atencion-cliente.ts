@@ -5,7 +5,7 @@ const escenarioVIP: Escenario = {
   titulo: "Cliente VIP en Crisis",
   etiqueta: "Caso Multiruta con Baraja Dinámica",
   contexto:
-    "Eres agente senior de la cuenta más importante de la empresa. Ana Rojas, cliente VIP con $48.000 facturados este año, acaba de escribir un mensaje desesperado antes de su lanzamiento. Cada partida presenta 7 rondas en orden diferente con decisiones que afectan el mazo restante.",
+    "Eres agente senior de la cuenta más importante de la empresa. Ana Rojas, cliente VIP con $48.000 facturados este año, acaba de escribir un mensaje desesperado antes de su lanzamiento. Una crisis que pone en riesgo la cuenta y requiere una solución inmediata.",
   inicio: "apertura",
   stats: [
     { key: "sat", label: "Satisfacción", icon: "😊", max: 100 },
@@ -72,7 +72,7 @@ const escenarioEnterprise: Escenario = {
   titulo: "Incidente Enterprise (SLA Roto)",
   etiqueta: "Modo Difícil con Baraja Dinámica",
   contexto:
-    "Una corporación de 5,000 empleados sufre una caída de pasarela de pagos en pleno Black Friday. El contrato en riesgo es de $150.000 anuales. Cada partida presenta 7 rondas en orden diferente con decisiones que afectan el mazo restante.",
+    "Una corporación de 5,000 empleados sufre una caída de pasarela de pagos en pleno Black Friday. El contrato en riesgo es de $150.000 anuales. Una crisis que requiere una solución inmediata para estabilizar la cuenta.",
   inicio: "apertura",
   stats: [
     { key: "sat", label: "Satisfacción", icon: "😊", max: 100 },
@@ -138,7 +138,7 @@ export const atencionCliente: GameData = {
   accent: "#D946EF",
   imagen: "/img/atencion-cliente.jpg",
   description:
-    "Simulador de resolución de crisis con clientes de alto valor. Cada partida presenta 7 rondas en orden diferente, con eventos sorpresa y decisiones que afectan el mazo restante. Ya no hay dos partidas iguales.",
+    "Simulador de resolución de crisis con clientes de alto valor. Toma decisiones estratégicas que afectan el rumbo de cada partida. Cada sesión presenta desafíos únicos que pondrán a prueba tu habilidad para gestionar crisis y mantener la satisfacción del cliente.",
   escenarioInicial: "vip",
   escenarios: [escenarioVIP, escenarioEnterprise],
 };

@@ -5,7 +5,7 @@ const escenarioVeronica: Escenario = {
   titulo: "Negociación Maestra (Verónica Salas)",
   etiqueta: "Caso Multiruta con Baraja Dinámica",
   contexto:
-    "El contrato vale $120.000 anuales. Enfrente está Verónica Salas, directora de compras, que ha negociado con 40 vendedores este año y les ganó a 38. Múltiples rutas y opciones de decisión, con baraja barajada cada partida.",
+    "El contrato vale $120.000 anuales. Enfrente está Verónica Salas, directora de compras, que ha negociado con 40 vendedores este año y les ganó a 38. Múltiples rutas y opciones de decisión.",
   inicio: "apertura",
   stats: [
     { key: "rel", label: "Relación", icon: "🤝", max: 100 },
@@ -63,7 +63,7 @@ const escenarioVeronica: Escenario = {
 export const negociacion: GameData = {
   slug: "negociacion",
   title: "Negociación Maestra",
-  tagline: "Un contrato. Siete rondas. Un mazo barajado cada partida.",
+  tagline: "Un contrato con nuevas decisiones cada partida.",
   icon: "🤝",
   category: "Ventas",
   difficulty: 3,
@@ -71,7 +71,7 @@ export const negociacion: GameData = {
   accent: "#C084FC",
   imagen: "/img/negociacion.jpg",
   description:
-    "Simulador de negociación con baraja dinámica de 10 tipos de Ronda. Cada partida presenta 7 rondas en orden diferente, con decisiones que afectan el mazo restante y condiciones de cierre adaptativas.",
+    "Simulador de negociación. Cada partida presenta desafíos únicos con decisiones que afectan el rumbo y condiciones de cierre adaptativas.",
   escenarioInicial: "veronica",
   escenarios: [escenarioVeronica],
 };
