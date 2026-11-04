@@ -4,10 +4,10 @@ import { negociacion } from "@/lib/games/negociacion";
 import { cazadorLeads } from "@/lib/games/cazador-leads";
 import { liderEquipo } from "@/lib/games/lider-equipo";
 import { gestorCartera } from "@/lib/games/gestor-cartera";
+import { desarrolloProducto } from "@/lib/games/desarrollo-producto";
 import PerfilJugador from "@/components/PerfilJugador";
 
 const upcoming = [
-  { icon: "💡", title: "Desarrollo de Producto", desc: "Features, presupuesto y un roadmap que grita." },
   { icon: "🚀", title: "Expansión Internacional", desc: "Un mercado nuevo decide si tu producto es global." },
 ];
 
@@ -21,7 +21,7 @@ function Dots({ n }: { n: number }) {
 }
 
 export default function HomePage() {
-  const games = [atencionCliente, negociacion, cazadorLeads, liderEquipo, gestorCartera];
+  const games = [atencionCliente, negociacion, cazadorLeads, liderEquipo, gestorCartera, desarrolloProducto];
 
   return (
     <div className="w-full">
