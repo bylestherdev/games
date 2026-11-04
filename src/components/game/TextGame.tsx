@@ -129,11 +129,64 @@ export default function TextGame({ game }: { game: GameData }) {
   const typer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Fallback de escena: si no hay escenas estáticas, generamos elecciones dinámicas según la ronda actual
-  const fallbackChoices = [
-    { label: "Analizar la situación con cautela", hint: "Enfoque equilibrado", effects: [{ stat: escenario.stats[0]?.key || "rel", delta: 5 }], result: "Evaluaste los puntos clave con calma.", next: "next" },
-    { label: "Tomar una postura firme", hint: "Acción directa", effects: [{ stat: escenario.stats[1]?.key || "mar", delta: 8 }], result: "Definiste tu posición con autoridad.", next: "next" },
-    { label: "Buscar un entendimiento colaborativo", hint: "Enfoque flexible", effects: [{ stat: escenario.stats[0]?.key || "rel", delta: 10 }, { stat: "mar", delta: -3 }], result: "Construiste un puente de entendimiento.", next: "next" },
+  // Pool de rondas y elecciones dinámicas con sentido contextual para cada una de las 7 fases
+  const poolRondas = escenario.poolRondasDisponibles ?? [
+    "apertura", "investigacion", "tecnica", "precio", "contraoferta", "cierre", "alianza", "riesgo", "validacion", "sorpresa"
   ];
+  const rondaTipo = poolRondas[(rondaActual - 1) % poolRondas.length] || "apertura";
+
+  // Opciones contextuales según el tipo de ronda actual
+  const getChoicesForRound = (tipo: string, stats: any[]) => {
+    const s1 = stats[0]?.key || "rel";
+    const s2 = stats[1]?.key || "mar";
+    
+    switch (tipo) {
+      case "apertura":
+        return [
+          { label: "Establecer contacto directo y profesional", hint: "Romper el hielo con firmeza", effects: [{ stat: s1, delta: 6 }], result: "Transmitiste seguridad y profesionalismo desde el primer segundo.", next: "next" },
+          { label: "Escuchar activamente las expectativas iniciales", hint: "Enfoque receptivo", effects: [{ stat: s1, delta: 10 }, { stat: s2, delta: -2 }], result: "Permitiste que la contraparte exponga sus prioridades sin presiones.", next: "next" },
+          { label: "Presentar de inmediato una propuesta atractiva", hint: "Golpe de efecto", effects: [{ stat: s2, delta: 8 }], result: "pusiste sobre la mesa condiciones interesantes de entrada.", next: "next" },
+        ];
+      case "investigacion":
+        return [
+          { label: "Hacer preguntas profundas sobre los requerimientos", hint: "Descubrir necesidades", effects: [{ stat: s1, delta: 8 }, { stat: s2, delta: 2 }], result: "Identificaste los puntos críticos que realmente les importan.", next: "next" },
+          { label: "Analizar los antecedentes y restricciones operativas", hint: "Auditoría rápida", effects: [{ stat: s2, delta: 6 }], result: "Comprendiste las limitaciones técnicas y presupuestarias.", next: "next" },
+          { label: "Indagar sobre experiencias previas con proveedores", hint: "Buscar debilidades de la competencia", effects: [{ stat: s1, delta: 5 }, { stat: s2, delta: 4 }], result: "Descubriste qué errores debes evitar a toda costa.", next: "next" },
+        ];
+      case "tecnica":
+        return [
+          { label: "Demostrar la robustez y garantías de la solución", hint: "Argumento técnico sólido", effects: [{ stat: s2, delta: 10 }], result: "Despejaste cualquier duda sobre la calidad del servicio.", next: "next" },
+          { label: "Ofrecer personalización a la medida de sus procesos", hint: "Ajuste perfecto", effects: [{ stat: s1, delta: 8 }, { stat: s2, delta: -3 }], result: "Demostraste flexibilidad para adaptarte a sus flujos de trabajo.", next: "next" },
+          { label: "Simplificar la explicación técnica enfocándote en ROI", hint: "Enfoque gerencial", effects: [{ stat: s1, delta: 6 }, { stat: s2, delta: 5 }], result: "Hiciste que el valor de la propuesta fuera evidente para los tomadores de decisiones.", next: "next" },
+        ];
+      case "precio":
+        return [
+          { label: "Defender el valor y mantener el margen objetivo", hint: "Firmeza en tarifas", effects: [{ stat: s2, delta: 12 }], result: "Protegiste la rentabilidad sin ceder ante presiones iniciales.", next: "next" },
+          { label: "Ofrecer un descuento condicionado a volumen o compromiso", hint: "Ganar-ganar", effects: [{ stat: s1, delta: 8 }, { stat: s2, delta: -4 }], result: "Conseguiste un compromiso mayor a cambio de una concesión calculada.", next: "next" },
+          { label: "Estructurar un esquema de pagos flexible por etapas", hint: "Facilitar el cierre", effects: [{ stat: s1, delta: 10 }], result: "Removiste la fricción financiera principal para avanzar.", next: "next" },
+        ];
+      case "contraoferta":
+        return [
+          { label: "Recalibrar la propuesta manteniendo el núcleo del trato", hint: "Flexibilidad táctica", effects: [{ stat: s1, delta: 7 }, { stat: s2, delta: 4 }], result: "Ajustaste los términos sin sacrificar los objetivos clave.", next: "next" },
+          { label: "Contraponer beneficios adicionales en lugar de bajar precio", hint: "Valor agregado", effects: [{ stat: s1, delta: 10 }, { stat: s2, delta: 2 }], result: "Aumentaste el atractivo percibido sin devaluar el servicio.", next: "next" },
+          { label: "Establecer límites claros a las concesiones", hint: "Línea roja", effects: [{ stat: s2, delta: 8 }, { stat: s1, delta: -3 }], result: "Marcaste un límite profesional que respetaron.", next: "next" },
+        ];
+      case "cierre":
+        return [
+          { label: "Proponer fecha definitiva para la firma del contrato", hint: "Cierre directo", effects: [{ stat: s2, delta: 10 }, { stat: "s1", delta: 5 }], result: "Aterrizaste los siguientes pasos con fechas y responsables claros.", next: "next" },
+          { label: "Asegurar los canales de onboarding y soporte inicial", hint: "Garantía post-venta", effects: [{ stat: s1, delta: 12 }], result: "Transmitiste total tranquilidad respecto al inicio de la relación.", next: "next" },
+          { label: "Sellar el acuerdo con un resumen ejecutivo de beneficios", hint: "Consolidar el pacto", effects: [{ stat: s1, delta: 8 }, { stat: s2, delta: 8 }], result: "Dejaste constancia del éxito compartido antes de firmar.", next: "next" },
+        ];
+      default:
+        return [
+          { label: "Consolidar la relación estratégica a largo plazo", hint: "Visión de futuro", effects: [{ stat: s1, delta: 10 }], result: "Sentaste las bases para renovaciones futuras y referencias.", next: "next" },
+          { label: "Ajustar detalles menores de implementación", hint: "Pulir asperezas", effects: [{ stat: s2, delta: 5 }], result: "Resolviste los últimos flecos operativos.", next: "next" },
+          { label: "Agradecer la confianza y formalizar la alianza", hint: "Cofirmar el éxito", effects: [{ stat: s1, delta: 8 }, { stat: s2, delta: 6 }], result: "Cerraste la interacción dejando una impresión impecable.", next: "next" },
+        ];
+    }
+  };
+
+  const fallbackChoices = getChoicesForRound(rondaTipo, escenario.stats);
 
   const scene = escenario.escenas.find((s) => s.id === sceneId) || {
     id: sceneId,
