@@ -188,11 +188,53 @@ export default function TextGame({ game }: { game: GameData }) {
 
   const fallbackChoices = getChoicesForRound(rondaTipo, escenario.stats);
 
+  const getRoundDetails = (tipo: string, contextoBase: string) => {
+    switch (tipo) {
+      case "apertura":
+        return {
+          title: "Fase 1: Toma de Contacto y Apertura",
+          text: [contextoBase, "Estableces el primer intercambio formal. Evalúan tu tono, postura y disposición inicial."]
+        };
+      case "investigacion":
+        return {
+          title: "Fase 2: Descubrimiento y Análisis",
+          text: ["Profundizas en las verdaderas necesidades, urgencias y restricciones del escenario.", "Es el momento clave para escuchar antes de proponer soluciones definitivas."]
+        };
+      case "tecnica":
+        return {
+          title: "Fase 3: Propuesta y Viabilidad",
+          text: ["Se evalúan los detalles técnicos, alcances y requerimientos específicos de la operación.", "Demostrar solidez aquí despeja las principales dudas operativas."]
+        };
+      case "precio":
+        return {
+          title: "Fase 4: Negociación Económica",
+          text: ["El foco se desplaza hacia los números, márgenes y condiciones financieras.", "Cada parte busca defender su rentabilidad sin romper el acuerdo."]
+        };
+      case "contraoferta":
+        return {
+          title: "Fase 5: Ajustes y Concesiones Tácticas",
+          text: ["Surgen contrapropuestas sobre la mesa tras evaluar las primeras cifras.", "Tus decisiones de aquí en adelante determinarán si mantienes el margen o cedes terreno."]
+        };
+      case "cierre":
+        return {
+          title: "Fase 6: Consolidación y Cierre",
+          text: ["Los puntos principales han sido debatidos; es hora de concretar los acuerdos finales y definir plazos.", "El pulso final de la negociación."]
+        };
+      default:
+        return {
+          title: `Fase ${rondaActual}: Consolidación y Alianza`,
+          text: ["Afinando los últimos detalles de la colaboración para asegurar una relación duradera y exitosa."]
+        };
+    }
+  };
+
+  const currentDetails = getRoundDetails(sceneId, escenario.contexto);
+
   const scene = escenario.escenas.find((s) => s.id === sceneId) || {
     id: sceneId,
     chapter: `Ronda ${rondaActual || 1} de 7`,
-    title: `${game.title} · ${sceneId.toUpperCase()}`,
-    text: [escenario.contexto],
+    title: currentDetails.title,
+    text: currentDetails.text,
     choices: fallbackChoices,
   } as unknown as Scene;
 
