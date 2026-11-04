@@ -5,7 +5,7 @@ const escenarioVeronica: Escenario = {
   titulo: "Negociación Maestra (Verónica Salas)",
   etiqueta: "Caso Multiruta con Baraja Dinámica",
   contexto:
-    "El contrato vale $120.000 anuales. Enfrente está Verónica Salas, directora de compras, que ha negociado con 40 vendedores este año y les ganó a 38. Múltiples rutas y opciones de decisión.",
+    "El contrato vale $120.000 anuales. Enfrente está Verónica Salas, directora de compras, que ha negociado con 40 vendedores este año y les ganó a 38.",
   inicio: "apertura",
   stats: [
     { key: "rel", label: "Relación", icon: "🤝", max: 100 },

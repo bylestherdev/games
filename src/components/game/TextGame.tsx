@@ -355,7 +355,6 @@ export default function TextGame({ game }: { game: GameData }) {
     if (feedback.isEnd) {
       gotoEnding(stats, log, flags, eventosDisparados);
     } else {
-      // Si el escenario tiene escenas estáticas, usar el flujo normal
       if (escenario.escenas && escenario.escenas.length > 0) {
         const nextSId = feedback.nextSceneId;
         const huboEvento = checkSurpriseEvent(stats, flags, nextSId);
@@ -375,32 +374,31 @@ export default function TextGame({ game }: { game: GameData }) {
           });
         }
       } else {
-        // Sistema de rondas dinámicas: avanzar a la siguiente ronda
-        const maxRondas = 7;
-        setRondaActual((prev) => {
-          if (prev >= maxRondas) {
-            // Ya completó todas las rondas, ir al ending
-            return prev;
-          }
-          if (prev === 0) return 1; // Primera ronda
-          return prev + 1; // Siguiente ronda
-        });
-        setFeedback(null);
-        setPhase("scene");
-        // Guardar progreso con el número de ronda
-        saveProgress({
-          slug: game.slug,
-          scope: escenarioId,
-          phase: "scene",
-          sceneId: sceneId,
-          stats,
-          log,
-          savedAt: Date.now(),
-        });
+        // Modo dinámico síncrono: calcular la siguiente ronda directamente
+        const siguienteRonda = rondaActual + 1;
+        if (siguienteRonda > 7) {
+          gotoEnding(stats, log, flags, eventosDisparados);
+        } else {
+          setRondaActual(siguienteRonda);
+          const pool = escenario.poolRondasDisponibles ?? ["apertura", "investigacion", "tecnica", "precio", "contraoferta", "cierre", "alianza", "riesgo", "validacion", "sorpresa"];
+          const nuevoTipo = pool[(siguienteRonda - 1) % pool.length] || "apertura";
+          setSceneId(nuevoTipo);
+          setTyped(0);
+          setFeedback(null);
+          setPhase("scene");
+          saveProgress({
+            slug: game.slug,
+            scope: escenarioId,
+            phase: "scene",
+            sceneId: nuevoTipo,
+            stats,
+            log,
+            savedAt: Date.now(),
+          });
+        }
       }
     }
-  }, [feedback, stats, log, flags, eventosDisparados, checkSurpriseEvent, game.slug, escenarioId, gotoEnding]);
-
+  }, [feedback, stats, log, flags, eventosDisparados, checkSurpriseEvent, game.slug, escenarioId, escenario, rondaActual]);
   const manejarOpcionEvento = (efectos: { stat: string; delta: number }[], resultado: string) => {
     const next = { ...stats };
     for (const ef of efectos) {
