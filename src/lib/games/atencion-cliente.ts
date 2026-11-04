@@ -24,6 +24,18 @@ const escenarioVIP: Escenario = {
     },
   ],
   escenas: [],
+  poolRondasDisponibles: [
+    "apertura",
+    "investigacion",
+    "tecnica",
+    "precio",
+    "contraoferta",
+    "cierre",
+    "alianza",
+    "riesgo",
+    "validacion",
+    "sorpresa",
+  ],
   finales: [
     {
       id: "best",
@@ -79,6 +91,18 @@ const escenarioEnterprise: Escenario = {
     },
   ],
   escenas: [],
+  poolRondasDisponibles: [
+    "apertura",
+    "investigacion",
+    "tecnica",
+    "precio",
+    "contraoferta",
+    "cierre",
+    "alianza",
+    "riesgo",
+    "validacion",
+    "sorpresa",
+  ],
   finales: [
     {
       id: "ent-best",

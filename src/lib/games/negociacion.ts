@@ -24,6 +24,18 @@ const escenarioVeronica: Escenario = {
     },
   ],
   escenas: [],
+  poolRondasDisponibles: [
+    "apertura",
+    "investigacion",
+    "tecnica",
+    "precio",
+    "contraoferta",
+    "cierre",
+    "alianza",
+    "riesgo",
+    "validacion",
+    "sorpresa",
+  ],
   finales: [
     {
       id: "legend",
