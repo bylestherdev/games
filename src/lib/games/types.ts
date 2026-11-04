@@ -116,6 +116,8 @@ export interface Escenario {
   escenas: Scene[];
   eventos: GameEvent[];
   finales: Ending[];
+  /** Pool de tipos de ronda disponibles para la baraja dinámica (10 tipos). */
+  poolRondasDisponibles: RoundType[];
 }
 
 export interface GameData {

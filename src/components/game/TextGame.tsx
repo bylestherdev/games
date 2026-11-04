@@ -64,6 +64,19 @@ export default function TextGame({ game }: { game: GameData }) {
             escenas: (game as unknown as { scenes?: Scene[] }).scenes ?? [],
             eventos: [],
             finales: (game as unknown as { endings?: Ending[] }).endings ?? [],
+            poolRondasDisponibles: [
+              "apertura",
+              "investigacion",
+              "tecnica",
+              "precio",
+              "contraoferta",
+              "cierre",
+              "alianza",
+              "riesgo",
+              "validacion",
+              "sorpresa",
+            ],
+          },
         ];
 
   const [escenarioId, setEscenarioId] = useState<string>(
