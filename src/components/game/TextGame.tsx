@@ -129,7 +129,8 @@ export default function TextGame({ game }: { game: GameData }) {
   const typer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Fallback de escena para evitar undefined si no hay escenas estáticas
-  // Añadimos una elección "Continuar simulación" para permitir avanzar del primer ecrã
+  // Añadimos una elección para permitir avanzar del primer ecrã.
+  // El progreso de ronda lo controla el state rondaActual + useEffect.
   const scene = escenario.escenas.find((s) => s.id === sceneId) || {
     id: "default",
     chapter: "Ronda Activa",
@@ -141,7 +142,7 @@ export default function TextGame({ game }: { game: GameData }) {
         hint: "",
         effects: [],
         result: "Continuar",
-        // Sin property 'next': el progreso se maneja mediante el sistema de ronda
+        // Sin property 'next': el progreso de ronda lo maneja el useEffect
       },
     ],
   } as unknown as Scene;
