@@ -5,10 +5,10 @@ import { cazadorLeads } from "@/lib/games/cazador-leads";
 import { liderEquipo } from "@/lib/games/lider-equipo";
 import { gestorCartera } from "@/lib/games/gestor-cartera";
 import { desarrolloProducto } from "@/lib/games/desarrollo-producto";
+import { expansionInternacional } from "@/lib/games/expansion-internacional";
 import PerfilJugador from "@/components/PerfilJugador";
 
-const upcoming = [
-  { icon: "🚀", title: "Expansión Internacional", desc: "Un mercado nuevo decide si tu producto es global." },
+const upcoming: Array<{ icon: string; title: string; desc: string }> = [
 ];
 
 function Dots({ n }: { n: number }) {
@@ -21,7 +21,7 @@ function Dots({ n }: { n: number }) {
 }
 
 export default function HomePage() {
-  const games = [atencionCliente, negociacion, cazadorLeads, liderEquipo, gestorCartera, desarrolloProducto];
+  const games = [atencionCliente, negociacion, cazadorLeads, liderEquipo, gestorCartera, desarrolloProducto, expansionInternacional];
 
   return (
     <div className="w-full">
