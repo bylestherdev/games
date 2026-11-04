@@ -89,7 +89,10 @@ export default function TextGame({ game }: { game: GameData }) {
 
   const [phase, setPhase] = useState<Phase>("intro");
   const [sceneId, setSceneId] = useState(escenario.inicio);
-  const [rondaActual, setRondaActual] = useState(0); // 1-7, 0 = aún no empieza
+  const [rondaActual, setRondaActual] = useState(() => {
+    // Si el escenario tiene escenas estáticas, usarlas; sino iniciar sistema de rondas
+    return escenario.escenas && escenario.escenas.length > 0 ? 0 : 1;
+  });
   const [stats, setStats] = useState<Record<string, number>>(() => initStats(escenario.stats));
   const [log, setLog] = useState<DecisionLogEntry[]>([]);
   const [typed, setTyped] = useState(0);
@@ -283,25 +286,57 @@ export default function TextGame({ game }: { game: GameData }) {
     if (feedback.isEnd) {
       gotoEnding(stats, log, flags, eventosDisparados);
     } else {
-      const nextSId = feedback.nextSceneId;
-      const huboEvento = checkSurpriseEvent(stats, flags, nextSId);
-      if (!huboEvento) {
-        setTyped(0);
-        setSceneId(nextSId);
+      // Si el escenario tiene escenas estáticas, usar el flujo normal
+      if (escenario.escenas && escenario.escenas.length > 0) {
+        const nextSId = feedback.nextSceneId;
+        const huboEvento = checkSurpriseEvent(stats, flags, nextSId);
+        if (!huboEvento) {
+          setTyped(0);
+          setSceneId(nextSId);
+          setFeedback(null);
+          setPhase("scene");
+          saveProgress({
+            slug: game.slug,
+            scope: escenarioId,
+            phase: "scene",
+            sceneId: nextSId,
+            stats,
+            log,
+            savedAt: Date.now(),
+          });
+        }
+      } else {
+        // Sistema de rondas dinámicas: avanzar a la siguiente ronda
+        const maxRondas = 7;
+        setRondaActual((prev) => {
+          if (prev >= maxRondas) {
+            // Ya completó todas las rondas, ir al ending
+            return prev;
+          }
+          if (prev === 0) return 1; // Primera ronda
+          return prev + 1; // Siguiente ronda
+        });
+        // Calcular el próximo sceneId basado en el tipo de ronda
+        const tiposRonda: string[] = escenario.poolRondasDisponibles ?? [
+          "apertura", "investigacion", "tecnica", "precio", "contraoferta", "cierre", "alianza", "riesgo", "validacion", "sorpresa"
+        ];
+        const tipoActual = tiposRonda[rondaActual - 1] || "apertura";
+        setSceneId(tipoActual);
         setFeedback(null);
         setPhase("scene");
+        // Guardar progreso con el número de ronda
         saveProgress({
           slug: game.slug,
           scope: escenarioId,
           phase: "scene",
-          sceneId: nextSId,
+          sceneId: tipoActual,
           stats,
           log,
           savedAt: Date.now(),
         });
       }
     }
-  }, [feedback, stats, log, flags, eventosDisparados, checkSurpriseEvent, game.slug, escenarioId, gotoEnding]);
+  }, [feedback, stats, log, flags, eventosDisparados, checkSurpriseEvent, game.slug, escenarioId, gotoEnding, rondaActual]);
 
   const manejarOpcionEvento = (efectos: { stat: string; delta: number }[], resultado: string) => {
     const next = { ...stats };
