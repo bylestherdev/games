@@ -114,7 +114,16 @@ export default function TextGame({ game }: { game: GameData }) {
 
   const shareCardRef = useRef<HTMLDivElement>(null);
   const typer = useRef<ReturnType<typeof setInterval> | null>(null);
-  const scene: Scene = escenario.escenas.find((s) => s.id === sceneId) ?? escenario.escenas[0];
+
+  // Fallback de escena para evitar undefined si no hay escenas estáticas
+  const scene = escenario.escenas.find((s) => s.id === sceneId) || {
+    id: "default",
+    chapter: "Ronda Activa",
+    title: game.title,
+    text: [escenario.contexto],
+    choices: [],
+  } as unknown as Scene;
+
   const fullText = phase === "scene" ? scene?.text?.join("\n\n") ?? "" : "";
   const isTyping = phase === "scene" && typed < fullText.length;
 
