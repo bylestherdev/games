@@ -93,6 +93,33 @@ export default function TextGame({ game }: { game: GameData }) {
     // Si el escenario tiene escenas estáticas, usarlas; sino iniciar sistema de rondas
     return escenario.escenas && escenario.escenas.length > 0 ? 0 : 1;
   });
+  // Baraja dinámica con restricciones narrativas: apertura fija 1, cierre/alianza en 6-7, medio barajado
+  const [poolBarajado, setPoolBarajado] = useState<string[]>(() => {
+    if (escenario.escenas && escenario.escenas.length > 0) return [];
+    const pool = escenario.poolRondasDisponibles ?? [
+      "apertura", "investigacion", "tecnica", "precio", "contraoferta", "cierre", "alianza", "riesgo", "validacion", "sorpresa"
+    ];
+    // Filtrar solo los que existen en el pool del escenario
+    const disponibles = pool.filter(t => pool.includes(t));
+    // Fijos: apertura=1, cierre/alianza en 6-7
+    const fijos = { 1: "apertura", 6: "cierre", 7: "alianza" };
+    const medio = disponibles.filter(t => !Object.values(fijos).includes(t));
+    // Barajar medio (Fisher-Yates)
+    for (let i = medio.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [medio[i], medio[j]] = [medio[j], medio[i]];
+    }
+    // Construir pool final: [1] + medio[0-3] + [6,7]
+    const resultado: string[] = [];
+    resultado[0] = fijos[1];
+    resultado[1] = medio[0];
+    resultado[2] = medio[1];
+    resultado[3] = medio[2];
+    resultado[4] = medio[3];
+    resultado[5] = fijos[6];
+    resultado[6] = fijos[7];
+    return resultado;
+  });
   // El avance de ronda y sceneId se maneja síncronamente en avanzarDesdeFeedback
   // No se necesita useEffect adicional
   const [stats, setStats] = useState<Record<string, number>>(() => initStats(escenario.stats));
@@ -122,10 +149,8 @@ export default function TextGame({ game }: { game: GameData }) {
 
   // Fallback de escena: si no hay escenas estáticas, generamos elecciones dinámicas según la ronda actual
   // Pool de rondas y elecciones dinámicas con sentido contextual para cada una de las 7 fases
-  const poolRondas = escenario.poolRondasDisponibles ?? [
-    "apertura", "investigacion", "tecnica", "precio", "contraoferta", "cierre", "alianza", "riesgo", "validacion", "sorpresa"
-  ];
-  const rondaTipo = poolRondas[(rondaActual - 1) % poolRondas.length] || "apertura";
+  // Tipo de ronda actual desde la baraja barajada
+  const rondaTipo = poolBarajado[rondaActual - 1] || "apertura";
 
   // Opciones contextuales según el tipo de ronda actual
   const getChoicesForRound = (tipo: string, stats: any[]) => {
@@ -535,14 +560,13 @@ export default function TextGame({ game }: { game: GameData }) {
           });
         }
       } else {
-        // Modo dinámico síncrono: calcular la siguiente ronda directamente
+        // Modo dinámico síncrono: calcular la siguiente ronda directamente usando la baraja barajada
         const siguienteRonda = rondaActual + 1;
         if (siguienteRonda > 7) {
           gotoEnding(stats, log, flags, eventosDisparados);
         } else {
           setRondaActual(siguienteRonda);
-          const pool = escenario.poolRondasDisponibles ?? ["apertura", "investigacion", "tecnica", "precio", "contraoferta", "cierre", "alianza", "riesgo", "validacion", "sorpresa"];
-          const nuevoTipo = pool[(siguienteRonda - 1) % pool.length] || "apertura";
+          const nuevoTipo = poolBarajado[siguienteRonda - 1] || "apertura";
           setSceneId(nuevoTipo);
           setTyped(0);
           setFeedback(null);
@@ -606,6 +630,27 @@ export default function TextGame({ game }: { game: GameData }) {
     setFeedback(null);
     setTyped(0);
     setPhase("scene");
+    // Regenerar baraja al reiniciar
+    const pool = escenario.poolRondasDisponibles ?? [
+      "apertura", "investigacion", "tecnica", "precio", "contraoferta", "cierre", "alianza", "riesgo", "validacion", "sorpresa"
+    ];
+    const disponibles = pool.filter(t => pool.includes(t));
+    const fijos = { 1: "apertura", 6: "cierre", 7: "alianza" };
+    const medio = disponibles.filter(t => !Object.values(fijos).includes(t));
+    for (let i = medio.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [medio[i], medio[j]] = [medio[j], medio[i]];
+    }
+    const nuevoPool: string[] = [];
+    nuevoPool[0] = fijos[1];
+    nuevoPool[1] = medio[0];
+    nuevoPool[2] = medio[1];
+    nuevoPool[3] = medio[2];
+    nuevoPool[4] = medio[3];
+    nuevoPool[5] = fijos[6];
+    nuevoPool[6] = fijos[7];
+    setPoolBarajado(nuevoPool);
+    setRondaActual(1);
   }, [game.slug, escenarioId, escenario]);
 
   const continueSaved = useCallback(() => {
