@@ -131,49 +131,176 @@ export default function TextGame({ game }: { game: GameData }) {
   const getChoicesForRound = (tipo: string, stats: any[]) => {
     const s1 = stats[0]?.key || "rel";
     const s2 = stats[1]?.key || "mar";
+    const s3 = stats[2]?.key || "pal";
     
     switch (tipo) {
       case "apertura":
         return [
-          { label: "Establecer contacto directo y profesional", hint: "Romper el hielo con firmeza", effects: [{ stat: s1, delta: 6 }], result: "Transmitiste seguridad y profesionalismo desde el primer segundo.", next: "next" },
-          { label: "Escuchar activamente las expectativas iniciales", hint: "Enfoque receptivo", effects: [{ stat: s1, delta: 10 }, { stat: s2, delta: -2 }], result: "Permitiste que la contraparte exponga sus prioridades sin presiones.", next: "next" },
-          { label: "Presentar de inmediato una propuesta atractiva", hint: "Golpe de efecto", effects: [{ stat: s2, delta: 8 }], result: "pusiste sobre la mesa condiciones interesantes de entrada.", next: "next" },
+          {
+            label: "Establecer contacto directo y profesional",
+            hint: "Rompes el hielo con firmeza. Ganás credibilidad inmediata pero revelás tu mano temprano.",
+            effects: [{ stat: s1, delta: 8 }, { stat: s2, delta: -4 }, { stat: s3, delta: 3 }],
+            result: "Verónica nota tu preparación. Te responde con respeto pero aprieta: 'Bien, empecemos por el precio base'. Ganaste Relación y Palanca, cediste Margen inicial.",
+            next: "next"
+          },
+          {
+            label: "Escuchar activamente y dejar que ella marque el tempo",
+            hint: "Enfoque receptivo. Obtenés información valiosa pero cedés control de la agenda.",
+            effects: [{ stat: s1, delta: 12 }, { stat: s2, delta: -6 }, { stat: s3, delta: -2 }],
+            result: "Verónica se explaya 20 minutos. Revela que su mayor dolor es la implementación, no el precio. Ganaste mucha Relación, pero cediste Margen y Palanca al dejar que ella conduzca.",
+            next: "next"
+          },
+          {
+            label: "Presentar una propuesta agresiva de entrada (anchoring alto)",
+            hint: "Golpe de efecto. Fijás el rango de negociación alto, pero arriesgás parecer inflexible.",
+            effects: [{ stat: s1, delta: -8 }, { stat: s2, delta: 15 }, { stat: s3, delta: -5 }],
+            result: "Verónica frunce el ceño: 'Ese número no es realista'. Lográs un Margen inicial alto, pero dañaste Relación y perdiste Palanca. Ahora tenés que recuperar confianza.",
+            next: "next"
+          },
         ];
       case "investigacion":
         return [
-          { label: "Hacer preguntas profundas sobre los requerimientos", hint: "Descubrir necesidades", effects: [{ stat: s1, delta: 8 }, { stat: s2, delta: 2 }], result: "Identificaste los puntos críticos que realmente les importan.", next: "next" },
-          { label: "Analizar los antecedentes y restricciones operativas", hint: "Auditoría rápida", effects: [{ stat: s2, delta: 6 }], result: "Comprendiste las limitaciones técnicas y presupuestarias.", next: "next" },
-          { label: "Indagar sobre experiencias previas con proveedores", hint: "Buscar debilidades de la competencia", effects: [{ stat: s1, delta: 5 }, { stat: s2, delta: 4 }], result: "Descubriste qué errores debes evitar a toda costa.", next: "next" },
+          {
+            label: "Hacer preguntas profundas sobre dolores reales y criterios de decisión",
+            hint: "Descubrís el 'por qué' real. Ganás intel crítica pero consumís tiempo de agenda.",
+            effects: [{ stat: s1, delta: 10 }, { stat: s2, delta: -3 }, { stat: s3, delta: 5 }],
+            result: "Descubrís que su mayor miedo es la migración de datos, no el precio. Ganás mucha Relación y Palanca, cedés algo de Margen por el tiempo invertido.",
+            next: "next"
+          },
+          {
+            label: "Analizar restricciones técnicas, legales y de presupuesto con su equipo",
+            hint: "Auditoría técnica. Obtenés datos duros pero exponés complejidad que puede asustar.",
+            effects: [{ stat: s1, delta: 3 }, { stat: s2, delta: 8 }, { stat: s3, delta: -4 }],
+            result: "Descubrís que su migración requiere 6 meses, no 3. Ganás Margen al justificar precio premium, pero perdés Relación y Palanca al revelar complejidad.",
+            next: "next"
+          },
+          {
+            label: "Indagar experiencias previas con competidores para mapear debilidades",
+            hint: "Inteligencia competitiva. Encontrás huecos pero arriesgás parecer obsesionado con otros.",
+            effects: [{ stat: s1, delta: 6 }, { stat: s2, delta: 4 }, { stat: s3, delta: 6 }],
+            result: "Confiesan que el proveedor actual falló en soporte post-venta. Ganás Palanca estratégica y Relación moderada, Margen ligero. Ahora sabés exactamente dónde golpear.",
+            next: "next"
+          },
         ];
       case "tecnica":
         return [
-          { label: "Demostrar la robustez y garantías de la solución", hint: "Argumento técnico sólido", effects: [{ stat: s2, delta: 10 }], result: "Despejaste cualquier duda sobre la calidad del servicio.", next: "next" },
-          { label: "Ofrecer personalización a la medida de sus procesos", hint: "Ajuste perfecto", effects: [{ stat: s1, delta: 8 }, { stat: s2, delta: -3 }], result: "Demostraste flexibilidad para adaptarte a sus flujos de trabajo.", next: "next" },
-          { label: "Simplificar la explicación técnica enfocándote en ROI", hint: "Enfoque gerencial", effects: [{ stat: s1, delta: 6 }, { stat: s2, delta: 5 }], result: "Hiciste que el valor de la propuesta fuera evidente para los tomadores de decisiones.", next: "next" },
+          {
+            label: "Demostrar robustez arquitectónica, SLAs y garantías de migración",
+            hint: "Argumento técnico sólido. Disipás dudas pero exponés complejidad operativa.",
+            effects: [{ stat: s1, delta: 4 }, { stat: s2, delta: 8 }, { stat: s3, delta: 6 }],
+            result: "El CTO asiente. Las dudas técnicas se disipan. Ganás Margen y Palanca técnica, Relación moderada. El precio premium se justifica solo.",
+            next: "next"
+          },
+          {
+            label: "Ofrecer personalización profunda a medida de sus flujos críticos",
+            hint: "Ajuste perfecto. Flexibilidad que enamora pero compromete escalabilidad y margen.",
+            effects: [{ stat: s1, delta: 10 }, { stat: s2, delta: -8 }, { stat: s3, delta: 3 }],
+            result: "El equipo técnico aplaude. 'Finalmente alguien que entiende nuestros flujos'. Ganás Relación enorme, pero cedés Margen significativo y algo de Palanca por el scope creep implícito.",
+            next: "next"
+          },
+          {
+            label: "Simplificar enfocándote solo en ROI y tiempo a valor",
+            hint: "Enfoque gerencial. Vendés resultado, no features. Arriesgás parecer superficial ante técnicos.",
+            effects: [{ stat: s1, delta: 6 }, { stat: s2, delta: 5 }, { stat: s3, delta: 4 }],
+            result: "El CFO sonríe. 'Por fin alguien que habla nuestro idioma'. Ganás Relación y Margen equilibrados, Palanca decente. Riesgo: el equipo técnico puede sentirse ignorado luego.",
+            next: "next"
+          },
         ];
       case "precio":
         return [
-          { label: "Defender el valor y mantener el margen objetivo", hint: "Firmeza en tarifas", effects: [{ stat: s2, delta: 12 }], result: "Protegiste la rentabilidad sin ceder ante presiones iniciales.", next: "next" },
-          { label: "Ofrecer un descuento condicionado a volumen o compromiso", hint: "Ganar-ganar", effects: [{ stat: s1, delta: 8 }, { stat: s2, delta: -4 }], result: "Conseguiste un compromiso mayor a cambio de una concesión calculada.", next: "next" },
-          { label: "Estructurar un esquema de pagos flexible por etapas", hint: "Facilitar el cierre", effects: [{ stat: s1, delta: 10 }], result: "Removiste la fricción financiera principal para avanzar.", next: "next" },
+          {
+            label: "Defender precio lista sin ceder: defender valor y ROI demostrado",
+            hint: "Firmeza total. Protegé margen máximo pero arriesgás que se vayan a la competencia.",
+            effects: [{ stat: s1, delta: -10 }, { stat: s2, delta: 18 }, { stat: s3, delta: -5 }],
+            result: "Verónica aprieta: 'Es caro'. Te mantienes firme: 'El ROI lo paga en 4 meses'. Ganás Margen máximo, pero Relación y Palanca sufren fuerte. Es todo o nada.",
+            next: "next"
+          },
+          {
+            label: "Ofrecer descuento 8% condicionado a contrato 3 años + pago anual adelantado",
+            hint: "Descuento condicionado. Cedés margen por compromiso largo y cashflow. Trade-off clásico.",
+            effects: [{ stat: s1, delta: 6 }, { stat: s2, delta: -6 }, { stat: s3, delta: 8 }],
+            result: "'3 años me da seguridad para aprobarlo interno'. Ganás Relación y Palanca enorme (compromiso largo), cedés Margen controlado. Cashflow asegurado.",
+            next: "next"
+          },
+          {
+            label: "Proponer pago por hitos: 30% inicio, 40% go-live, 30% a 90 días post-implementación",
+            hint: "Pago por hitos. Reducís fricción financiera pero diluís valor presente y alargás cobro.",
+            effects: [{ stat: s1, delta: 8 }, { stat: s2, delta: -4 }, { stat: s3, delta: -3 }],
+            result: "'Ese esquema nos da aire para aprobarlo ya'. Ganás Relación y algo de Margen, perdés Palanca (pagos condicionados) y algo de Margen por riesgo de impago.",
+            next: "next"
+          },
         ];
       case "contraoferta":
         return [
-          { label: "Recalibrar la propuesta manteniendo el núcleo del trato", hint: "Flexibilidad táctica", effects: [{ stat: s1, delta: 7 }, { stat: s2, delta: 4 }], result: "Ajustaste los términos sin sacrificar los objetivos clave.", next: "next" },
-          { label: "Contraponer beneficios adicionales en lugar de bajar precio", hint: "Valor agregado", effects: [{ stat: s1, delta: 10 }, { stat: s2, delta: 2 }], result: "Aumentaste el atractivo percibido sin devaluar el servicio.", next: "next" },
-          { label: "Establecer límites claros a las concesiones", hint: "Línea roja", effects: [{ stat: s2, delta: 8 }, { stat: s1, delta: -3 }], result: "Marcaste un límite profesional que respetaron.", next: "next" },
+          {
+            label: "Recalibrar: pequeño descuento extra a cambio de firmar hoy",
+            hint: "Cierre rápido. Cedés margen residual por cerrar ya. Riesgo: parecé desesperado.",
+            effects: [{ stat: s1, delta: 3 }, { stat: s2, delta: -5 }, { stat: s3, delta: 4 }],
+            result: "'Si firmamos hoy, 3% extra'. Aceptan. Ganás algo de Palanca y Relación, perdés Margen. Cierre rápido pero dejaste dinero en la mesa.",
+            next: "next"
+          },
+          {
+            label: "Contraponer: ampliar scope (módulo analytics + soporte 24/7) sin bajar precio",
+            hint: "Valor agregado. Ampliás percepción de valor sin tocar precio. Requiere capacidad de entrega real.",
+            effects: [{ stat: s1, delta: 8 }, { stat: s2, delta: 2 }, { stat: s3, delta: 6 }],
+            result: "'Analytics incluido cambia la ecuación'. Aceptan precio original. Ganás Relación y Palanca fuerte, Margen casi intacto. Requiere que tu equipo entregue el extra prometido.",
+            next: "next"
+          },
+          {
+            label: "Plantarse: 'Este es mi límite. Si no cerramos aquí, nos vemos en la renovación'",
+            hint: "Línea roja dura. Demostrás convicción. Arriesgás ruptura total. Solo si tenés BATNA fuerte.",
+            effects: [{ stat: s1, delta: -6 }, { stat: s2, delta: 12 }, { stat: s3, delta: -8 }],
+            result: "Silencio tenso. 30 segundos. 'De acuerdo. Firmamos tus términos'. Ganás Margen máximo y respeto (Palanca técnica), pero Relación dañada y Palanca relacional quemada. Riesgo alto de churn futuro.",
+            next: "next"
+          },
         ];
       case "cierre":
         return [
-          { label: "Proponer fecha definitiva para la firma del contrato", hint: "Cierre directo", effects: [{ stat: s2, delta: 10 }, { stat: "s1", delta: 5 }], result: "Aterrizaste los siguientes pasos con fechas y responsables claros.", next: "next" },
-          { label: "Asegurar los canales de onboarding y soporte inicial", hint: "Garantía post-venta", effects: [{ stat: s1, delta: 12 }], result: "Transmitiste total tranquilidad respecto al inicio de la relación.", next: "next" },
-          { label: "Sellar el acuerdo con un resumen ejecutivo de beneficios", hint: "Consolidar el pacto", effects: [{ stat: s1, delta: 8 }, { stat: s2, delta: 8 }], result: "Dejaste constancia del éxito compartido antes de firmar.", next: "next" },
+          {
+            label: "Proponer firma digital hoy con fecha de go-live en 30 días",
+            hint: "Cierre directo. Aterrizás compromiso ya. Arriesgás presión excesiva si no todo está listo.",
+            effects: [{ stat: s1, delta: 4 }, { stat: s2, delta: 6 }, { stat: s3, delta: 5 }],
+            result: "'Listo, firmemos'. Contrato firmado, go-live agendado. Ganás Margen decente, Relación y Palanca equilibradas. Cierre limpio.",
+            next: "next"
+          },
+          {
+            label: "Condicionar firma a piloto pagado de 60 días con criterios de éxito claros",
+            hint: "Piloto pagado. Reducís riesgo para ellos, demostrás confianza. Alargás ciclo pero asegurás fit real.",
+            effects: [{ stat: s1, delta: 10 }, { stat: s2, delta: -4 }, { stat: s3, delta: 6 }],
+            result: "'Ese piloto nos da la seguridad que necesita el board'. Aceptan piloto pagado $15K. Ganás Relación y Palanca enorme, cedés Margen inicial. Pipeline real, no vaporware.",
+            next: "next"
+          },
+          {
+            label: "Sellar con resumen ejecutivo de valor, ROI proyectado y próximos pasos vinculantes",
+            hint: "Consolidar pacto. Documentás valor acordado y compromisos mutuos. Profesional pero puede parecer burocrático.",
+            effects: [{ stat: s1, delta: 6 }, { stat: s2, delta: 4 }, { stat: s3, delta: 8 }],
+            result: "Documento firmado por ambas partes. 'Esto nos da trazabilidad interna'. Ganás Palanca documental fuerte, Relación y Margen decentes. Base sólida para renovación.",
+            next: "next"
+          },
         ];
       default:
         return [
-          { label: "Consolidar la relación estratégica a largo plazo", hint: "Visión de futuro", effects: [{ stat: s1, delta: 10 }], result: "Sentaste las bases para renovaciones futuras y referencias.", next: "next" },
-          { label: "Ajustar detalles menores de implementación", hint: "Pulir asperezas", effects: [{ stat: s2, delta: 5 }], result: "Resolviste los últimos flecos operativos.", next: "next" },
-          { label: "Agradecer la confianza y formalizar la alianza", hint: "Cofirmar el éxito", effects: [{ stat: s1, delta: 8 }, { stat: s2, delta: 6 }], result: "Cerraste la interacción dejando una impresión impecable.", next: "next" },
+          {
+            label: "Proponer Joint Business Plan: co-marketing, roadmap compartido, revenue share",
+            hint: "Alianza estratégica real. Inversión mutua alta. Requiere alineación ejecutiva real.",
+            effects: [{ stat: s1, delta: 12 }, { stat: s2, delta: -6 }, { stat: s3, delta: 10 }],
+            result: "'Hagámoslo juntos'. Plan conjunto firmado por ambos CEOs. Ganás Relación y Palanca máximas, cedés Margen por inversión conjunta. Pipeline futuro asegurado.",
+            next: "next"
+          },
+          {
+            label: "Definir SLA premium con penalties/bonuses + revisiones trimestrales de valor",
+            hint: "Gobernanza profesional. Métricas claras, incentivos alineados. Requiere disciplina operativa.",
+            effects: [{ stat: s1, delta: 6 }, { stat: s2, delta: 4 }, { stat: s3, delta: 8 }],
+            result: "SLA firmado con bonuses por uptime/CSAT. Ganás Palanca de gobernanza y Margen decente, Relación profesional. Base para renovación automática.",
+            next: "next"
+          },
+          {
+            label: "Cerrar como proveedor preferente con first-right-of-refusal en nuevas verticales",
+            hint: "Bloqueo competitivo. First-mover advantage en expansiones. Requiere confianza total.",
+            effects: [{ stat: s1, delta: 8 }, { stat: s2, delta: 2 }, { stat: s3, delta: 6 }],
+            result: "'Queremos que seáis nuestro partner por defecto'. First-right firmado. Ganás Relación y Palanca de bloqueo competitivo, Margen ligero. Moat defensivo creado.",
+            next: "next"
+          },
         ];
     }
   };
