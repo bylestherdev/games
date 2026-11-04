@@ -128,19 +128,23 @@ export default function TextGame({ game }: { game: GameData }) {
   const shareCardRef = useRef<HTMLDivElement>(null);
   const typer = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Fallback de escena: si no hay escenas estáticas, generamos elecciones dinámicas según la ronda actual
-  const fallbackChoices = [
-    { label: "Analizar la situación con cautela", hint: "Enfoque equilibrado", effects: [{ stat: escenario.stats[0]?.key || "rel", delta: 5 }], result: "Evaluaste los puntos clave con calma.", next: "next" },
-    { label: "Tomar una postura firme", hint: "Acción directa", effects: [{ stat: escenario.stats[1]?.key || "mar", delta: 8 }], result: "Definiste tu posición con autoridad.", next: "next" },
-    { label: "Buscar un entendimiento colaborativo", hint: "Enfoque flexible", effects: [{ stat: escenario.stats[0]?.key || "rel", delta: 10 }, { stat: "mar", delta: -3 }], result: "Construiste un puente de entendimiento.", next: "next" },
-  ];
-
+  // Fallback de escena para evitar undefined si no hay escenas estáticas
+  // Añadimos una elección para permitir avanzar del primer ecrã.
+  // El progreso de ronda lo controla el state rondaActual + useEffect.
   const scene = escenario.escenas.find((s) => s.id === sceneId) || {
-    id: sceneId,
-    chapter: `Ronda ${rondaActual || 1} de 7`,
-    title: `${game.title} · ${sceneId.toUpperCase()}`,
+    id: "default",
+    chapter: "Ronda Activa",
+    title: game.title,
     text: [escenario.contexto],
-    choices: fallbackChoices,
+    choices: [
+      {
+        label: "Continuar simulación",
+        hint: "",
+        effects: [],
+        result: "Continuar",
+        // Sin property 'next': el progreso de ronda lo maneja el useEffect
+      },
+    ],
   } as unknown as Scene;
 
   const fullText = phase === "scene" ? scene?.text?.join("\n\n") ?? "" : "";
