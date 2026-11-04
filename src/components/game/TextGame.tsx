@@ -591,7 +591,7 @@ export default function TextGame({ game }: { game: GameData }) {
                         choose(i);
                       }}
                       aria-keyshortcuts={String(i + 1)}
-                      className="choice group w-full text-left"
+                      className="choice group w-full text-left bg-white/[0.02] border-white/10 hover:border-white/30 rounded-lg"
                     >
                       <span className="choice-idx">[{String(i + 1).padStart(2, "0")}]</span>
                       <span className="flex-1 min-w-0">
