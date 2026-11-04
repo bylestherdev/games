@@ -129,21 +129,12 @@ export default function TextGame({ game }: { game: GameData }) {
   const typer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Fallback de escena para evitar undefined si no hay escenas estáticas
-  // Cuando no hay escenas estáticas, creamos una escena mínima con una elección
   const scene = escenario.escenas.find((s) => s.id === sceneId) || {
     id: "default",
     chapter: "Ronda Activa",
     title: game.title,
     text: [escenario.contexto],
-    choices: [
-      {
-        label: "Continuar simulación",
-        hint: "",
-        effects: [],
-        result: "Continuar",
-        // Sin property 'next': el progreso de ronda lo maneja el useEffect
-      },
-    ],
+    choices: [],
   } as unknown as Scene;
 
   const fullText = phase === "scene" ? scene?.text?.join("\n\n") ?? "" : "";
@@ -305,29 +296,6 @@ export default function TextGame({ game }: { game: GameData }) {
     if (feedback.isEnd) {
       gotoEnding(stats, log, flags, eventosDisparados);
     } else {
-      const nextSId = feedback.nextSceneId;
-      const huboEvento = checkSurpriseEvent(stats, flags, nextSId);
-      if (!huboEvento) {
-        setTyped(0);
-        setSceneId(nextSId);
-        setFeedback(null);
-        setPhase("scene");
-        saveProgress({
-          slug: game.slug,
-          scope: escenarioId,
-          phase: "scene",
-          sceneId: nextSId,
-          stats,
-          log,
-          savedAt: Date.now(),
-        });
-      }
-    }
-  const avanzarDesdeFeedback = useCallback(() => {
-    if (!feedback) return;
-    if (feedback.isEnd) {
-      gotoEnding(stats, log, flags, eventosDisparados);
-    } else {
       // Si el escenario tiene escenas estáticas, usar el flujo normal
       if (escenario.escenas && escenario.escenas.length > 0) {
         const nextSId = feedback.nextSceneId;
@@ -348,21 +316,30 @@ export default function TextGame({ game }: { game: GameData }) {
           });
         }
       } else {
-        // Modo dinámico: incrementar rondaActual
+        // Sistema de rondas dinámicas: avanzar a la siguiente ronda
+        const maxRondas = 7;
         setRondaActual((prev) => {
-          if (prev >= 7) {
-            // Ya completó todas las 7 rondas, ir al ending
+          if (prev >= maxRondas) {
+            // Ya completó todas las rondas, ir al ending
             return prev;
           }
+          if (prev === 0) return 1; // Primera ronda
           return prev + 1; // Siguiente ronda
         });
-        // El useEffectWatcher se encargará de setear sceneId basado en la nueva rondaActual
-        setTyped(0);
         setFeedback(null);
         setPhase("scene");
+        // Guardar progreso con el número de ronda
+        saveProgress({
+          slug: game.slug,
+          scope: escenarioId,
+          phase: "scene",
+          sceneId: sceneId,
+          stats,
+          log,
+          savedAt: Date.now(),
+        });
       }
     }
-  }, [feedback, stats, log, flags, eventosDisparados, checkSurpriseEvent, game.slug, escenarioId, escenario]);
   }, [feedback, stats, log, flags, eventosDisparados, checkSurpriseEvent, game.slug, escenarioId, gotoEnding]);
 
   const manejarOpcionEvento = (efectos: { stat: string; delta: number }[], resultado: string) => {
@@ -653,7 +630,7 @@ export default function TextGame({ game }: { game: GameData }) {
                         choose(i);
                       }}
                       aria-keyshortcuts={String(i + 1)}
-                      className="choice group w-full text-left"
+                      className="choice group w-full text-left bg-white/[0.02] border-white/10 hover:border-white/30 rounded-lg"
                     >
                       <span className="choice-idx">[{String(i + 1).padStart(2, "0")}]</span>
                       <span className="flex-1 min-w-0">
