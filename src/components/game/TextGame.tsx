@@ -89,20 +89,7 @@ export default function TextGame({ game }: { game: GameData }) {
 
   const [phase, setPhase] = useState<Phase>("intro");
   const [sceneId, setSceneId] = useState(escenario.inicio);
-  const [rondaActual, setRondaActual] = useState(() => {
-    // Si el escenario tiene escenas estáticas, usarlas; sino iniciar sistema de rondas
-    return escenario.escenas && escenario.escenas.length > 0 ? 0 : 1;
-  });
-  // Efecto: al cambiar rondaActual en modo dinámico, actualizar sceneId
-  useEffect(() => {
-    if (escenario.escenas?.length === 0 && phase === "scene") {
-      const tiposRonda: string[] = escenario.poolRondasDisponibles ?? [
-        "apertura", "investigacion", "tecnica", "precio", "contraoferta", "cierre", "alianza", "riesgo", "validacion", "sorpresa"
-      ];
-      const tipoActual = tiposRonda[rondaActual - 1] || "apertura";
-      setSceneId(tipoActual);
-    }
-  }, [rondaActual, phase, escenario]);
+  const [rondaActual, setRondaActual] = useState(0); // 1-7, 0 = aún no empieza
   const [stats, setStats] = useState<Record<string, number>>(() => initStats(escenario.stats));
   const [log, setLog] = useState<DecisionLogEntry[]>([]);
   const [typed, setTyped] = useState(0);
@@ -129,12 +116,21 @@ export default function TextGame({ game }: { game: GameData }) {
   const typer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Fallback de escena para evitar undefined si no hay escenas estáticas
+  // Cuando no hay escenas estáticas, creamos una escena mínima con una elección
   const scene = escenario.escenas.find((s) => s.id === sceneId) || {
     id: "default",
     chapter: "Ronda Activa",
     title: game.title,
     text: [escenario.contexto],
-    choices: [],
+    choices: [
+      {
+        label: "Continuar simulación",
+        hint: "",
+        effects: [],
+        result: "Continuar",
+        next: "continuar",
+      },
+    ],
   } as unknown as Scene;
 
   const fullText = phase === "scene" ? scene?.text?.join("\n\n") ?? "" : "";
@@ -296,44 +292,18 @@ export default function TextGame({ game }: { game: GameData }) {
     if (feedback.isEnd) {
       gotoEnding(stats, log, flags, eventosDisparados);
     } else {
-      // Si el escenario tiene escenas estáticas, usar el flujo normal
-      if (escenario.escenas && escenario.escenas.length > 0) {
-        const nextSId = feedback.nextSceneId;
-        const huboEvento = checkSurpriseEvent(stats, flags, nextSId);
-        if (!huboEvento) {
-          setTyped(0);
-          setSceneId(nextSId);
-          setFeedback(null);
-          setPhase("scene");
-          saveProgress({
-            slug: game.slug,
-            scope: escenarioId,
-            phase: "scene",
-            sceneId: nextSId,
-            stats,
-            log,
-            savedAt: Date.now(),
-          });
-        }
-      } else {
-        // Sistema de rondas dinámicas: avanzar a la siguiente ronda
-        const maxRondas = 7;
-        setRondaActual((prev) => {
-          if (prev >= maxRondas) {
-            // Ya completó todas las rondas, ir al ending
-            return prev;
-          }
-          if (prev === 0) return 1; // Primera ronda
-          return prev + 1; // Siguiente ronda
-        });
+      const nextSId = feedback.nextSceneId;
+      const huboEvento = checkSurpriseEvent(stats, flags, nextSId);
+      if (!huboEvento) {
+        setTyped(0);
+        setSceneId(nextSId);
         setFeedback(null);
         setPhase("scene");
-        // Guardar progreso con el número de ronda
         saveProgress({
           slug: game.slug,
           scope: escenarioId,
           phase: "scene",
-          sceneId: sceneId,
+          sceneId: nextSId,
           stats,
           log,
           savedAt: Date.now(),
@@ -630,7 +600,7 @@ export default function TextGame({ game }: { game: GameData }) {
                         choose(i);
                       }}
                       aria-keyshortcuts={String(i + 1)}
-                      className="choice group w-full text-left bg-white/[0.02] border-white/10 hover:border-white/30 rounded-lg"
+                      className="choice group w-full text-left"
                     >
                       <span className="choice-idx">[{String(i + 1).padStart(2, "0")}]</span>
                       <span className="flex-1 min-w-0">
