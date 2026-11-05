@@ -497,166 +497,348 @@ export function ejecutarAccionLead(lead: Lead, accionId: TipoAccion): ResultadoA
   const b = lead.bant;
   const accion = ACCIONES.find(a => a.id === accionId)!;
 
+  // Utilidad: calcular probabilidad base de éxito basada en BANT
+  const calcularProbabilidadExito = (lead: Lead, accionId: TipoAccion): number => {
+    const b = lead.bant;
+    const scoreBANT = (b.presupuesto + b.necesidad + b.autoridad + b.plazo) / 400; // 0-1
+    const multTemp = lead.temperatura === "hot" ? 1.3 : lead.temperatura === "warm" ? 1.0 : 0.6;
+    
+    // Factores por acción
+    const factoresAccion: Record<TipoAccion, number> = {
+      "linkedin": 0.3,
+      "email": 0.4,
+      "llamada": 0.5,
+      "seguimiento": 0.4,
+      "demo": 0.7,
+      "propuesta": 0.8,
+      "reunión": 0.9,
+      "descartar": 1.0,
+    };
+    
+    const baseProb = scoreBANT * multTemp * (factoresAccion[accionId] || 0.5);
+    return Math.min(0.95, Math.max(0.05, baseProb)); // Entre 5% y 95%
+  };
+
+  // Utilidad: determinar si una acción tiene éxito basada en probabilidad
+  const determinarExito = (probabilidad: number): boolean => {
+    return Math.random() < probabilidad;
+  };
+
+  // Helper para crear efectos base
+  const efectosBase = (lead: Lead, accionId: TipoAccion): Partial<Lead> => {
+    const incrementos: Record<TipoAccion, { interes: number; paciencia: number }> = {
+      "llamada": { interes: 12, paciencia: 5 },
+      "email": { interes: 8, paciencia: 8 },
+      "linkedin": { interes: 6, paciencia: 10 },
+      "demo": { interes: 20, paciencia: 5 },
+      "propuesta": { interes: 15, paciencia: 5 },
+      "reunión": { interes: 25, paciencia: 10 },
+      "seguimiento": { interes: 5, paciencia: 15 },
+      "descartar": { interes: 0, paciencia: 0 },
+    };
+    const inc = incrementos[accionId] || { interes: 5, paciencia: 5 };
+    const probBase = (lead.bant.presupuesto + lead.bant.necesidad + lead.bant.autoridad + lead.bant.plazo) / 400;
+    const multTemp = lead.temperatura === "hot" ? 1.3 : lead.temperatura === "warm" ? 1.0 : 0.7;
+    const probCierre = Math.min(95, Math.round((lead.bant.presupuesto + lead.bant.necesidad + lead.bant.autoridad + lead.bant.plazo) / 4 * multTemp));
+    
+    return {
+      interes: Math.min(100, lead.interes + inc.interes),
+      paciencia: Math.min(100, lead.paciencia + inc.paciencia),
+      probabilidadCierre: Math.min(95, probCierre),
+      ultimaInteraccion: Date.now(),
+    };
+  };
+
+  // === LLAMADA ===
   if (accionId === "llamada") {
-    if (b.autoridad >= 55) {
-      const efectos = calcularEfectosBANT(lead, "llamada");
+    // Descubrir si es decisor (probabilidad basada en autoridad)
+    const esDecisor = Math.random() < (b.autoridad / 100);
+    const probExito = Math.min(0.8, b.autoridad / 100 * 0.8 + 0.2); // 20-80%
+    const exito = Math.random() < probExito;
+
+    if (esDecisor && exito) {
+      // Llamada exitosa con decisor: descubre info, agenda demo, avanza a "contactado" (no calificado aún)
+      const efectos = { ...calcularEfectosBANT(lead, "llamada"), interes: Math.min(100, lead.interes + 15), paciencia: Math.min(100, lead.paciencia + 8) };
       return {
-        texto: `📞 Llamada exitosa con ${nombreContacto}. Habló claro: el problema es real, hay urgencia y quiere agendar demo la próxima semana.`,
+        texto: `📞 Llamada exitosa con ${nombreContacto}. Es el decisor. Confirmó dolor real ($${lead.valorEstimado.toLocaleString()}/año de impacto), hay urgencia (Q2) y budget aprobado. Agendó demo para la próxima semana.`,
         tipo: "excelente",
         lead: {
           ...lead,
-          ...efectos,
-          estado: "calificado",
-          paciencia: Math.max(lead.paciencia, 75),
+          ...efectosBase(lead, "llamada"),
+          estado: "contactado", // NO salta a calificado - necesita demo/propuesta
+          paciencia: Math.min(100, lead.paciencia + 10),
           temperatura: lead.temperatura === "cold" ? "warm" : lead.temperatura,
-          notas: [...lead.notas, `Llamada ${new Date().toLocaleDateString()}: Demo agendada`],
+          notas: [...lead.notas, `Llamada ${new Date().toLocaleDateString()}: Decisor confirmado, demo agendada. BANT parcial: B${b.presupuesto} A${b.autoridad} N${b.necesidad} T${b.plazo}`],
         },
       };
     }
+    
+    if (esDecisor && !exito) {
+      return {
+        texto: `📞 Llamada con ${nombreContacto} (es decisor). Escuchó pero no hay urgencia real: "Mándame info por email, lo vemos en Q3". No hay dolor urgente ni plazo.`,
+        tipo: "neutro",
+        lead: {
+          ...lead,
+          ...efectosBase(lead, "llamada"),
+          estado: "contactado",
+          interes: Math.max(0, lead.interes - 5),
+          paciencia: Math.max(0, lead.paciencia - 5),
+          notas: [...lead.notas, `Llamada ${new Date().toLocaleDateString()}: Decisor sin urgencia`],
+        },
+      };
+    }
+
+    // No es decisor
     return {
-      texto: `📞 Llamaste a ${nombreContacto}, pero no es quien decide. Te derivó a otro departamento y perdiste 45 minutos.`,
+      texto: `📞 Llamaste a ${nombreContacto}, pero no decide. Te derivó a ${b.autoridad > 50 ? "su jefe" : "otro departamento"}. Perdiste 45 min.`,
       tipo: "malo",
       lead: {
         ...lead,
         estado: "contactado",
-        interes: Math.max(0, lead.interes - 10),
-        paciencia: Math.max(0, lead.paciencia - 20),
-        notas: [...lead.notas, `Llamada ${new Date().toLocaleDateString()}: Contacto equivocado`],
+        interes: Math.max(0, lead.interes - 8),
+        paciencia: Math.max(0, lead.paciencia - 15),
+        notas: [...lead.notas, `Llamada ${new Date().toLocaleDateString()}: Contacto equivocado (autoridad ${b.autoridad})`],
       },
     };
   }
 
+  // === EMAIL ===
   if (accionId === "email") {
-    const solido = b.presupuesto >= 50 && b.necesidad >= 50;
-    const efectos = calcularEfectosBANT(lead, "email");
-    return {
-      texto: solido
-        ? `📧 Email respondido con datos concretos: presupuesto confirmado ($${lead.valorEstimado.toLocaleString()}/año), dolor urgente y plazo Q2. Ahora tienes BANT parcial.`
-        : `📧 Respondieron: "Gracias, lo revisaremos". Sin señales de presupuesto, autoridad ni plazo. Seguimiento en 3 días.`,
-      tipo: solido ? "bueno" : "neutro",
-      lead: {
-        ...lead,
-        ...efectos,
-        estado: "contactado",
-        notas: [...lead.notas, `Email ${new Date().toLocaleDateString()}: ${solido ? "Respuesta sólida" : "Respuesta evasiva"}`],
-      },
-    };
-  }
+    const solido = b.presupuesto >= 45 && b.necesidad >= 45;
+    const probRespuesta = solido ? 0.65 : 0.25;
+    const respondio = Math.random() < probRespuesta;
 
-  if (accionId === "linkedin") {
-    return {
-      texto: `🔗 Conectado con ${lead.contacto} en LinkedIn. Aceptó la conexión. Vió tu perfil. Envía mensaje de valor en 24h.`,
-      tipo: "bueno",
-      lead: {
-        ...lead,
-        interes: Math.min(100, lead.interes + 8),
-        paciencia: Math.min(100, lead.paciencia + 10),
-        estado: "contactado",
-        notas: [...lead.notas, `LinkedIn ${new Date().toLocaleDateString()}: Conexión aceptada`],
-      },
-    };
-  }
-
-  if (accionId === "demo") {
-    const exito = b.necesidad >= 50 && b.plazo >= 40;
-    if (exito) {
+    if (respondio && solido) {
+      const efectos = { ...calcularEfectosBANT(lead, "email"), interes: Math.min(100, lead.interes + 10) };
       return {
-        texto: `🖥️ Demo completada con ${lead.contacto} y su equipo técnico. Preguntas profundas sobre integración y seguridad. Pidieron propuesta formal para el comité.`,
-        tipo: "excelente",
+        texto: `📧 Email respondido con datos concretos: presupuesto confirmado ($${lead.valorEstimado.toLocaleString()}/año), dolor urgente (${b.necesidad}/100), plazo Q2. Tienes BANT parcial: B${b.presupuesto} N${b.necesidad}.`,
+        tipo: "bueno",
         lead: {
           ...lead,
-          interes: Math.min(100, lead.interes + 30),
-          paciencia: 80,
-          estado: "propuesta_enviada",
-          probabilidadCierre: Math.min(90, lead.probabilidadCierre + 25),
-          notas: [...lead.notas, `Demo ${new Date().toLocaleDateString()}: Propuesta solicitada`],
+          ...efectosBase(lead, "email"),
+          estado: "contactado",
+          notas: [...lead.notas, `Email ${new Date().toLocaleDateString()}: Respuesta sólida - B${b.presupuesto} N${b.necesidad}`],
+        },
+      };
+    }
+    if (respondio && !solido) {
+      return {
+        texto: `📧 Respondieron: "Gracias, lo revisaremos". Sin presupuesto confirmado, sin autoridad clara, sin plazo. Seguimiento en 5 días.`,
+        tipo: "neutro",
+        lead: {
+          ...lead,
+          ...efectosBase(lead, "email"),
+          estado: "contactado",
+          notas: [...lead.notas, `Email ${new Date().toLocaleDateString()}: Respuesta evasiva`],
+        },
+      };
+    }
+    // No respondieron
+    return {
+      texto: `📧 Sin respuesta a tu email tras 5 días. ${nombreContacto} no abrió ni clickeó. Lead se enfría.`,
+      tipo: "malo",
+      lead: {
+        ...lead,
+        interes: Math.max(0, lead.interes - 8),
+        paciencia: Math.max(0, lead.paciencia - 10),
+        estado: lead.estado === "nuevo" ? "enfriado" : lead.estado,
+        notas: [...lead.notas, `Email ${new Date().toLocaleDateString()}: Sin respuesta`],
+      },
+    };
+  }
+
+  // === LINKEDIN ===
+  if (accionId === "linkedin") {
+    const acepto = Math.random() < 0.65;
+    if (acepto) {
+      return {
+        texto: `🔗 Conectado con ${lead.contacto} en LinkedIn. Aceptó al instante. Vió tu perfil (3 visitas). Envía mensaje de valor en 24h.`,
+        tipo: "bueno",
+        lead: {
+          ...lead,
+          ...efectosBase(lead, "linkedin"),
+          estado: "contactado",
+          notas: [...lead.notas, `LinkedIn ${new Date().toLocaleDateString()}: Conexión aceptada`],
         },
       };
     }
     return {
-      texto: `🖥️ Demo con ${lead.contacto}. Preguntas superficiales, sin dolor real detectado. "Nos lo pensamos". Perdiste 2 slots valiosos.`,
+      texto: `🔗 Solicitud de conexión a ${lead.contacto} en LinkedIn. Sin respuesta tras 5 días.`,
+      tipo: "neutro",
+      lead: {
+        ...lead,
+        notas: [...lead.notas, `LinkedIn ${new Date().toLocaleDateString()}: Sin respuesta`],
+      },
+    };
+  }
+
+  // === DEMO ===
+  if (accionId === "demo") {
+    // Demo solo tiene sentido si hay dolor real (necesidad) y plazo razonable
+    const probExito = (b.necesidad / 100) * 0.6 + (b.plazo / 100) * 0.4; // 0-1
+    const exito = Math.random() < probExito;
+
+    if (exito) {
+      return {
+        texto: `🖥️ Demo completada con ${lead.contacto} y su equipo técnico (${2 + Math.floor(Math.random() * 3)} personas). Preguntas profundas sobre integración, seguridad, API. Pidieron propuesta formal para comité de compra.`,
+        tipo: "excelente",
+        lead: {
+          ...lead,
+          ...efectosBase(lead, "demo"),
+          estado: "propuesta_enviada",
+          interes: Math.min(100, lead.interes + 25),
+          paciencia: Math.min(100, lead.paciencia + 10),
+          probabilidadCierre: Math.min(85, lead.probabilidadCierre + 30),
+          notas: [...lead.notas, `Demo ${new Date().toLocaleDateString()}: Propuesta solicitada. Equipo técnico validado.`],
+        },
+      };
+    }
+    return {
+      texto: `🖥️ Demo con ${lead.contacto} y su equipo. Preguntas superficiales ("¿tiene app móvil?"), sin dolor real detectado, sin timeline. "Nos lo pensamos, mándenos info". Perdiste 2 slots valiosos.`,
       tipo: "malo",
       lead: {
         ...lead,
         interes: Math.max(0, lead.interes - 15),
         paciencia: Math.max(0, lead.paciencia - 25),
         estado: "enfriado",
-        notas: [...lead.notas, `Demo ${new Date().toLocaleDateString()}: Sin dolor real`],
+        notas: [...lead.notas, `Demo ${new Date().toLocaleDateString()}: Sin dolor real, sin urgencia`],
       },
     };
   }
 
+  // === PROPUESTA ===
   if (accionId === "propuesta") {
-    const exito = b.necesidad >= 55 && b.plazo >= 45 && b.presupuesto >= 40;
+    // Solo funciona si hay BANT sólido: necesidad + plazo + presupuesto + autoridad
+    const bantScore = (b.necesidad + b.plazo + b.presupuesto + b.autoridad) / 400;
+    const probExito = Math.min(0.9, bantScore * 0.9); // 0-90%
+    const exito = Math.random() < probExito;
+
     if (exito) {
-      const valor = Math.round(lead.valorEstimado * (0.8 + Math.random() * 0.4));
+      const valor = Math.round(lead.valorEstimado * (0.85 + Math.random() * 0.3)); // 85-115% del estimado
       return {
-        texto: `📄 Propuesta enviada y ACEPTADA. ${lead.empresa} entra al pipeline formal por $${valor.toLocaleString()}/año. Comité aprobó por unanimidad.`,
+        texto: `📄 Propuesta enviada y ACEPTADA. ${lead.empresa} entra al pipeline formal por $${valor.toLocaleString()}/año. Comité aprobó: "ROI claro, timeline realista, confianza en el equipo".`,
         tipo: "excelente",
         lead: {
           ...lead,
           estado: "calificado",
           interes: 100,
-          paciencia: 90,
-          probabilidadCierre: 95,
-          valorEstimado: Math.round(lead.valorEstimado * 1.1),
+          paciencia: 95,
+          probabilidadCierre: 98,
+          valorEstimado: Math.round(lead.valorEstimado * 1.05),
           notas: [...lead.notas, `Propuesta ${new Date().toLocaleDateString()}: ACEPTADA - $${valor.toLocaleString()}/año`],
         },
-        pipelineGenerado: Math.round(lead.valorEstimado * 1.1),
+        pipelineGenerado: Math.round(lead.valorEstimado * 1.05),
       };
     }
+    // Fallo: propuesta rechazada o ghosted
+    const razones = [
+      "Precio fuera de presupuesto aprobado",
+      "Timeline irrealista para su implementación",
+      "Competidor ofreció 20% menos",
+      "Falta sponsor ejecutivo para firmar",
+      "Equipo técnico rechazó la integración",
+    ];
+    const razon = razones[Math.floor(Math.random() * razones.length)];
     return {
-      texto: `📄 Propuesta enviada a ${lead.empresa}. Silencio total. El timing no era correcto o el champion interno no empujó. Lead enfriado.`,
+      texto: `📄 Propuesta enviada a ${lead.empresa}. ${razon}. "Nos lo pensamos para el próximo trimestre". Lead enfriado.`,
       tipo: "malo",
       lead: {
         ...lead,
         estado: "enfriado",
-        paciencia: 0,
+        paciencia: Math.max(0, lead.paciencia - 30),
         interes: Math.max(0, lead.interes - 20),
-        notas: [...lead.notas, `Propuesta ${new Date().toLocaleDateString()}: Sin respuesta`],
+        notas: [...lead.notas, `Propuesta ${new Date().toLocaleDateString()}: Rechazada - ${razon}`],
       },
     };
   }
 
+  // === SEGUIMIENTO ===
   if (accionId === "seguimiento") {
     const eraFrio = lead.estado === "enfriado";
+    const reactivado = lead.estado === "enfriado" && Math.random() < 0.4; // 40% reactivar
+    
+    if (eraFrio && reactivado) {
+      return {
+        texto: `🔄 Re-contactaste a ${lead.contacto} tras 3 semanas de silencio. "¡Buen timing! Reabrimos presupuesto para Q2, agendemos demo". Lead REACTIVADO.`,
+        tipo: "excelente",
+        lead: {
+          ...lead,
+          ...efectosBase(lead, "seguimiento"),
+          estado: "contactado",
+          interes: Math.min(100, lead.interes + 25),
+          paciencia: Math.min(100, lead.paciencia + 35),
+          notas: [...lead.notas, `Seguimiento ${new Date().toLocaleDateString()}: REACTIVADO - Reabren presupuesto`],
+        },
+      };
+    }
+    if (eraFrio && !reactivado) {
+      return {
+        texto: `🔄 Seguimiento a ${lead.contacto} (estaba frío). "Gracias por insistir, pero ya contratamos a competidor el mes pasado". Lead PERDIDO definitivamente.`,
+        tipo: "malo",
+        lead: {
+          ...lead,
+          estado: "descartado",
+          interes: 0,
+          paciencia: 0,
+          notas: [...lead.notas, `Seguimiento ${new Date().toLocaleDateString()}: Perdido vs competencia`],
+        },
+      };
+    }
+    // Seguimiento normal (mantenimiento)
     return {
-      texto: eraFrio
-        ? `🔄 Re-contactaste a ${lead.contacto} tras 2 semanas de silencio. "¡Buen momento! Volvimos a priorizar el proyecto". Lead reactivado.`
-        : `🔄 Seguimiento con ${lead.contacto}. "Gracias por insistir, la semana que viene revisamos con el equipo". Mantenido caliente.`,
+      texto: `🔄 Seguimiento con ${lead.contacto}. "Gracias por insistir, la semana que viene revisamos con el comité técnico". Mantenido caliente.`,
       tipo: "bueno",
       lead: {
         ...lead,
-        interes: Math.min(100, lead.interes + (eraFrio ? 20 : 10)),
-        paciencia: Math.min(100, lead.paciencia + (eraFrio ? 30 : 15)),
-        estado: eraFrio ? "contactado" : lead.estado,
-        notas: [...lead.notas, `Seguimiento ${new Date().toLocaleDateString()}: ${eraFrio ? "Reactivado" : "Mantenido"}`],
+        ...efectosBase(lead, "seguimiento"),
+        interes: Math.min(100, lead.interes + 8),
+        paciencia: Math.min(100, lead.paciencia + 12),
+        notas: [...lead.notas, `Seguimiento ${new Date().toLocaleDateString()}: Mantenido caliente`],
       },
     };
   }
 
+  // === REUNIÓN EJECUTIVA (solo enterprise) ===
   if (accionId === "reunión") {
+    // Solo para deals enterprise con BANT muy alto
+    const bantScore = (b.necesidad + b.plazo + b.presupuesto + b.autoridad) / 400;
+    const exito = Math.random() < (bantScore * 0.85);
+    
+    if (exito) {
+      const valor = Math.round(lead.valorEstimado * (1.1 + Math.random() * 0.4));
+      return {
+        texto: `🤝 Reunión ejecutiva con ${lead.contacto} + CFO + CTO. Negociación directa: cerraron $${valor.toLocaleString()}/año por 3 años con SLA premium. Contrato firmado in situ.`,
+        tipo: "excelente",
+        lead: {
+          ...lead,
+          estado: "calificado",
+          interes: 100,
+          paciencia: 100,
+          probabilidadCierre: 99,
+          valorEstimado: Math.round(lead.valorEstimado * 1.2),
+          notas: [...lead.notas, `Reunión ejecutiva ${new Date().toLocaleDateString()}: CERRADO $${valor.toLocaleString()}/año x 3 años`],
+        },
+        pipelineGenerado: Math.round(lead.valorEstimado * 1.2),
+      };
+    }
     return {
-      texto: `🤝 Reunión ejecutiva con ${lead.contacto} y su CFO/CEO. Negociación directa de términos. Contrato firmado in situ con ajustes menores.`,
-      tipo: "excelente",
+      texto: `🤝 Reunión ejecutiva con ${lead.contacto} + CFO. CFO bloquea: "ROI no claro a 12 meses, necesitamos caso de negocio". Reunión inconclusa. 3 slots quemados.`,
+      tipo: "malo",
       lead: {
         ...lead,
-        estado: "calificado",
-        interes: 100,
-        paciencia: 100,
-        probabilidadCierre: 98,
-        valorEstimado: Math.round(lead.valorEstimado * 1.2),
-        notas: [...lead.notas, `Reunión ejecutiva ${new Date().toLocaleDateString()}: CERRADO`],
+        interes: Math.max(0, lead.interes - 10),
+        paciencia: Math.max(0, lead.paciencia - 20),
+        notas: [...lead.notas, `Reunión ejecutiva ${new Date().toLocaleDateString()}: Bloqueado por CFO`],
       },
-      pipelineGenerado: Math.round(lead.valorEstimado * 1.2),
     };
   }
 
+  // === DESCARTAR ===
   if (accionId === "descartar") {
     return {
       texto: `🗑️ Descartaste a ${lead.empresa}. Tu agenda respira… pero ese pipeline potencial ($${lead.valorEstimado.toLocaleString()}) se lo lleva la competencia.`,
       tipo: "neutro",
-      lead: { ...lead, estado: "descartado", notas: [...lead.notas, `Descartado ${new Date().toLocaleDateString()}`] },
+      lead: { ...lead, estado: "descartado", notas: [...lead.notas, `Descartado ${new Date().toLocaleDateString()}: Decisión estratégica`] },
     };
   }
 
