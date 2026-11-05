@@ -5,7 +5,7 @@ const escenarioVIP: Escenario = {
   titulo: "Crisis VIP: El Lanzamiento de Ana Rojas",
   etiqueta: "Gestión de Crisis - Cliente Estratégico",
   contexto:
-    "Son las 23:47 del viernes. Ana Rojas, CEO de una startup en hipercrecimiento (facturación $48K/año, proyección $200K), acaba de escribir: 'El pago falla en producción. Mi lanzamiento es el lunes. Si no resuelvo esto, pierdo 3 años de trabajo'. Es tu cuenta más grande. Tu paciencia, empatía y capacidad técnica decidirán si la retienes o la pierdes para la competencia. Tienes 7 interacciones para resolver la crisis y fortalecer la relación.",
+    "Son las 23:47 del viernes. Ana Rojas, CEO (Chief Executive Officer / Director Ejecutivo) (Chief Executive Officer / Director Ejecutivo) (Chief Executive Officer / Director Ejecutivo) de una startup en hipercrecimiento (facturación $48K/año, proyección $200K), acaba de escribir: 'El pago falla en producción. Mi lanzamiento es el lunes. Si no resuelvo esto, pierdo 3 años de trabajo'. Es tu cuenta más grande. Tu paciencia, empatía y capacidad técnica decidirán si la retienes o la pierdes para la competencia. Tienes 7 interacciones para resolver la crisis y fortalecer la relación.",
   inicio: "apertura",
   stats: [
     { key: "sat", label: "Satisfacción", icon: "😊", max: 100 },
@@ -62,7 +62,7 @@ const escenarioVIP: Escenario = {
       id: "bad",
       rank: "D",
       title: "Cancelación Consumada",
-      text: "A las 9:00 AM del lunes llegó el correo: 'Cancelamos. La competencia nos ofreció migración en 48h y SLA real'. La lección duele: en cuentas enterprise, la velocidad de respuesta y la transparencia valen más que el producto. $48K perdidos y una referencia negativa en el mercado.",
+      text: "A las 9:00 AM del lunes llegó el correo: 'Cancelamos. La competencia nos ofreció migración en 48h y SLA (Service Level Agreement / Acuerdo de Nivel de Servicio) (Service Level Agreement / Acuerdo de Nivel de Servicio) (Service Level Agreement / Acuerdo de Nivel de Servicio) (Service Level Agreement / Acuerdo de Nivel de Servicio) real'. La lección duele: en cuentas enterprise, la velocidad de respuesta y la transparencia valen más que el producto. $48K perdidos y una referencia negativa en el mercado.",
     },
   ],
 };
@@ -72,7 +72,7 @@ const escenarioEnterprise: Escenario = {
   titulo: "Incidente Crítico: Black Friday GlobalCorp",
   etiqueta: "Gestión de Incidentes - Cuenta Enterprise",
   contexto:
-    "Es viernes 24 de noviembre, 06:13 AM. La pasarela de pagos de GlobalCorp (5.000 empleados, $150K/año) cayó en pleno Black Friday. Cada minuto de caída son $47K en ventas perdidas. El CTO te exige resolución en 2 horas. El SLA estipula 99.9% uptime; ya vas en 94%. Tu equipo técnico trabaja en paralelo, pero la gestión de la comunicación, expectativas y confianza del cliente depende enteramente de ti. 7 puntos de contacto para estabilizar la cuenta.",
+    "Es viernes 24 de noviembre, 06:13 AM. La pasarela de pagos de GlobalCorp (5.000 empleados, $150K/año) cayó en pleno Black Friday. Cada minuto de caída son $47K en ventas perdidas. El CTO (Chief Technology Officer / Director Técnico) (Chief Technology Officer / Director Técnico) (Chief Technology Officer / Director Técnico) (Chief Technology Officer / Director Técnico) (Chief Technology Officer / Director Técnico) (Chief Technology Officer / Director Técnico) te exige resolución en 2 horas. El SLA (Service Level Agreement / Acuerdo de Nivel de Servicio) (Service Level Agreement / Acuerdo de Nivel de Servicio) (Service Level Agreement / Acuerdo de Nivel de Servicio) (Service Level Agreement / Acuerdo de Nivel de Servicio) estipula 99.9% uptime; ya vas en 94%. Tu equipo técnico trabaja en paralelo, pero la gestión de la comunicación, expectativas y confianza del cliente depende enteramente de ti. 7 puntos de contacto para estabilizar la cuenta.",
   inicio: "apertura",
   stats: [
     { key: "sat", label: "Satisfacción", icon: "😊", max: 100 },
@@ -86,7 +86,7 @@ const escenarioEnterprise: Escenario = {
       icono: "📰",
       prob: 0.25,
       unaVez: true,
-      texto: "TechCrunch acaba de publicar: 'GlobalCorp sufre outage crítico en Black Friday — clientes reportan pagos rechazados masivos'. El CTO te reenvía el enlace: 'Controla la narrativa AHORA'.",
+      texto: "TechCrunch acaba de publicar: 'GlobalCorp sufre outage crítico en Black Friday — clientes reportan pagos rechazados masivos'. El CTO (Chief Technology Officer / Director Técnico) (Chief Technology Officer / Director Técnico) (Chief Technology Officer / Director Técnico) (Chief Technology Officer / Director Técnico) (Chief Technology Officer / Director Técnico) (Chief Technology Officer / Director Técnico) te reenvía el enlace: 'Controla la narrativa AHORA'.",
       efectos: [{ stat: "pac", delta: -15 }],
     },
   ],
@@ -109,20 +109,20 @@ const escenarioEnterprise: Escenario = {
       rank: "S",
       title: "Resiliencia Enterprise",
       conditions: [{ stat: "sat", min: 75 }, { stat: "pac", min: 70 }],
-      text: "El servicio se restauró a las 08:47 AM. Ventas Black Friday: $2.3M recuperados de $2.4M proyectados. El CTO te llamó personalmente: 'No es la caída, es cómo la gestionaste'. GlobalCorp firmó 3 años a $450K/año con cláusula de co-inversión en redundancia. Te nombraron Strategic Partner.",
+      text: "El servicio se restauró a las 08:47 AM. Ventas Black Friday: $2.3M recuperados de $2.4M proyectados. El CTO (Chief Technology Officer / Director Técnico) (Chief Technology Officer / Director Técnico) (Chief Technology Officer / Director Técnico) (Chief Technology Officer / Director Técnico) (Chief Technology Officer / Director Técnico) (Chief Technology Officer / Director Técnico) te llamó personalmente: 'No es la caída, es cómo la gestionaste'. GlobalCorp firmó 3 años a $450K/año con cláusula de co-inversión en redundancia. Te nombraron Strategic Partner.",
     },
     {
       id: "ent-good",
       rank: "A",
       title: "Tormenta Superada",
       conditions: [{ stat: "sat", min: 55 }],
-      text: "Servicio restablecido a las 11:20 AM. Ventas recuperadas: $1.9M de $2.4M. GlobalCorp renovó 1 año ($150K) con penalizaciones por SLA reducidas 40%. 'Buen manejo, pero esperamos que no se repita', dijo el VP Engineering. El plan de redundancia que prometiste es tu compromiso Q1.",
+      text: "Servicio restablecido a las 11:20 AM. Ventas recuperadas: $1.9M de $2.4M. GlobalCorp renovó 1 año ($150K) con penalizaciones por SLA (Service Level Agreement / Acuerdo de Nivel de Servicio) (Service Level Agreement / Acuerdo de Nivel de Servicio) (Service Level Agreement / Acuerdo de Nivel de Servicio) (Service Level Agreement / Acuerdo de Nivel de Servicio) reducidas 40%. 'Buen manejo, pero esperamos que no se repita', dijo el VP (Vice President / Vicepresidente) (Vice President / Vicepresidente) Engineering. El plan de redundancia que prometiste es tu compromiso Q1.",
     },
     {
       id: "ent-bad",
       rank: "D",
-      title: "SLA Incumplido — Contrato Rescindido",
-      text: "Servicio caído 4 horas 47 minutos. Ventas perdidas: $1.1M. GlobalCorp ejecutó la cláusula de terminación por SLA incumplido. El correo del Legal llegó a las 3 PM: 'Efectivo inmediato'. La competencia ya está en fase de migración. La lección: en enterprise, la comunicación proactiva durante la crisis vale más que la resolución técnica tardía.",
+      title: "SLA (Service Level Agreement / Acuerdo de Nivel de Servicio) (Service Level Agreement / Acuerdo de Nivel de Servicio) (Service Level Agreement / Acuerdo de Nivel de Servicio) (Service Level Agreement / Acuerdo de Nivel de Servicio) Incumplido — Contrato Rescindido",
+      text: "Servicio caído 4 horas 47 minutos. Ventas perdidas: $1.1M. GlobalCorp ejecutó la cláusula de terminación por SLA (Service Level Agreement / Acuerdo de Nivel de Servicio) (Service Level Agreement / Acuerdo de Nivel de Servicio) (Service Level Agreement / Acuerdo de Nivel de Servicio) (Service Level Agreement / Acuerdo de Nivel de Servicio) incumplido. El correo del Legal llegó a las 3 PM: 'Efectivo inmediato'. La competencia ya está en fase de migración. La lección: en enterprise, la comunicación proactiva durante la crisis vale más que la resolución técnica tardía.",
     },
   ],
 };

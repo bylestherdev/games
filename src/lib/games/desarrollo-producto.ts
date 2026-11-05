@@ -3,9 +3,9 @@ import type { GameData, Escenario, Stat, Choice, GameEvent, Ending, EndingCondit
 const ESCENARIO_PM_LAUNCH: Escenario = {
   id: "pm-launch",
   titulo: "PM de Lanzamiento: De 0 a 1 en 12 Semanas",
-  etiqueta: "Nuevo Producto B2B SaaS",
+  etiqueta: "Nuevo Producto B2B (Business to Business / Negocio a Negocio) SaaS",
   contexto:
-    "Eres el primer PM de 'FlowState' - herramienta de collaboration para equipos de ingeniería distribuidos. Founders (ex-Google, ex-Stripe) te dieron 12 semanas para lanzar MVP a 50 beta users y demostrar product-market fit. Equipo: 3 engineers, 1 designer (50%), 0 budget marketing. Competencia: Linear, Notion, Jira, ClickUp. Tu métrica norte: 50 equipos activos semanales (WAU) al final del trimestre. Tienes 12 sprints (semanas).",
+    "Eres el primer PM (Product Manager / Gerente de Producto) de 'FlowState' - herramienta de collaboration para equipos de ingeniería distribuidos. Founders (ex-Google, ex-Stripe) te dieron 12 semanas para lanzar MVP a 50 beta users y demostrar product-market fit. Equipo: 3 engineers, 1 designer (50%), 0 budget marketing. Competencia: Linear, Notion, Jira, ClickUp. Tu métrica norte: 50 equipos activos semanales (WAU) al final del trimestre. Tienes 12 sprints (semanas).",
   inicio: "sprint-1",
   stats: [
     { key: "adopcion", label: "Adopción", icon: "📊", max: 100 },
@@ -49,7 +49,7 @@ const ESCENARIO_PM_LAUNCH: Escenario = {
       icono: "💥",
       prob: 0.2,
       unaVez: true,
-      texto: "Sprint 10. QA encuentra: 47 bugs P0/P1. Auth flaky en 15% logins. DB connection pool exhausted en load test. Mobile layout broken en Safari. Launch en 2 semanas. Equipo: 'Necesitamos 1 sprint solo bug bash'. Founder: 'Launch date is sacred'.",
+      texto: "Sprint 10. QA encuentra: 47 bugs P0/P1 (Priority 0/Priority 1 / Prioridad 0/Prioridad 1). Auth flaky en 15% logins. DB connection pool exhausted en load test. Mobile layout broken en Safari. Launch en 2 semanas. Equipo: 'Necesitamos 1 sprint solo bug bash'. Founder: 'Launch date is sacred'.",
       requiere: [{ stat: "calidad", max: 55 }],
       efectos: [{ stat: "calidad", delta: -20 }, { stat: "velocidad", delta: -10 }],
       opciones: [
@@ -78,21 +78,21 @@ const ESCENARIO_PM_LAUNCH: Escenario = {
       rank: "S",
       title: "Product Master",
       conditions: [{ stat: "adopcion", min: 75 }, { stat: "calidad", min: 70 }, { stat: "velocidad", min: 60 }],
-      text: "Launch: 120 equipos WAU (2.4x meta). NPS 72. 0 P0 bugs. 3 competitors copycat tu roadmap. Sequoia lead Series A ($12M). Founders: 'Eres el PM que soñábamos'. Te ofrecen Head of Product track.",
+      text: "Launch: 120 equipos WAU (2.4x meta). NPS (Net Promoter Score / Puntuación Neta de Promotores) 72. 0 P0 bugs. 3 competitors copycat tu roadmap. Sequoia lead Series A ($12M). Founders: 'Eres el PM (Product Manager / Gerente de Producto) que soñábamos'. Te ofrecen Head of Product track.",
     },
     {
       id: "bueno",
       rank: "A",
       title: "Launch Sólido",
       conditions: [{ stat: "adopcion", min: 60 }, { stat: "calidad", min: 60 }],
-      text: "Launch: 65 equipos WAU. NPS 58. 12 bugs P1 post-launch (fixados semana 1). Traction clara. Serie A en pipeline. Próximo reto: retention cohort > 40% month 3.",
+      text: "Launch: 65 equipos WAU. NPS (Net Promoter Score / Puntuación Neta de Promotores) 58. 12 bugs P1 post-launch (fixados semana 1). Traction clara. Serie A en pipeline. Próximo reto: retention cohort > 40% month 3.",
     },
     {
       id: "regular",
       rank: "B",
       title: "Launch Aceptable",
       conditions: [{ stat: "adopcion", min: 40 }],
-      text: "Launch: 45 equipos WAU. NPS 42. 23 bugs P1. Churn 35% month 1. Product-market fit incipiente. Próximo trimestre: focus retention + activation. Base frágil.",
+      text: "Launch: 45 equipos WAU. NPS (Net Promoter Score / Puntuación Neta de Promotores) 42. 23 bugs P1. Churn 35% month 1. Product-market fit incipiente. Próximo trimestre: focus retention + activation. Base frágil.",
     },
     {
       id: "fracaso",
@@ -108,7 +108,7 @@ const ESCENARIO_PM_GROWTH: Escenario = {
   titulo: "PM Growth: De 10K a 100K Usuarios",
   etiqueta: "Escalado Post-PMF",
   contexto:
-    "FlowState tiene PMF (8K WAU, NPS 58, $200K ARR). Serie A cerrada ($8M). Meta: 100K WAU en 12 meses. Equipo: 12 engineers, 3 PMs (tú lead), 2 designers, 3 data. Challenges: activation rate 18% → 35%, retention D30 35% → 55%, viral coefficient 0.3 → 1.2. Budget: $200K growth. Competencia: bien financiada, agresiva.",
+    "FlowState tiene PMF (8K WAU, NPS (Net Promoter Score / Puntuación Neta de Promotores) 58, $200K ARR). Serie A cerrada ($8M). Meta: 100K WAU en 12 meses. Equipo: 12 engineers, 3 PMs (tú lead), 2 designers, 3 data. Challenges: activation rate 18% → 35%, retention D30 (Day 30 / Día 30) 35% → 55%, viral coefficient 0.3 → 1.2. Budget: $200K growth. Competencia: bien financiada, agresiva.",
   inicio: "mes-1",
   stats: [
     { key: "activacion", label: "Activación", icon: "🚀", max: 100 },
@@ -141,7 +141,7 @@ const ESCENARIO_PM_GROWTH: Escenario = {
       requiere: [{ stat: "retencion", max: 55 }],
       efectos: [{ stat: "retencion", delta: -15 }, { stat: "activacion", delta: -5 }],
       opciones: [
-        { label: "Enterprise sprint: SSO/SAML + audit logs + dedicated Slack connect en 3 sprints", hint: "Enterprise-ready. Costoso. Desvía recursos growth.", effects: [{ stat: "retencion", delta: 15 }, { stat: "activacion", delta: -5 }, { stat: "viralidad", delta: -3 }], resultado: "2/3 accounts retained. 1 lost (migrated). Enterprise pipeline +$200K. Retención +15. Activación -5 (recursos desviados)." },
+        { label: "Enterprise sprint: SSO/SAML (Single Sign-On / Security Assertion Markup Language / Inicio de Sesión Único / Lenguaje de Marcado de Aserción de Seguridad) + audit logs + dedicated Slack connect en 3 sprints", hint: "Enterprise-ready. Costoso. Desvía recursos growth.", effects: [{ stat: "retencion", delta: 15 }, { stat: "activacion", delta: -5 }, { stat: "viralidad", delta: -3 }], resultado: "2/3 accounts retained. 1 lost (migrated). Enterprise pipeline +$200K. Retención +15. Activación -5 (recursos desviados)." },
         { label: "Enterprise-lite: SSO only + shared support channel + roadmap commitment", hint: "Mínimo viable. Rápido. Riesgo: no suficiente para retener.", effects: [{ stat: "retencion", delta: 8 }, { stat: "viralidad", delta: -2 }], resultado: "1/3 retained. 2 churn. 'Falta audit logs'. Retención +8. Señal: enterprise necesita más." },
         { label: "Partnership: integra con Okta/EntraID via partner + co-sell", hint: "Partnership. Acelera. Revenue share. Dependencia tercero.", effects: [{ stat: "retencion", delta: 10 }, { stat: "viralidad", delta: 5 }, { stat: "activacion", delta: -3 }], resultado: "Okta partnership cerrado. 2/3 retained. Co-sell pipeline +$200K. Retención +10. Viralidad +5 (partner referrals)." },
       ],
@@ -166,14 +166,14 @@ const ESCENARIO_PM_GROWTH: Escenario = {
       rank: "S",
       title: "Growth Architect",
       conditions: [{ stat: "activacion", min: 75 }, { stat: "retencion", min: 70 }, { stat: "viralidad", min: 65 }],
-      text: "100K WAU en 10 meses. Activation 38% → 42%. Retention D30 35% → 58%. Viral coeff 0.3 → 1.4. $2.4M ARR. Series B ($35M) closed. Board: 'Growth machine built'. Te ofrecen VP Growth.",
+      text: "100K WAU en 10 meses. Activation 38% → 42%. Retention D30 (Day 30 / Día 30) 35% → 58%. Viral coeff 0.3 → 1.4. $2.4M ARR. Series B ($35M) closed. Board: 'Growth machine built'. Te ofrecen VP Growth.",
     },
     {
       id: "bueno",
       rank: "A",
       title: "Growth Lead Sólido",
       conditions: [{ stat: "activacion", min: 65 }, { stat: "retencion", min: 60 }],
-      text: "85K WAU. Activation 35%. Retention D30 52%. Viral 0.9. $1.8M ARR. Series B termsheet. Próximo reto: internationalization + enterprise motion.",
+      text: "85K WAU. Activation 35%. Retention D30 (Day 30 / Día 30) 52%. Viral 0.9. $1.8M ARR. Series B termsheet. Próximo reto: internationalization + enterprise motion.",
     },
     {
       id: "regular",
@@ -186,7 +186,7 @@ const ESCENARIO_PM_GROWTH: Escenario = {
       id: "fracaso",
       rank: "D",
       title: "Growth Stalled",
-      text: "35K WAU. Activation 15%. Retention 28%. Viral 0.1. $400K ARR. Burn rate > revenue. Investors: 'Where is growth?'. CFO takes over growth. You move to feature PM. Lesson: growth without retention = leaky bucket.",
+      text: "35K WAU. Activation 15%. Retention 28%. Viral 0.1. $400K ARR. Burn rate > revenue. Investors: 'Where is growth?'. CFO takes over growth. You move to feature PM (Product Manager / Gerente de Producto). Lesson: growth without retention = leaky bucket.",
     },
   ],
 };
@@ -196,7 +196,7 @@ const ESCENARIO_PM_PLATFORM: Escenario = {
   titulo: "PM Platform: De Producto a Plataforma",
   etiqueta: "Estrategia de Plataforma",
   contexto:
-    "FlowState tiene 150K WAU, $5M ARR. Board: 'Next phase: platform'. Vision: developers build apps ON FlowState (marketplace, APIs, SDK, extensibility). Meta: 500 third-party apps en 18 meses. 10% revenue share. Riesgos: core product neglect, API stability, developer trust, support burden. Equipo: 2 PMs platform (tú lead), 8 engineers, 1 DX engineer, 1 devrel. Budget: $500K.",
+    "FlowState tiene 150K WAU, $5M ARR. Board: 'Next phase: platform'. Vision: developers build apps ON FlowState (marketplace, APIs, SDK (Software Development Kit / Kit de Desarrollo de Software), extensibility). Meta: 500 third-party apps en 18 meses. 10% revenue share. Riesgos: core product neglect, API (Application Programming Interface / Interfaz de Programación de Aplicaciones) stability, developer trust, support burden. Equipo: 2 PMs platform (tú lead), 8 engineers, 1 DX (Developer Experience / Experiencia de Desarrollador) engineer, 1 devrel. Budget: $500K.",
   inicio: "fase-1",
   stats: [
     { key: "adopcion-dev", label: "Adopción Developers", icon: "👨‍💻", max: 100 },
@@ -210,7 +210,7 @@ const ESCENARIO_PM_PLATFORM: Escenario = {
       icono: "💥",
       prob: 0.3,
       unaVez: true,
-      texto: "Lanzáis API v2.0 (GraphQL + webhooks). 48h después: 40% developers reportan breaking changes. Top 5 apps (80% usage) down. DevRel inbox: 200+ tickets. Trust: '¿Podemos confiar en vosotros?'. Tu credibility en juego.",
+      texto: "Lanzáis API (Application Programming Interface / Interfaz de Programación de Aplicaciones) v2.0 (GraphQL + webhooks). 48h después: 40% developers reportan breaking changes. Top 5 apps (80% usage) down. DevRel inbox: 200+ tickets. Trust: '¿Podemos confiar en vosotros?'. Tu credibility en juego.",
       requiere: [{ stat: "estabilidad-api", max: 55 }],
       efectos: [{ stat: "estabilidad-api", delta: -25 }, { stat: "adopcion-dev", delta: -15 }],
       opciones: [
@@ -225,13 +225,13 @@ const ESCENARIO_PM_PLATFORM: Escenario = {
       icono: "🆓",
       prob: 0.25,
       unaVez: true,
-      texto: "Competidor (bien financiado) lanza 'Platform Free Tier': APIs ilimitadas, 0% revenue share, $10K credits. Sus APIs: peores docs, peor DX, pero GRATIS. Tus developers: '¿Por qué pagar 10% revenue share?'. Tu board: 'Match pricing o perdemos ecosistema'.",
+      texto: "Competidor (bien financiado) lanza 'Platform Free Tier': APIs ilimitadas, 0% revenue share, $10K credits. Sus APIs: peores docs, peor DX (Developer Experience / Experiencia de Desarrollador), pero GRATIS. Tus developers: '¿Por qué pagar 10% revenue share?'. Tu board: 'Match pricing o perdemos ecosistema'.",
       requiere: [{ stat: "ecosistema", max: 60 }],
       efectos: [{ stat: "ecosistema", delta: -15 }, { stat: "adopcion-dev", delta: -10 }],
       opciones: [
         { label: "Diferenciar: 'Free tier + premium features (analytics, support, SLA) + revenue share solo >$10K'", hint: "Freemium inteligente. Mantiene revenue share en high-value. Diferencia en value-add.", effects: [{ stat: "ecosistema", delta: 10 }, { stat: "adopcion-dev", delta: 8 }, { stat: "ecosistema", delta: -3 }], resultado: "Developers: 'Free tier + premium support vale 10%'. 60% quedan. Ecosistema +10. Adopción +8. Revenue share -3% (free tier)." },
         { label: "Match: 0% revenue share first $50K + free tier ilimitado", hint: "Match agresivo. Pierdes revenue. Señala debilidad.", effects: [{ stat: "adopcion-dev", delta: 12 }, { stat: "ecosistema", delta: -15 }], resultado: "Nadie se va. Pero revenue share $0 first year. Ecosistema -15%. Adopción +12. Board preocupado: '¿Cómo monetizamos?'." },
-        { label: "Diferenciar en DX: 'Mejor docs, mejor SDKs, mejor support. Gratis no = mejor'", hint: "Calidad como moat. Lento. Requiere inversión sostenida.", effects: [{ stat: "adopcion-dev", delta: 8 }, { stat: "ecosistema", delta: 5 }, { stat: "ecosistema", delta: -2 }], resultado: "SDKs v2 + interactive docs + dedicated support. Developers: 'Vuestra DX vale el 10%'. Adopción +8. Ecosistema +3 neto." },
+        { label: "Diferenciar en DX (Developer Experience / Experiencia de Desarrollador): 'Mejor docs, mejor SDKs, mejor support. Gratis no = mejor'", hint: "Calidad como moat. Lento. Requiere inversión sostenida.", effects: [{ stat: "adopcion-dev", delta: 8 }, { stat: "ecosistema", delta: 5 }, { stat: "ecosistema", delta: -2 }], resultado: "SDKs v2 + interactive docs + dedicated support. Developers: 'Vuestra DX (Developer Experience / Experiencia de Desarrollador) vale el 10%'. Adopción +8. Ecosistema +3 neto." },
       ],
     },
   ],
@@ -254,21 +254,21 @@ const ESCENARIO_PM_PLATFORM: Escenario = {
       rank: "S",
       title: "Platform Visionary",
       conditions: [{ stat: "adopcion-dev", min: 80 }, { stat: "estabilidad-api", min: 75 }, { stat: "ecosistema", min: 70 }],
-      text: "500+ apps en marketplace. $2.5M ecosystem revenue (20% total ARR). 99.99% API uptime. Developer NPS 78. 'Best DX in category' (DevSurvey). Competitors copy your SDK patterns. Te ofrecen CPO track.",
+      text: "500+ apps en marketplace. $2.5M ecosystem revenue (20% total ARR). 99.99% API (Application Programming Interface / Interfaz de Programación de Aplicaciones) uptime. Developer NPS (Net Promoter Score / Puntuación Neta de Promotores) 78. 'Best DX (Developer Experience / Experiencia de Desarrollador) in category' (DevSurvey). Competitors copy your SDK (Software Development Kit / Kit de Desarrollo de Software) patterns. Te ofrecen CPO track.",
     },
     {
       id: "bueno",
       rank: "A",
       title: "Platform Leader",
       conditions: [{ stat: "adopcion-dev", min: 70 }, { stat: "estabilidad-api", min: 65 }],
-      text: "300 apps. $1.2M ecosystem revenue. 99.9% uptime. Developer NPS 65. 15% revenue from platform. Base para escalar a 1000 apps. Próximo reto: enterprise-grade SLAs.",
+      text: "300 apps. $1.2M ecosystem revenue. 99.9% uptime. Developer NPS (Net Promoter Score / Puntuación Neta de Promotores) 65. 15% revenue from platform. Base para escalar a 1000 apps. Próximo reto: enterprise-grade SLAs.",
     },
     {
       id: "regular",
       rank: "B",
       title: "Platform Inicial",
       conditions: [{ stat: "adopcion-dev", min: 55 }],
-      text: "150 apps. $400K ecosystem revenue. 99.5% uptime. Developer NPS 52. Platform = 5% revenue. Próximo reto: killer apps + enterprise adoption. Base frágil.",
+      text: "150 apps. $400K ecosystem revenue. 99.5% uptime. Developer NPS (Net Promoter Score / Puntuación Neta de Promotores) 52. Platform = 5% revenue. Próximo reto: killer apps + enterprise adoption. Base frágil.",
     },
     {
       id: "fracaso",

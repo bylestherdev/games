@@ -3,7 +3,7 @@ import type { GameData, Escenario, Stat, Choice, RoundType, RoundConfig } from "
 const escenarioVeronica: Escenario = {
   id: "veronica",
   titulo: "Negociación Maestra: El Contrato con Verónica Salas",
-  etiqueta: "Simulador de Negociación B2B",
+  etiqueta: "Simulador de Negociación B2B (Business to Business / Negocio a Negocio)",
   contexto:
     "Te sientas frente a Verónica Salas, Directora de Compras de una gran corporación. Ha cerrado acuerdos con 40 proveedores este año y solo dos lograron términos favorables. El contrato anual vale $120.000 y tu margen objetivo es del 35%. Verónica conoce cada táctica del manual y no cede sin obtener algo a cambio. Tienes 7 rondas para cerrar el mejor acuerdo posible sin romper la relación.",
   inicio: "apertura",
@@ -19,7 +19,7 @@ const escenarioVeronica: Escenario = {
       icono: "📉",
       prob: 0.25,
       unaVez: true,
-      texto: "Verónica pone sobre la mesa una propuesta de un competidor menor: 40% más barato, mismos SLAs. '¿Por qué no me voy con ellos?', pregunta sin inmutarse.",
+      texto: "Verónica pone sobre la mesa una propuesta de un competidor menor: 40% más barato, mismos SLAs (Service Level Agreements / Acuerdos de Nivel de Servicio). '¿Por qué no me voy con ellos?', pregunta sin inmutarse.",
       efectos: [{ stat: "pal", delta: -10 }, { stat: "mar", delta: -8 }],
     },
   ],
@@ -41,7 +41,7 @@ const escenarioVeronica: Escenario = {
       id: "legend",
       rank: "S",
       title: "Maestra de la Negociación",
-      text: "Lograste un contrato a 3 años con margen del 38% y cláusulas de renovación automática. Verónica te dijo: 'Es la primera vez que alguien entiende mis KPIs antes de que yo los pida'. Te recomendó personalmente a tres directores de compras de su red. Tu comisión superó el objetivo trimestral en un 140%.",
+      text: "Lograste un contrato a 3 años con margen del 38% y cláusulas de renovación automática. Verónica te dijo: 'Es la primera vez que alguien entiende mis KPIs (Key Performance Indicators / Indicadores Clave de Rendimiento) antes de que yo los pida'. Te recomendó personalmente a tres directores de compras de su red. Tu comisión superó el objetivo trimestral en un 140%.",
     },
     {
       id: "great",

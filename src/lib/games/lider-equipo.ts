@@ -5,7 +5,7 @@ const ESCENARIO_PRIMER_EQUIPO: Escenario = {
   titulo: "Primer Equipo: Tu Debut como Manager",
   etiqueta: "Onboarding de Liderazgo",
   contexto:
-    "Te acaban de promover. Ayer eras IC senior; hoy lideras 5 ingenieros. Tu manager te dio 90 días para demostrar que sirves. El equipo tiene deuda técnica, un delivery comprometido para fin de mes, y dos seniors que no se hablan. Tu ex-jefe te dijo: 'Tu trabajo ya no es código, es gente'. Tienes 6 sprints (6 semanas) para entregar el proyecto, sanar al equipo y no quemarte.",
+    "Te acaban de promover. Ayer eras IC (Individual Contributor / Colaborador Individual) senior; hoy lideras 5 ingenieros. Tu manager te dio 90 días para demostrar que sirves. El equipo tiene deuda técnica, un delivery comprometido para fin de mes, y dos seniors que no se hablan. Tu ex-jefe te dijo: 'Tu trabajo ya no es código, es gente'. Tienes 6 sprints (6 semanas) para entregar el proyecto, sanar al equipo y no quemarte.",
   inicio: "semana-1",
   stats: [
     { key: "entrega", label: "Entrega", icon: "📦", max: 100 },
@@ -19,12 +19,12 @@ const ESCENARIO_PRIMER_EQUIPO: Escenario = {
       icono: "⚡",
       prob: 0.3,
       unaVez: true,
-      texto: "María y Carlos (tus dos seniors) llevan 3 días sin cruzarse palabra. El PR de María lleva 4 días sin review; Carlos dice 'no apruebo basura'. El equipo lo nota. Si no intervienes ya, el sprint se rompe.",
+      texto: "María y Carlos (tus dos seniors) llevan 3 días sin cruzarse palabra. El PR (Pull Request / Solicitud de Integración) de María lleva 4 días sin review; Carlos dice 'no apruebo basura'. El equipo lo nota. Si no intervienes ya, el sprint se rompe.",
       requiere: [{ stat: "salud", max: 60 }],
       efectos: [{ stat: "salud", delta: -10 }, { stat: "entrega", delta: -5 }],
       opciones: [
         { label: "Mediación 1:1 con cada uno, luego juntos", hint: "Lento pero profundo. Arriesgas que escalen mientras medias.", effects: [{ stat: "salud", delta: 8 }, { stat: "entrega", delta: -3 }], resultado: "María admite que tiene miedo de quedar obsoleta; Carlos admite que está agotado. Acuerdan normas de review. Salud +8, Entrega -3." },
-        { label: "Decisión unilateral: tú apruebas el PR y marcas normas", hint: "Rápido. Resuelves el bloqueo pero pierdes confianza.", effects: [{ stat: "entrega", delta: 8 }, { stat: "salud", delta: -10 }], resultado: "El PR sale hoy. María se siente validada; Carlos se siente ignorado. Entrega +8, Salud -10. La tensión persiste bajo la alfombra." },
+        { label: "Decisión unilateral: tú apruebas el PR (Pull Request / Solicitud de Integración) y marcas normas", hint: "Rápido. Resuelves el bloqueo pero pierdes confianza.", effects: [{ stat: "entrega", delta: 8 }, { stat: "salud", delta: -10 }], resultado: "El PR (Pull Request / Solicitud de Integración) sale hoy. María se siente validada; Carlos se siente ignorado. Entrega +8, Salud -10. La tensión persiste bajo la alfombra." },
         { label: "Delegar en el Tech Lead (si existe) o rotar ownership", hint: "Descentralizas. Empoderas pero pierdes visibilidad técnica.", effects: [{ stat: "innovacion", delta: 5 }, { stat: "salud", delta: 2 }, { stat: "entrega", delta: -2 }], resultado: "El equipo asume ownership. Innovación +5. Salud ligera +. Entrega -2 por curva de aprendizaje." },
       ],
     },
@@ -34,7 +34,7 @@ const ESCENARIO_PRIMER_EQUIPO: Escenario = {
       icono: "😰",
       prob: 0.25,
       unaVez: true,
-      texto: "Lucas (junior, 6 meses) no ha hecho commit en 3 días. Sus dailies son 'bien, sigo igual'. Su PR lleva 'WIP' 5 días. Su pareja acaba de tener bebé; no duerme. Si no actúas, se quiebra o se va.",
+      texto: "Lucas (junior, 6 meses) no ha hecho commit en 3 días. Sus dailies son 'bien, sigo igual'. Su PR (Pull Request / Solicitud de Integración) lleva 'WIP' 5 días. Su pareja acaba de tener bebé; no duerme. Si no actúas, se quiebra o se va.",
       requiere: [{ stat: "salud", max: 70 }],
       efectos: [{ stat: "salud", delta: -8 }, { stat: "entrega", delta: -3 }],
       opciones: [
@@ -49,7 +49,7 @@ const ESCENARIO_PRIMER_EQUIPO: Escenario = {
       icono: "💥",
       prob: 0.2,
       unaVez: true,
-      texto: "El módulo de pagos (legacy, 0 tests) explota en prod. 3 horas de downtime. Ventas grita. El CTO te llama: '¿Por qué no vimos esto?'. El equipo miraba para otro lado hace meses.",
+      texto: "El módulo de pagos (legacy, 0 tests) explota en prod. 3 horas de downtime. Ventas grita. El CTO (Chief Technology Officer / Director Técnico) te llama: '¿Por qué no vimos esto?'. El equipo miraba para otro lado hace meses.",
       requiere: [{ stat: "entrega", max: 60 }],
       efectos: [{ stat: "entrega", delta: -15 }, { stat: "salud", delta: -5 }],
       opciones: [
@@ -78,7 +78,7 @@ const ESCENARIO_PRIMER_EQUIPO: Escenario = {
       rank: "S",
       title: "Líder de Élite",
       conditions: [{ stat: "entrega", min: 70 }, { stat: "salud", min: 75 }, { stat: "innovacion", min: 60 }],
-      text: "Proyecto entregado a tiempo, 0 bugs críticos. Equipo cohesionado: eNPS 9/10. Dos juniors promovidos. Tu manager te pide que mentorees a los nuevos managers. 'Lograste lo imposible: entregar Y cuidar'. Te ofrecen Lead de 20 personas.",
+      text: "Proyecto entregado a tiempo, 0 bugs críticos. Equipo cohesionado: eNPS (Employee Net Promoter Score / Puntuación Neta de Promotores de Empleados) 9/10. Dos juniors promovidos. Tu manager te pide que mentorees a los nuevos managers. 'Lograste lo imposible: entregar Y cuidar'. Te ofrecen Lead de 20 personas.",
     },
     {
       id: "funcional",
@@ -105,7 +105,7 @@ const ESCENARIO_PRIMER_EQUIPO: Escenario = {
       id: "fracaso",
       rank: "D",
       title: "Fracaso de Liderazgo",
-      text: "Proyecto cancelado. 3 renuncias. Tu manager te quita el equipo. 'Quizás management no es lo tuyo'. Vuelves a IC con reputación dañada. La lección duele: gestionar personas no es 'código con personas'.",
+      text: "Proyecto cancelado. 3 renuncias. Tu manager te quita el equipo. 'Quizás management no es lo tuyo'. Vuelves a IC (Individual Contributor / Colaborador Individual) con reputación dañada. La lección duele: gestionar personas no es 'código con personas'.",
     },
   ],
 };
@@ -115,7 +115,7 @@ const ESCENARIO_DEUDA_TECNICA: Escenario = {
   titulo: "Crisis de Deuda Técnica: El Rescate",
   etiqueta: "Turnaround Técnico",
   contexto:
-    "Heredas un equipo de 6 que lleva 18 meses 'entregando features' sin refactorizar. La arquitectura es un monolito de 500k LOC, 0 tests, deploy manual, 3 hotfixes/semana. El CTO te dio 8 sprints: 'Arregla esto o lo reescribimos desde cero (y te quedas sin equipo)'. El equipo está cínico: 'Ya vimos 3 managers intentar esto'. Tienes 8 sprints para estabilizar, testear, modularizar y recuperar confianza.",
+    "Heredas un equipo de 6 que lleva 18 meses 'entregando features' sin refactorizar. La arquitectura es un monolito de 500k LOC, 0 tests, deploy manual, 3 hotfixes/semana. El CTO (Chief Technology Officer / Director Técnico) te dio 8 sprints: 'Arregla esto o lo reescribimos desde cero (y te quedas sin equipo)'. El equipo está cínico: 'Ya vimos 3 managers intentar esto'. Tienes 8 sprints para estabilizar, testear, modularizar y recuperar confianza.",
   inicio: "semana-1",
   stats: [
     { key: "estabilidad", label: "Estabilidad", icon: "🛡️", max: 100 },
@@ -129,7 +129,7 @@ const ESCENARIO_DEUDA_TECNICA: Escenario = {
       icono: "🔴",
       prob: 0.3,
       unaVez: true,
-      texto: "Viernes 18:00. El checkout falla. $12K/min perdidos. El on-call (junior) no sabe hacer rollback. El runbook no existe. Slack arde. El CTO te mira en la weekly del lunes: 'Esto no puede volver a pasar'.",
+      texto: "Viernes 18:00. El checkout falla. $12K/min perdidos. El on-call (junior) no sabe hacer rollback. El runbook no existe. Slack arde. El CTO (Chief Technology Officer / Director Técnico) te mira en la weekly del lunes: 'Esto no puede volver a pasar'.",
       requiere: [{ stat: "estabilidad", max: 50 }],
       efectos: [{ stat: "estabilidad", delta: -15 }, { stat: "confianza", delta: -10 }],
       opciones: [
@@ -173,7 +173,7 @@ const ESCENARIO_DEUDA_TECNICA: Escenario = {
       rank: "S",
       title: "Rescate Épico",
       conditions: [{ stat: "estabilidad", min: 80 }, { stat: "velocidad", min: 65 }, { stat: "confianza", min: 70 }],
-      text: "Monolito estable (99.9% uptime). Velocidad +40% vs baseline. Tests 78% coverage. CI/CD automatizado. Equipo orgulloso: 'Por primera vez en años duermo tranquilo'. CTO: 'Salvaste el producto'. Te ofrecen Staff Engineer track o Engineering Manager de 2 equipos.",
+      text: "Monolito estable (99.9% uptime). Velocidad +40% vs baseline. Tests 78% coverage. CI/CD (Continuous Integration/Continuous Deployment / Integración Continua/Despliegue Continuo) automatizado. Equipo orgulloso: 'Por primera vez en años duermo tranquilo'. CTO (Chief Technology Officer / Director Técnico): 'Salvaste el producto'. Te ofrecen Staff Engineer track o Engineering Manager de 2 equipos.",
     },
     {
       id: "bueno",
@@ -193,7 +193,7 @@ const ESCENARIO_DEUDA_TECNICA: Escenario = {
       id: "insuficiente",
       rank: "D",
       title: "Reescritura Ordenada",
-      text: "La deuda ganó. CTO ordena reescritura desde cero (Strangler Fig). Equipo dispersado. Tu gestión: 'Buena intención, ejecución insuficiente'. Te mueven a otro rol. La lección: la deuda técnica se paga con interés compuesto.",
+      text: "La deuda ganó. CTO (Chief Technology Officer / Director Técnico) ordena reescritura desde cero (Strangler Fig (Patrón Estrangulador / Patrón de migración gradual)). Equipo dispersado. Tu gestión: 'Buena intención, ejecución insuficiente'. Te mueven a otro rol. La lección: la deuda técnica se paga con interés compuesto.",
     },
   ],
 };
@@ -261,7 +261,7 @@ const ESCENARIO_HIPERCRECIMIENTO: Escenario = {
       rank: "S",
       title: "Arquitecto de Organización",
       conditions: [{ stat: "hiring", min: 80 }, { stat: "cultura", min: 75 }, { stat: "ejecucion", min: 70 }],
-      text: "24 hires en 6 meses (92% retención 6m). eNPS 8.5/10. Career ladder live. Review cycles corriendo. Velocidad equipo +60% vs baseline. CEO: 'Construiste la máquina que nos lleva a Series C'. Te ofrecen VP Engineering.",
+      text: "24 hires en 6 meses (92% retención 6m). eNPS (Employee Net Promoter Score / Puntuación Neta de Promotores de Empleados) 8.5/10. Career ladder live. Review cycles corriendo. Velocidad equipo +60% vs baseline. CEO: 'Construiste la máquina que nos lleva a Series C'. Te ofrecen VP Engineering.",
     },
     {
       id: "bueno",
@@ -281,7 +281,7 @@ const ESCENARIO_HIPERCRECIMIENTO: Escenario = {
       id: "fracaso",
       rank: "D",
       title: "Caos de Hipercrecimiento",
-      text: "12 hires (50% retención). Cultura rota (eNPS 4). 3 seniors key renunciaron. Velocidad caída. CEO trae VP Engineering externo. Tú vuelves a IC. Lección: escalar personas es más duro que escalar servidores.",
+      text: "12 hires (50% retención). Cultura rota (eNPS 4). 3 seniors key renunciaron. Velocidad caída. CEO trae VP Engineering externo. Tú vuelves a IC (Individual Contributor / Colaborador Individual). Lección: escalar personas es más duro que escalar servidores.",
     },
   ],
 };

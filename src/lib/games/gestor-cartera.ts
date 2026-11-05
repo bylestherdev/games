@@ -5,7 +5,7 @@ const ESCENARIO_CARTERA_B2B: Escenario = {
   titulo: "Gestor de Cartera B2B: 20 Cuentas, Recursos Limitados",
   etiqueta: "Gestión de Cuentas Estratégicas",
   contexto:
-    "Eres Account Manager Senior. Tienes 20 cuentas enterprise ($2M ARR total). Tu cuota: $500K nuevo ARR este trimestre. Tu equipo: 1 SDR, 1 SE (compartido), 0 budget para marketing. 3 cuentas en riesgo de churn ($400K), 5 con upsell potential ($300K cada una), 12 en mantenimiento. Tu manager quiere forecast exacto el viernes. Tienes 12 semanas. ¿A quién priorizas?",
+    "Eres Account Manager Senior. Tienes 20 cuentas enterprise ($2M ARR total). Tu cuota: $500K nuevo ARR este trimestre. Tu equipo: 1 SDR (Sales Development Representative / Representante de Desarrollo de Ventas), 1 SE (compartido), 0 budget para marketing. 3 cuentas en riesgo de churn ($400K), 5 con upsell potential ($300K cada una), 12 en mantenimiento. Tu manager quiere forecast exacto el viernes. Tienes 12 semanas. ¿A quién priorizas?",
   inicio: "semana-1",
   stats: [
     { key: "retencion", label: "Retención", icon: "🛡️", max: 100 },
@@ -25,7 +25,7 @@ const ESCENARIO_CARTERA_B2B: Escenario = {
       efectos: [{ stat: "retencion", delta: -15 }, { stat: "pipeline", delta: -10 }],
       opciones: [
         { label: "Ejecutivo sponsor visit: C-level visita in-situ + roadmap exclusivo + pricing creativo", hint: "Alto toque. Caro en tiempo. Señal de valor máximo.", effects: [{ stat: "retencion", delta: 20 }, { stat: "expansion", delta: 5 }, { stat: "pipeline", delta: -5 }], resultado: "C-level visita in-situ. Roadmap co-creado. Descuento 15% condicionado a 3 años. Renovación firmada + upsell módulo analytics. Retención +20, Expansión +5." },
-        { label: "Descuento 20% inmediato + SLA premium + health checks mensuales", hint: "Rápido. Protege revenue. Margen golpeado. Precedente peligroso.", effects: [{ stat: "retencion", delta: 12 }, { stat: "expansion", delta: -8 }, { stat: "pipeline", delta: 3 }], resultado: "Renuevan al instante. 20% descuento duele margen. Expansion -8 (precedente). Pipeline +3 por renovación segura." },
+        { label: "Descuento 20% inmediato + SLA (Service Level Agreement / Acuerdo de Nivel de Servicio) premium + health checks mensuales", hint: "Rápido. Protege revenue. Margen golpeado. Precedente peligroso.", effects: [{ stat: "retencion", delta: 12 }, { stat: "expansion", delta: -8 }, { stat: "pipeline", delta: 3 }], resultado: "Renuevan al instante. 20% descuento duele margen. Expansion -8 (precedente). Pipeline +3 por renovación segura." },
         { label: "Dejar ir: 'Entendemos. Transición ordenada 60 días. Puertas abiertas'", hint: "Cortar pérdidas. Libera recursos. Pierdes logo y revenue.", effects: [{ stat: "retencion", delta: -30 }, { stat: "expansion", delta: 0 }, { stat: "pipeline", delta: 10 }], resultado: "Churn confirmado. $180K perdidos. Equipo libera 15h/semana. Pipeline +10 por foco en otras cuentas. Reputación de 'fácil de dejar'." },
       ],
     },
@@ -35,7 +35,7 @@ const ESCENARIO_CARTERA_B2B: Escenario = {
       icono: "💎",
       prob: 0.25,
       unaVez: true,
-      texto: "Cuenta #7 ($45K ARR, 2 años) contrata nuevo VP Engineering. Auditan stack: 'Nos falta observabilidad, security, CI/CD'. Budget aprobado $200K. Tu SE está al 120%. Competición: 2 vendors ya en shortlist.",
+      texto: "Cuenta #7 ($45K ARR, 2 años) contrata nuevo VP (Vice President / Vicepresidente) Engineering. Auditan stack: 'Nos falta observabilidad, security, CI/CD'. Budget aprobado $200K. Tu SE está al 120%. Competición: 2 vendors ya en shortlist.",
       requiere: [{ stat: "expansion", max: 70 }],
       efectos: [{ stat: "expansion", delta: -5 }, { stat: "pipeline", delta: -5 }],
       opciones: [
@@ -50,13 +50,13 @@ const ESCENARIO_CARTERA_B2B: Escenario = {
       icono: "🎯",
       prob: 0.2,
       unaVez: true,
-      texto: "Tu cuenta #1 ($320K ARR, 4 años) recibe oferta: competidor ofrece migración gratis + 50% descuento año 1 + dedicated CSM. Tu champion: 'Es tentador. Necesito argumento para mi CFO mañana'.",
+      texto: "Tu cuenta #1 ($320K ARR, 4 años) recibe oferta: competidor ofrece migración gratis + 50% descuento año 1 + dedicated CSM. Tu champion: 'Es tentador. Necesito argumento para mi CFO (Chief Financial Officer / Director Financiero) mañana'.",
       requiere: [{ stat: "retencion", max: 75 }],
       efectos: [{ stat: "retencion", delta: -10 }, { stat: "pipeline", delta: -5 }],
       opciones: [
         { label: "Match precio + valor diferencial: 'Migramos gratis + 3 meses gratis + health checks semanales + roadmap co-creado'", hint: "Match precio. Defiendes con servicio. Margen cero año 1.", effects: [{ stat: "retencion", delta: 15 }, { stat: "expansion", delta: -10 }, { stat: "pipeline", delta: -5 }], resultado: "CFO convence: 'El riesgo de migrar no vale 50% descuento'. Renuevan 2 años. Retención +15. Expansion -10 (margen cero)." },
         { label: "No match: 'Nuestro valor es X. Si precio es único criterio, entendemos'", hint: "Línea roja. Defiendes valor. Riesgo churn real.", effects: [{ stat: "retencion", delta: -20 }, { stat: "expansion", delta: 10 }, { stat: "pipeline", delta: 8 }], resultado: "CFO elige competidor. Churn $320K. Pero mensaje claro al mercado. Pipeline +8 por foco en otras. Expansion +10 (margen intacto en otras)." },
-        { label: "Counter-offer creativo: 'Migración gratis + 3 meses gratis + co-marketing case study + pricing lock 3 años'", hint: "Creativo. Valor no-precio. Diferenciación real.", effects: [{ stat: "retencion", delta: 12 }, { stat: "expansion", delta: -3 }, { stat: "pipeline", delta: 3 }], resultado: "CFO: 'El case study vale más que 10% descuento'. Renuevan 3 años. Retención +12. Expansion -3. Pipeline +3." },
+        { label: "Counter-offer creativo: 'Migración gratis + 3 meses gratis + co-marketing case study + pricing lock 3 años'", hint: "Creativo. Valor no-precio. Diferenciación real.", effects: [{ stat: "retencion", delta: 12 }, { stat: "expansion", delta: -3 }, { stat: "pipeline", delta: 3 }], resultado: "CFO (Chief Financial Officer / Director Financiero): 'El case study vale más que 10% descuento'. Renuevan 3 años. Retención +12. Expansion -3. Pipeline +3." },
       ],
     },
   ],
@@ -108,7 +108,7 @@ const ESCENARIO_CARTERA_ENTERPRISE: Escenario = {
   titulo: "Cartera Enterprise: 5 Cuentas Whale, Ciclos Complejos",
   etiqueta: "Gestión Cuentas Estratégicas",
   contexto:
-    "Gestionas 5 cuentas enterprise ($5M ARR total, $1M c/u avg). Ciclos 12-18 meses. Comités 8-12 stakeholders. Competidores: 3 vendors entrenched. Tu rol: orchestrar recursos (SE, Legal, Finance, Product, Exec sponsors), navegar política, cerrar renewals + expansion. Meta: $1.5M nuevo ARR (renewals + expansion) en 4 trimestres. Tu VP Sales quiere forecast mensual exacto.",
+    "Gestionas 5 cuentas enterprise ($5M ARR total, $1M c/u avg). Ciclos 12-18 meses. Comités 8-12 stakeholders. Competidores: 3 vendors entrenched. Tu rol: orchestrar recursos (SE, Legal, Finance, Product, Exec sponsors), navegar política, cerrar renewals + expansion. Meta: $1.5M nuevo ARR (renewals + expansion) en 4 trimestres. Tu VP (Vice President / Vicepresidente) Sales quiere forecast mensual exacto.",
   inicio: "q1",
   stats: [
     { key: "forecast", label: "Forecast Accuracy", icon: "🎯", max: 100 },
@@ -123,12 +123,12 @@ const ESCENARIO_CARTERA_ENTERPRISE: Escenario = {
       icono: "👋",
       prob: 0.3,
       unaVez: true,
-      texto: "Tu champion en cuenta $1.2M (VP Engineering, 3 años) anuncia: 'Me voy a competitor'. Renewal en 60 días. Sin champion, sin acceso a decision makers. El nuevo VP es desconocido. Competidor ya contactando.",
+      texto: "Tu champion en cuenta $1.2M (VP Engineering, 3 años) anuncia: 'Me voy a competitor'. Renewal en 60 días. Sin champion, sin acceso a decision makers. El nuevo VP (Vice President / Vicepresidente) es desconocido. Competidor ya contactando.",
       requiere: [{ stat: "relaciones", max: 60 }],
       efectos: [{ stat: "relaciones", delta: -20 }, { stat: "forecast", delta: -15 }],
       opciones: [
-        { label: "Activación ejecutiva inmediata: tu VP + CEO visitan al nuevo VP en 48h", hint: "Alto nivel. Señal compromiso. Quema capital político.", effects: [{ stat: "relaciones", delta: 15 }, { stat: "forecast", delta: 5 }, { stat: "cerrados", delta: -5 }], resultado: "VP + CEO visitan. Nuevo VP impreso por atención. Renuevan 2 años + upsell. Relaciones +15. Forecast +5. Cerrados -5 (descuento concedido)." },
-        { label: "Activación red: board member / investor común hace intro cálida", hint: "Red. Señal poder. Depende de disponibilidad terceros.", effects: [{ stat: "relaciones", delta: 10 }, { stat: "forecast", delta: 8 }, { stat: "cerrados", delta: 0 }], resultado: "Board member hace intro. Nuevo VP responde en 2h. Reunión agendada. Relaciones +10, Forecast +8." },
+        { label: "Activación ejecutiva inmediata: tu VP (Vice President / Vicepresidente) + CEO (Chief Executive Officer / Director Ejecutivo) visitan al nuevo VP (Vice President / Vicepresidente) en 48h", hint: "Alto nivel. Señal compromiso. Quema capital político.", effects: [{ stat: "relaciones", delta: 15 }, { stat: "forecast", delta: 5 }, { stat: "cerrados", delta: -5 }], resultado: "VP + CEO (Chief Executive Officer / Director Ejecutivo) visitan. Nuevo VP (Vice President / Vicepresidente) impreso por atención. Renuevan 2 años + upsell. Relaciones +15. Forecast +5. Cerrados -5 (descuento concedido)." },
+        { label: "Activación red: board member / investor común hace intro cálida", hint: "Red. Señal poder. Depende de disponibilidad terceros.", effects: [{ stat: "relaciones", delta: 10 }, { stat: "forecast", delta: 8 }, { stat: "cerrados", delta: 0 }], resultado: "Board member hace intro. Nuevo VP (Vice President / Vicepresidente) responde en 2h. Reunión agendada. Relaciones +10, Forecast +8." },
         { label: "Hail Mary: oferta agresiva 20% descuento + co-innovation lab", hint: "Desesperado. Margen cero. Señala debilidad.", effects: [{ stat: "cerrados", delta: 10 }, { stat: "relaciones", delta: -10 }, { stat: "forecast", delta: -10 }], resultado: "Firman por precio. Relaciones -10 (commodity). Forecast -10 (impredecible). Cerrados +10 (dinero hoy)." },
       ],
     },
@@ -138,13 +138,13 @@ const ESCENARIO_CARTERA_ENTERPRISE: Escenario = {
       icono: "🏦",
       prob: 0.2,
       unaVez: true,
-      texto: "Tu cuenta $800K (3 años) anuncia: 'Nos adquirió MegaCorp'. Nuevo parent: revisión de todos los vendors en 90 días. Tu contrato: renewal en 4 meses. Nuevo CIO de MegaCorp trae su vendor preferido (tu competidor).",
+      texto: "Tu cuenta $800K (3 años) anuncia: 'Nos adquirió MegaCorp'. Nuevo parent: revisión de todos los vendors en 90 días. Tu contrato: renewal en 4 meses. Nuevo CIO (Chief Information Officer / Director de Información) de MegaCorp trae su vendor preferido (tu competidor).",
       requiere: [{ stat: "pipeline", max: 70 }],
       efectos: [{ stat: "pipeline", delta: -15 }, { stat: "forecast", delta: -10 }],
       opciones: [
-        { label: "Activación inmediata: tu CEO + VP Sales llaman a CEO MegaCorp", hint: "Top-down. Señal poder. Riesgo: 'vendors no deciden estrategia'", effects: [{ stat: "relaciones", delta: 10 }, { stat: "pipeline", delta: 5 }, { stat: "forecast", delta: 5 }], resultado: "CEO llama a CEO. Intro a nuevo CIO. Reunión en 1 semana. Pipeline +5 (nuevo stakeholder)." },
+        { label: "Activación inmediata: tu CEO (Chief Executive Officer / Director Ejecutivo) + VP (Vice President / Vicepresidente) Sales llaman a CEO (Chief Executive Officer / Director Ejecutivo) MegaCorp", hint: "Top-down. Señal poder. Riesgo: 'vendors no deciden estrategia'", effects: [{ stat: "relaciones", delta: 10 }, { stat: "pipeline", delta: 5 }, { stat: "forecast", delta: 5 }], resultado: "CEO llama a CEO (Chief Executive Officer / Director Ejecutivo). Intro a nuevo CIO (Chief Information Officer / Director de Información). Reunión en 1 semana. Pipeline +5 (nuevo stakeholder)." },
         { label: "Posicionamiento proactivo: 'Ya integramos con su stack actual. Migración zero-touch'", hint: "Técnico. Reduce fricción. Diferenciación real.", effects: [{ stat: "pipeline", delta: 8 }, { stat: "cerrados", delta: 5 }], resultado: "CIO impreso: 'Raro que vendor anticipe esto'. Demo técnica agendada. Pipeline +8, Cerrados +5." },
-        { label: "Defensivo: lock-in contractual 2 años + SLA enterprise + price lock", hint: "Contractual. Blinda revenue. Señala debilidad.", effects: [{ stat: "cerrados", delta: 10 }, { stat: "relaciones", delta: -10 }], resultado: "Firman 2 años. Relaciones -10 (commodity). Cerrados +10 (revenue blindado)." },
+        { label: "Defensivo: lock-in contractual 2 años + SLA (Service Level Agreement / Acuerdo de Nivel de Servicio) enterprise + price lock", hint: "Contractual. Blinda revenue. Señala debilidad.", effects: [{ stat: "cerrados", delta: 10 }, { stat: "relaciones", delta: -10 }], resultado: "Firman 2 años. Relaciones -10 (commodity). Cerrados +10 (revenue blindado)." },
       ],
     },
   ],
@@ -166,7 +166,7 @@ const ESCENARIO_CARTERA_ENTERPRISE: Escenario = {
       rank: "S",
       title: "Enterprise Rainmaker",
       conditions: [{ stat: "forecast", min: 80 }, { stat: "relaciones", min: 75 }, { stat: "cerrados", min: 70 }],
-      text: "$2.2M cerrados (150% meta). Forecast accuracy 95%. 5/5 renewals + $800K expansion. 3 nuevos logos enterprise sourced. VP Sales: 'Eres el rainmaker del año'. Te ofrecen Director of Strategic Accounts.",
+      text: "$2.2M cerrados (150% meta). Forecast accuracy 95%. 5/5 renewals + $800K expansion. 3 nuevos logos enterprise sourced. VP (Vice President / Vicepresidente) Sales: 'Eres el rainmaker del año'. Te ofrecen Director of Strategic Accounts.",
     },
     {
       id: "bueno",
@@ -186,7 +186,7 @@ const ESCENARIO_CARTERA_ENTERPRISE: Escenario = {
       id: "fracaso",
       rank: "D",
       title: "Perdida de Cuentas Clave",
-      text: "2 cuentas churn ($600K perdidos). Pipeline seco. VP Sales: 'Necesito hunter, no farmer'. Te mueven a mid-market. Lección: enterprise no se gestiona, se orquesta.",
+      text: "2 cuentas churn ($600K perdidos). Pipeline seco. VP (Vice President / Vicepresidente) Sales: 'Necesito hunter, no farmer'. Te mueven a mid-market. Lección: enterprise no se gestiona, se orquesta.",
     },
   ],
 };
@@ -200,7 +200,7 @@ export const gestorCartera: GameData = {
   difficulty: 3,
   minutes: 15,
   description:
-    "Simulador de Account Management estratégico. Gestionas cartera mixta: retención, expansión, pipeline. Recursos finitos (SDR, SE, budget). Cada decisión: ¿a quién atiendes hoy? ¿A quién dejas enfriar? Trade-offs reales: retención vs expansión vs pipeline.",
+    "Simulador de Account Management estratégico. Gestionas cartera mixta: retención, expansión, pipeline. Recursos finitos (SDR (Sales Development Representative / Representante de Desarrollo de Ventas), SE, budget). Cada decisión: ¿a quién atiendes hoy? ¿A quién dejas enfriar? Trade-offs reales: retención vs expansión vs pipeline.",
   accent: "#8B5CF6",
   imagen: "/img/gestor-cartera.jpg",
   escenarioInicial: "cartera-b2b",
