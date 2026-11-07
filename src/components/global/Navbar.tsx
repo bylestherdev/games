@@ -14,8 +14,8 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="fixed top-0 left-0 w-full md:top-4 md:left-1/2 md:-translate-x-1/2 md:max-w-[1100px] isolate z-[100] px-0 md:px-4">
-      <div className="w-full px-5 sm:px-6 bg-[rgba(26,20,17,0.85)] backdrop-blur-[14px] border-0 md:border md:border-[var(--border)] rounded-none md:rounded-[2rem] h-16 md:h-16 flex items-center justify-between shadow-xl">
+    <header className="fixed top-0 left-0 w-full md:top-4 md:left-1/2 md:-translate-x-1/2 md:max-w-[1100px] isolate z-[100] px-0 md:px-4 bg-[var(--color-canvas)] transition-colors">
+      <div className="w-full px-5 sm:px-6 h-16 md:h-16 flex items-center justify-between border-b border-[var(--border-subtle)] bg-[var(--color-canvas)] backdrop-blur-[14px] md:backdrop-blur-none">
         <Link
           href="/"
           onClick={() => setOpen(false)}
@@ -63,8 +63,8 @@ export default function Navbar() {
 
       {/* Menú móvil */}
       <div
-        className={`fixed inset-0 bg-[var(--color-canvas)] z-[90] md:hidden flex flex-col px-6 py-6 transition-all duration-300 ${
-          open ? "translate-x-0 opacity-100" : "translate-x-full opacity-0 pointer-events-none"
+        className={`fixed inset-0 z-[90] md:hidden bg-[var(--color-canvas)] overflow-y-auto transition-all duration-300 ${
+          open ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
         <div className="flex items-center justify-between h-16">
@@ -77,7 +77,7 @@ export default function Navbar() {
             </svg>
           </button>
         </div>
-        <nav className="flex-1 flex flex-col justify-center gap-2">
+        <nav className="flex-1 flex flex-col justify-center gap-2 px-6 py-6">
           {links.map((l) => (
             <Link
               key={l.href}
