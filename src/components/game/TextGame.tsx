@@ -24,13 +24,13 @@ import {
 
 type Phase = "intro" | "scene" | "event" | "feedback" | "ending";
 
-function initStats(stats: Stat[]): Record<string, number> {
+export function initStats(stats: Stat[]): Record<string, number> {
   const s: Record<string, number> = {};
   for (const st of stats) s[st.key] = st.initial ?? Math.round(st.max * 0.5);
   return s;
 }
 
-function resolveEnding(endings: Ending[], stats: Record<string, number>): Ending {
+export function resolveEnding(endings: Ending[], stats: Record<string, number>): Ending {
   for (const e of endings) {
     if (!e.conditions || e.conditions.length === 0) return e;
     const ok = e.conditions.every((c) => {
@@ -44,7 +44,7 @@ function resolveEnding(endings: Ending[], stats: Record<string, number>): Ending
   return endings[endings.length - 1];
 }
 
-function formatValue(st: Pick<Stat, "format">, value: number): string {
+export function formatValue(st: Pick<Stat, "format">, value: number): string {
   const rounded = Math.round(value);
   return st.format === "money" ? `$${rounded.toLocaleString("es-CL")}` : `${rounded}`;
 }
@@ -729,39 +729,26 @@ export default function TextGame({ game }: { game: GameData }) {
   return (
     <div className="w-full max-w-3xl mx-auto px-4 pb-24 pt-28 md:pt-32">
       {/* Terminal shell */}
-      <div className="rounded-2xl border border-white/10 bg-[#0E0F1A] shadow-[0_30px_80px_-20px_rgba(217,70,239,0.25)] overflow-hidden">
+      <div className="main">
         {/* Header */}
-        <div className="flex items-center gap-3 px-4 sm:px-5 py-3.5 border-b border-white/10 bg-[#13141E]">
-          <span className="w-3 h-3 rounded-full bg-[#FF5F57] shrink-0" />
-          <span className="w-3 h-3 rounded-full bg-[#FEBC2E] shrink-0" />
-          <span className="w-3 h-3 rounded-full bg-[#28C840] shrink-0" />
+        <div className="game-header">
+          <span className="w-3 h-3 rounded-full #c44569 shrink-0" />
+          <span className="w-3 h-3 rounded-full #febc2e shrink-0" />
+          <span className="w-3 h-3 rounded-full #28c840 shrink-0" />
           <span className="ml-1 sm:ml-3 min-w-0 flex-1 truncate font-mono text-[10px] sm:text-xs text-white/50 tracking-widest uppercase">
             {game.icon} {game.slug} [{escenario.etiqueta}] — bylesther.dev/games
           </span>
-          <span className="hidden sm:flex items-center gap-1.5 text-[10px] font-mono text-emerald-400/90 shrink-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            EN LÍNEA
+          <span className="hidden sm:flex items-center gap-1.5 text-[10px] font-mono #28c840/90 shrink-0">
+            <span className="w-1.5 h-1.5 rounded-full #28c840 animate-pulse" />
+            <span className="phase-indicator">EN LÍNEA</span>
           </span>
         </div>
 
         {/* Round Progress Indicator */}
         {rondaProgreso && (
-          <div className="px-4 sm:px-5 py-3 border-b border-white/10 bg-[#0B0C15]">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-[10px] text-white/40 uppercase tracking-wider">Ronda</span>
-                <span className="font-mono text-lg font-bold text-white">{rondaProgreso} / {totalRondas}</span>
-              </div>
-              <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-[#C026D3] to-[#D946EF] rounded-full transition-all duration-500 ease-out"
-                  style={{ width: `${(rondaProgreso / totalRondas) * 100}%` }}
-                />
-              </div>
-              <span className="font-mono text-[10px] text-white/40 uppercase tracking-wider shrink-0">
-                {rondaProgreso === totalRondas ? "FINAL" : `Ronda ${rondaProgreso}`}
-              </span>
-            </div>
+          <div className="progress-bar">
+            <div className="progress-fill" style={{ width: `${(rondaProgreso / totalRondas) * 100}%` }} />
+            <span className="sr-only">{rondaProgreso === totalRondas ? "Final" : `Ronda ${rondaProgreso}`}</span>
           </div>
         )}
 
@@ -779,16 +766,16 @@ export default function TextGame({ game }: { game: GameData }) {
                     <span className="truncate group-hover:text-white transition-colors" title={st.label}>
                       <span className="mr-1">{st.icon}</span>{st.label}
                     </span>
-                    <span className={`shrink-0 font-mono ${isLow ? 'text-red-400' : isHigh ? 'text-emerald-400' : 'text-white/80'}`}>
+                    <span className={`shrink-0 font-mono ${isLow ? '#c44569' : isHigh ? '#28c840' : 'text-white/80'}`}>
                       {formatValue(st, val)}
                     </span>
                   </div>
-                  <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+                  <div className="h-2 rounded-full var(--border-subtle) overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all duration-700 ease-out ${
-                        isLow ? 'bg-gradient-to-r from-red-500 to-red-400' :
-                        isHigh ? 'bg-gradient-to-r from-emerald-500 to-emerald-400' :
-                        'bg-gradient-to-r from-[#C026D3] to-[#D946EF]'
+                        isLow ? 'bg-gradient-to-r #c44569 to-red-400' :
+                        isHigh ? 'bg-gradient-to-r #28c840 #28c840' :
+                        'bg-gradient-to-r var(--color-kinetic-start) var(--color-kinetic-end)'
                       }`}
                       style={{
                         width: `${pct}%`,
@@ -803,18 +790,18 @@ export default function TextGame({ game }: { game: GameData }) {
         )}
 
         {/* Body */}
-        <div className="px-4 sm:px-6 py-7 sm:py-8 md:px-10 md:py-10 min-h-[380px]">
+        <div className="game-body">
           {/* INTRO */}
           {phase === "intro" && (
-            <div className="text-center py-10 animate-[fadeUp_.6s_ease-out]">
+            <div className="intro hero-text">
               {game.imagen && (
-                <div className="mb-6 rounded-xl overflow-hidden border border-white/10 max-h-48 shadow-lg">
-                  <img src={game.imagen} alt={game.title} className="w-full h-full object-cover opacity-90" />
-                </div>
+                <figure className="game-image">
+                  <img src={game.imagen} alt={game.title} className="card-img object-cover w-full h-full" />
+                  <figcaption className="card-img-credit">{game.title}</figcaption>
+                </figure>
               )}
-              <div className="text-6xl mb-6">{game.icon}</div>
-              <h1 className="font-serif text-4xl md:text-5xl text-white mb-3">{game.title}</h1>
-              <p className="text-[var(--color-text-accent)] font-mono text-sm mb-6 tracking-wide">{game.tagline}</p>
+              <h1 className="display-3 mb-4">{game.title}</h1>
+              <p className="lead mb-6">{game.tagline}</p>
               
               {escenarios.length > 1 && (
                 <div className="mb-8 max-w-md mx-auto">
@@ -828,7 +815,7 @@ export default function TextGame({ game }: { game: GameData }) {
                           onClick={() => cambiarEscenario(esc.id)}
                           className={`p-3 rounded-xl border text-left transition-all ${
                             esc.id === escenarioId
-                              ? "bg-[rgba(217,70,239,0.15)] border-[#D946EF] text-white"
+                              ? "bg-[rgba(217,70,239,0.15)] border-[var(--color-kinetic-end)] text-white"
                               : "bg-white/[0.02] border-white/10 text-white/70 hover:border-white/30"
                           }`}
                         >
@@ -846,17 +833,17 @@ export default function TextGame({ game }: { game: GameData }) {
                 </div>
               )}
 
-              <p className="text-[var(--color-text-secondary)] leading-relaxed max-w-xl mx-auto mb-8">
+              <p className="lead mb-8">
                 {escenario.contexto}
               </p>
 
-              <div className="flex flex-wrap gap-3 justify-center">
+              <div className="mt-8 flex flex-wrap gap-3 justify-center">
                 {saved && saved.sceneId ? (
                   <>
-                    <button onClick={continueSaved} className="btn-primary text-base px-8 py-3.5">
+                    <button onClick={continueSaved} className="btn-primary">
                       ▶ Continuar partida guardada
                     </button>
-                    <button onClick={start} className="btn-tertiary text-base px-8 py-3.5">
+                    <button onClick={start} className="btn-gold">
                       Empezar de cero
                     </button>
                   </>
@@ -886,7 +873,7 @@ export default function TextGame({ game }: { game: GameData }) {
                 <span className="font-mono text-[11px] tracking-widest text-[var(--color-accent-kinetic)] uppercase">
                   {scene.chapter}
                 </span>
-                <span className="h-px flex-1 bg-white/10" />
+                <span className="h-px flex-1 var(--border-subtle)" />
                 <span className="font-mono text-[10px] text-white/30">{escenario.etiqueta}</span>
               </div>
               <h2 className="font-serif text-3xl md:text-4xl text-white mb-6">{scene.title}</h2>
@@ -1007,7 +994,7 @@ export default function TextGame({ game }: { game: GameData }) {
                 <span className="font-mono text-[11px] tracking-widest text-[var(--color-accent-kinetic)] uppercase">
                   {" > "}Decisión {String(feedback.choiceIdx + 1).padStart(2, "0")} registrada
                 </span>
-                <span className="h-px flex-1 bg-white/10" />
+                <span className="h-px flex-1 var(--border-subtle)" />
                 {rondaProgreso && (
                   <span className="font-mono text-[10px] text-white/30 shrink-0">
                     Ronda {rondaProgreso} / {totalRondas}
@@ -1023,7 +1010,7 @@ export default function TextGame({ game }: { game: GameData }) {
                     <span key={i} className={`delta-chip ${d.delta >= 0 ? "delta-up" : "delta-down"} flex items-center gap-1.5`}>
                       <span className="text-lg">{d.icon}</span>
                       <span className="font-medium">{d.label}</span>
-                      <span className={`font-bold ${d.delta >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                      <span className={`font-bold ${d.delta >= 0 ? '#28c840' : '#c44569'}`}>
                         {d.delta >= 0 ? "+" : "−"}{d.money ? `$${Math.abs(d.delta).toLocaleString("es-CL")}` : Math.abs(d.delta)}
                       </span>
                     </span>
@@ -1056,7 +1043,7 @@ export default function TextGame({ game }: { game: GameData }) {
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "16px" }}>
                     <span style={{ fontSize: "20px", fontWeight: "750", letterSpacing: "-0.02em" }}>
-                      ByLesther<span style={{ color: "#D946EF" }}>Games</span>
+                      ByLesther<span style={{ color: "var(--color-kinetic-end)" }}>Games</span>
                     </span>
                     <span style={{ fontFamily: "monospace", fontSize: "12px", color: "#C084FC", textTransform: "uppercase", letterSpacing: "0.1em" }}>
                       {game.title} · {escenario.etiqueta}
@@ -1064,7 +1051,7 @@ export default function TextGame({ game }: { game: GameData }) {
                   </div>
 
                   <div style={{ display: "flex", alignItems: "center", gap: "24px", marginBottom: "24px" }}>
-                    <div style={{ width: "90px", height: "90px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "42px", fontWeight: "bold", background: "linear-gradient(135deg, #6B21A8 0%, #D946EF 100%)", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.2)" }}>
+                    <div style={{ width: "90px", height: "90px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "42px", fontWeight: "bold", background: "linear-gradient(135deg, #6B21A8 0%, var(--color-kinetic-end) 100%)", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.2)" }}>
                       {ending.rank}
                     </div>
                     <div>
@@ -1103,14 +1090,14 @@ export default function TextGame({ game }: { game: GameData }) {
                     <div style={{ fontSize: "15px", fontWeight: "600", marginBottom: "4px" }}>
                       🎮 ¿Puedes conseguir un rank mejor que {ending.rank}?
                     </div>
-                    <div style={{ fontFamily: "monospace", fontSize: "12px", color: "#D946EF", letterSpacing: "0.05em" }}>
+                    <div style={{ fontFamily: "monospace", fontSize: "12px", color: "var(--color-kinetic-end)", letterSpacing: "0.05em" }}>
                       Juega gratis en games.bylesther.dev/games/{game.slug}
                     </div>
                   </div>
 
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "20px", borderTop: "1px solid rgba(255,255,255,0.1)", fontFamily: "monospace", fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>
                     <span>Decisiones tomadas: {log.length}</span>
-                    <span style={{ color: "#D946EF" }}>games.bylesther.dev</span>
+                    <span style={{ color: "var(--color-kinetic-end)" }}>games.bylesther.dev</span>
                   </div>
                 </div>
               </div>
@@ -1234,7 +1221,7 @@ export default function TextGame({ game }: { game: GameData }) {
                   </button>
                 </div>
                 {compartidoMsg && (
-                  <p className="mt-2 font-mono text-xs text-emerald-400 animate-pulse">{compartidoMsg}</p>
+                  <p className="mt-2 font-mono text-xs #28c840 animate-pulse">{compartidoMsg}</p>
                 )}
               </div>
 

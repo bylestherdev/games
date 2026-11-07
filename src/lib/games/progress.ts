@@ -27,7 +27,7 @@ const CHANGE_EVENT = "games:progress-change";
 export const progressKey = (slug: string, scope?: string) =>
   scope ? `${PREFIX}${slug}:${scope}` : `${PREFIX}${slug}`;
 
-function parse(raw: string | null): SavedProgress | null {
+export function parse(raw: string | null): SavedProgress | null {
   if (!raw) return null;
   try {
     const data = JSON.parse(raw) as SavedProgress;

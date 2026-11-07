@@ -1,517 +1,335 @@
-@import "tailwindcss";
-
-@theme {
-  --font-sans: var(--sans);
-  --font-serif: var(--serif);
-}
-
+/* =========================================
+   RAÍZ: Sistema Visual Bylesther - Enfoque Negociación
+   ========================================= */
 :root {
-  /* BASE: GAMBITO - NEGRO CARBÓN Y GRIS ACERO */
-  --color-canvas:           #09090E;
-  --color-surface:          #13141E;
-  --color-surface-hover:    #1A1B28;
-  --color-surface-elevated: #1A1B28;
-  --color-border:           rgba(255, 255, 255, 0.08);
-  
-  /* TEXTO */
-  --color-text-primary:     #FFFFFF;
-  --color-text-secondary:   #94A3B8;
-  --color-text-tertiary:    #94A3B8;
-  
-  /* ACENTOS Y COLORES */
-  --color-text-accent:      #C084FC;
-  --color-kinetic-start:    #C026D3;
-  --color-kinetic-end:      #D946EF;
-  --color-leather:          #A66E38;
-  --color-whatsapp:         #25D366;
-  
-  /* COMPATIBILIDAD DE VARIABLES */
-  --color-border-neutral:   var(--color-border);
-  --color-border-rest:      var(--color-border);
-  --color-border-active:    rgba(255, 255, 255, 0.12);
-  --color-accent-kinetic:   #D946EF;
-  --color-accent-glow:      rgba(217, 70, 239, 0.35);
-  --color-accent-lavender:  #C084FC;
-  --color-accent-leather:   #A66E38;
-  
-  /* DEGRADADOS */
-  --gradient-kinetic:       linear-gradient(135deg, #C026D3 0%, #D946EF 100%);
-  --gradient-whatsapp:      linear-gradient(135deg, #059669 0%, #25D366 100%);
-  
-  /* TIPOGRAFÍA */
-  --sans:      'Inter', system-ui, sans-serif;
-  --serif:     'DM Serif Display', Georgia, serif;
-}
+  /* --- Espacio y Ritmo Visual --- */
+  --section-gap: 6rem;
+  --subsection-gap: 3rem;
+  --card-padding: 1.5rem;
+  --radius: 0.5rem;
 
-html { 
-  scroll-behavior: smooth;
-  width: 100%;
-  overflow-x: hidden;
-}
+  /* --- Tipografía --- */
+  --font-display: "Cormorant Garamond", "Playfair Display", "Georgia", serif;
+  --font-body: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "DM Mono", "Fira Code", "Consolas", monospace;
 
-body {
-  background: var(--color-canvas);
-  color: var(--color-text-primary);
-  font-family: var(--sans);
-  font-size: 16px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  font-variant-numeric: tabular-nums;
-  width: 100%;
-  overflow-x: hidden;
+  --h1-size: 3rem;
+  --h2-size: 2rem;
+  --h3-size: 1.25rem;
+  --body-size: 1rem;
+  --caption-size: 0.8rem;
+
+  --leading-tight: 1.1;
+  --normal-leading: 1.5;
+  --relaxed-leading: 1.7;
+
+  /* --- Paleta de Negociación (con propósito) --- */
+  --bg-primary: #0d0d0d;
+  --bg-secondary: #1a1a1f;
+  --bg-card: #212129;
+  --bg-warm: #3d271f;
+
+  /* Colores con propósito de negociación */
+  --negotiation-warm: #c44569;      /* Rubí - Ofrecer / Apertura */
+  --negotiation-cool: #2a6d9c;      /* Zafiro - Contraoferta / Estrategia */
+  --negotiation-gold: #d4a853;      /* Oro - Cierre / Ganancia */
+  --negotiation-neutral: #50565f;   /* Gris Pizarra - Neutral / Cerrar */
+
+  --text-primary: #f5f0e6;
+  --text-secondary: #a69581;
+  --text-mute: #6b5b51;
+  --border-subtle: #3d3539;
+
+  /* Gradientes temáticos (no kinetic genérico) */
+  --grad-warm-cool: linear-gradient(135deg, #c44569 0%, #2a6d9c 100%);
+  --grad-warm-gold: linear-gradient(135deg, #c44569 0%, #d4a853 50%, #2a6d9c 100%);
+  --grad-card: radial-gradient(at 30% 20%, #2d2a3a, #1a1a1f);
+  --grad-accent: linear-gradient(180deg, #e8d5b6 0%, #c44569 100%);
+
+  /* Sombras sutiles, no planas */
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  /* Animación deliberada */
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* =========================================
-   SCROLLBAR GLOBAL
+   BASE HTML / BODY
    ========================================= */
-::-webkit-scrollbar {
-  width: 8px;
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
 }
-::-webkit-scrollbar-track {
-  background: var(--color-canvas); 
+
+body {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: var(--body-size);
+  line-height: var(--normal-leading);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-feature-settings: "rlig" on, "calt" on;
+  font-feature-settings: "rlig" on, "calt" on;
 }
-::-webkit-scrollbar-thumb {
-  background: var(--color-border); 
-  border-radius: 4px;
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-accent); 
-}
+
+/* =========================================
+   SCROLLBAR
+   ========================================= */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #0d0d0d; }
+::-webkit-scrollbar-thumb { background: #3d3539; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #c44569; }
 
 /* =========================================
    SELECCIÓN DE TEXTO
    ========================================= */
-::selection {
-  background-color: rgba(192, 132, 252, 0.20);
-  color: var(--color-text-primary);
+::selection { 
+  background: rgba(196, 69, 105, 0.25); 
+  color: #f5f0e6; 
 }
 
 /* =========================================
-   CONTENEDORES PRINCIPALES DE PÁGINAS
+   FOCUS VISIBLE (ACCESIBILIDAD)
    ========================================= */
-.cont-servicios,
-.cont-contacto,
-.cont-privacidad,
-.cont-terminos,
-.cont-calculadora,
-.cont-demo,
-.cont-construccion {
-  width: 100%;
-  max-width: 1100px;
-  margin-left: auto !important;
-  margin-right: auto !important;
-  
-  padding-top: 8rem;
-  padding-bottom: 4rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  
+*:focus-visible {
+  outline: 2px solid var(--negotiation-gold);
+  outline-offset: 4px;
+  border-radius: var(--radius, 0.5rem);
+}
+
+/* =========================================
+   TYPOGRAPHY SCALE INTENCIONAL
+   ========================================= */
+h1 { font-family: var(--font-display); font-size: var(--h1-size); line-height: var(--leading-tight); font-weight: 700; }
+h2 { font-family: var(--font-display); font-size: var(--h2-size); line-height: var(--leading-tight); font-weight: 600; }
+h3 { font-family: var(--font-display); font-size: var(--h3-size); line-height: 1.3; font-weight: 600; }
+p { line-height: var(--relaxed-leading); display: block; }
+
+.lead {
+  font-size: 1.25rem;
+  font-family: var(--font-display);
+  color: var(--text-secondary);
+  display: block;
+  max-width: 60ch;
+}
+
+/* Monospace con ligaduras para código */
+.code { font-family: var(--font-mono); font-feature-settings: "liga" on; }
+
+/* =========================================
+   ESTRUCTURA: MENOS CARDS, MÁS SUSTANCIA
+   ========================================= */
+/* Removed excessive card wrappers - using semantic structure instead */
+
+/* Card base - solo donde realmente necesario */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: var(--card-padding);
+  box-shadow: var(--shadow-card);
+  transition: var(--transition-base);
   display: flex;
   flex-direction: column;
 }
 
-@media (min-width: 768px) {
-  .cont-servicios,
-  .cont-contacto,
-  .cont-privacidad,
-  .cont-terminos,
-  .cont-calculadora,
-  .cont-demo,
-  .cont-construccion {
-    padding-top: 10rem;
-    padding-bottom: 6rem;
-    padding-left: 3rem;
-    padding-right: 3rem;
-  }
+.card:hover {
+  border-color: var(--negotiation-warm);
+  transform: translateY(-2px);
 }
 
-.cont-contacto { max-width: 900px; }
-.cont-privacidad, .cont-terminos { max-width: 800px; }
-.cont-construccion { max-width: 700px; }
+.card:active {
+  transform: translateY(1px);
+}
+
+/* Hero section - textos alineados a la izquierda */
+.hero-text {
+  text-align: left !important;
+}
+
+.hero-text h1 { text-align: left; }
+.hero-text p { text-align: left; }
+.hero-text .lead { text-align: left; }
 
 /* =========================================
-   SISTEMA HOMOLOGADO DE BOTONES
+   BOTONES CON SIGNIFICADO NEGOCIACIÓN
    ========================================= */
-
-/* Estructura Base compartida: misma altura, radio y transición */
-.btn-primary,
-.btn-action,
-.btn-secondary,
-.btn-whatsapp,
-.btn-tertiary {
+.btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
   font-weight: 600;
   font-size: 0.875rem;
-  text-align: center;
-  border-radius: 9999px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  padding: 0.7rem 1.6rem;
-  line-height: 1.4;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-warm);
+  color: var(--text-primary);
   cursor: pointer;
-  white-space: nowrap;
+  transition: var(--transition-base);
+  user-select: none;
+  font-family: inherit;
 }
 
-@media (min-width: 768px) {
-  .btn-primary,
-  .btn-action,
-  .btn-secondary,
-  .btn-whatsapp,
-  .btn-tertiary {
-    padding: 0.75rem 2rem;
-    font-size: 0.9rem;
-  }
+.btn:hover {
+  background: #5a3d2f;
+  border-color: #7a4a3a;
 }
 
-/* Botón Principal — Píldora con degradado magenta y volumen */
-.btn-primary,
-.btn-action {
-  background: linear-gradient(135deg, #6B21A8 0%, #D946EF 100%);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-top: 1px solid rgba(255, 255, 255, 0.25);
-  color: #FFFFFF;
-  box-shadow: 0 8px 24px rgba(217, 70, 239, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-  font-weight: 700;
+.btn:focus-visible {
+  outline: 2px solid var(--negotiation-gold);
+  outline-offset: 4px;
 }
 
-.btn-primary:hover,
-.btn-action:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(217, 70, 239, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.30);
+.btn:active {
+  background: #4a3228;
 }
 
-.btn-primary:active,
-.btn-action:active {
-  transform: translateY(0px);
+/* Variantes temáticas de negociación */
+.btn-primary {
+  background: var(--negotiation-warm);
+  border-color: var(--negotiation-warm);
+  color: #fff;
 }
 
-/* Botón WhatsApp — Píldora con degradado verde esmeralda */
-.btn-secondary,
-.btn-whatsapp {
-  background: linear-gradient(135deg, #059669 0%, #25D366 100%);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-top: 1px solid rgba(255, 255, 255, 0.25);
-  color: #FFFFFF;
-  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-  font-weight: 700;
+.btn-primary:hover {
+  background: #a6355a;
 }
 
-.btn-secondary:hover,
-.btn-whatsapp:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(37, 211, 102, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.30);
+.btn-secondary {
+  background: var(--negotiation-cool);
+  border-color: var(--negotiation-cool);
+  color: #fff;
 }
 
-.btn-secondary:active,
-.btn-whatsapp:active {
-  transform: translateY(0px);
+.btn-secondary:hover {
+  background: #235a88;
 }
 
-/* Botón Terciario (Alternativo) */
-.btn-tertiary {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-primary);
+.btn-gold {
+  background: var(--negotiation-gold);
+  border-color: var(--negotiation-gold);
+  color: #1a1410;
 }
 
-.btn-tertiary:hover {
-  background-color: var(--color-surface-hover);
-  border-color: var(--color-border-active);
-  transform: translateY(-2px);
-  box-shadow: 0 0 20px rgba(217, 70, 239, 0.15);
-}
-
-.btn-tertiary:active {
-  transform: translateY(0px);
+.btn-gold:hover {
+  background: #b89a3d;
 }
 
 /* =========================================
-   CARRUSEL DE TECNOLOGÍAS
+   COMPONENTES DEL JUEGO - DISEÑO DIRECTO
    ========================================= */
-@keyframes marquee {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
+.game-section {
+  padding: var(--section-gap) 0;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
-.marquee-container {
-  display: flex;
+.game-section .title {
+  font-family: var(--font-display);
+  font-size: var(--h1-size);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--subsection-gap);
+}
+
+.game-section .subtitle {
+  font-size: var(--caption-size);
+  color: var(--text-mute);
+  margin-bottom: var(--subsection-gap);
+}
+
+/* Progress bar con paleta negociación */
+.progress-bar {
   width: 100%;
+  height: 0.5rem;
+  background: var(--bg-secondary);
+  border-radius: 0.25rem;
   overflow: hidden;
-  position: relative;
-  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  margin-top: var(--subsection-gap);
 }
 
-.marquee-track {
-  display: flex;
-  gap: 2rem;
-  min-width: max-content;
-  animation: marquee var(--animation-duration, 25s) linear infinite;
+.progress-fill {
+  height: 100%;
+  background: var(--grad-warm-cool);
+  border-radius: 0.25rem;
+  transition: width 300ms ease;
 }
 
-.marquee-track:hover,
-.marquee-track:active {
-  animation-play-state: paused;
+/* Indicador de fase con propósito */
+.phase-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--grad-warm-cool);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 9999px;
+  margin-bottom: 1rem;
 }
 
-/* Reducir animación en modo reduced-motion */
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track {
-    animation: none;
-  }
-}
-
-/* =========================================
-   SISTEMA HOMOLOGADO DE CARDS Y CONTENEDORES
-   ========================================= */
-
-/* Card Base */
-.card {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@media (min-width: 768px) {
-  .card {
-    padding: 2rem;
-  }
-}
-
-/* Card Interactiva (Hover Effect - Efecto Cinético) */
-.card-interactive {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@media (min-width: 768px) {
-  .card-interactive {
-    padding: 2rem;
-  }
-}
-
-.card-interactive:hover {
-  background-color: var(--color-surface-hover);
-  border-color: var(--color-border-active);
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px -10px var(--color-accent-glow);
-}
-
-/* Card Destacada */
-.card-featured {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@media (min-width: 768px) {
-  .card-featured {
-    padding: 2rem;
-  }
-}
-
-.card-featured:hover {
-  border-color: var(--color-border-active);
-  transform: translateY(-3px);
-  box-shadow: 0 10px 35px var(--color-accent-glow);
-}
-
-/* =========================================
-   MOTOR DE JUEGO — TEXT RPG
-   ========================================= */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.caret {
-  display: inline-block;
-  width: 0.55em;
-  height: 1.1em;
-  margin-left: 2px;
-  background: var(--color-accent-kinetic);
-  vertical-align: text-bottom;
-  animation: blink 0.8s steps(1) infinite;
-}
-
-@keyframes blink {
-  50% { opacity: 0; }
-}
-
+/* Choice components con estilo directo */
 .choice {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: var(--spacing-sm, 0.75rem) var(--spacing-md, 1.25rem);
+  cursor: pointer;
+  transition: var(--transition-base);
   display: flex;
   align-items: flex-start;
-  gap: 0.9rem;
-  width: 100%;
-  padding: 1rem 1.25rem;
-  text-align: left;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--color-border);
-  border-left: 2px solid var(--color-border);
-  border-radius: 0.75rem;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  gap: 0.5rem;
 }
 
 .choice:hover {
-  background: rgba(217, 70, 239, 0.06);
-  border-color: rgba(217, 70, 239, 0.4);
-  border-left-color: var(--color-accent-kinetic);
-  transform: translateX(6px);
+  border-color: var(--negotiation-warm);
+  background: #352d34;
 }
 
 .choice:focus-visible {
-  outline: 2px solid var(--color-accent-kinetic);
-  outline-offset: 2px;
-  background: rgba(217, 70, 239, 0.08);
-  border-color: rgba(217, 70, 239, 0.5);
-}
-
-/* Teclas de atajo */
-.kbd {
-  display: inline-block;
-  font-family: ui-monospace, monospace;
-  font-size: 0.65rem;
-  line-height: 1.4;
-  padding: 0.05rem 0.35rem;
-  border-radius: 0.3rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.55);
-}
-
-/* Foco visible para navegación por teclado */
-button:focus-visible,
-a:focus-visible,
-summary:focus-visible {
-  outline: 2px solid var(--color-accent-kinetic);
+  outline: 2px solid var(--negotiation-gold);
   outline-offset: 3px;
-  border-radius: 0.5rem;
+  background: #3d3540;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .caret,
-  .delta-chip,
-  .rank-badge {
-    animation: none;
-  }
-
-  .choice,
-  .game-card,
-  .btn-primary,
-  .btn-tertiary {
-    transition: none;
-  }
-}
-
-.choice-idx {
-  font-family: ui-monospace, monospace;
-  font-size: 0.8rem;
-  color: var(--color-accent-lavender);
-  margin-top: 0.15rem;
-  flex-shrink: 0;
-}
-
-.choice-arrow {
-  margin-left: auto;
-  color: rgba(255, 255, 255, 0.15);
-  transition: all 0.25s;
-  flex-shrink: 0;
-  margin-top: 0.1rem;
-}
-
-.choice:hover .choice-arrow {
-  color: var(--color-accent-kinetic);
-  transform: translateX(4px);
-}
-
-.delta-chip {
-  font-family: ui-monospace, monospace;
-  font-size: 0.72rem;
-  padding: 0.35rem 0.8rem;
-  border-radius: 999px;
-  animation: fadeUp 0.4s ease-out both;
-  white-space: nowrap;
-}
-
-.delta-chip.delta-up {
-  background: rgba(40, 200, 112, 0.1);
-  border: 1px solid rgba(40, 200, 112, 0.35);
-  color: #4ADE80;
-}
-
-.delta-chip.delta-down {
-  background: rgba(255, 95, 87, 0.1);
-  border: 1px solid rgba(255, 95, 87, 0.35);
-  color: #FF7B73;
-}
-
-.delta-chip:nth-child(2) { animation-delay: 0.12s; }
-.delta-chip:nth-child(3) { animation-delay: 0.24s; }
-
-.rank-badge {
-  width: 108px;
-  height: 108px;
+/* =========================================
+   UTILIDADES DE ESPACIO Y CONTENEDOR
+   ========================================= */
+.container {
+  width: 100%;
+  max-width: 720px;
   margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--serif);
-  font-size: 3.4rem;
-  color: #fff;
-  border-radius: 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: linear-gradient(135deg, #6B21A8 0%, #D946EF 100%);
-  animation: fadeUp 0.5s ease-out both;
+  padding: 0 var(--section-gap);
 }
 
-/* Card de juego en el home */
-.game-card {
-  position: relative;
-  display: block;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 1.25rem;
-  padding: 1.75rem;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-}
+.mb-xs { margin-bottom: 0.25rem; }
+.mb-sm { margin-bottom: 0.5rem; }
+.mb-md { margin-bottom: 1rem; }
+.mb-lg { margin-bottom: var(--section-gap, 6rem); }
 
-.game-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 0%), rgba(217, 70, 239, 0.08), transparent 45%);
-  opacity: 0;
-  transition: opacity 0.35s;
-  pointer-events: none;
-}
+.mx-auto { margin-left: auto; margin-right: auto; }
 
-.game-card:hover::before {
-  opacity: 1;
-}
-
-.game-card:hover {
-  border-color: rgba(217, 70, 239, 0.45);
-  transform: translateY(-6px);
-  box-shadow: 0 20px 50px -15px rgba(217, 70, 239, 0.3);
-}
-
-.game-card-locked {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-.game-card-locked:hover {
-  transform: none;
-  border-color: var(--color-border);
-  box-shadow: none;
-}
+/* =========================================
+   RESPONSIVE CON PENSAMIENTO
+   ========================================= */
+@media (min-width: 640px) { .h1-size { font-size: calc(var(--h1-size) * 1.1); } }
+@media (min-width: 768px) { .container { padding: 0 calc(var(--section-gap) * 1.5); } }
+@media (min-width: 1024px) { .container { padding: 0 calc(var(--section-gap) * 1.75); } }
