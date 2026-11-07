@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /* =========================================
    RAÍZ: Sistema Visual Bylesther - Enfoque Negociación
    ========================================= */
@@ -30,23 +32,23 @@
   --bg-warm: #3d271f;
 
   /* Colores con propósito de negociación */
-  --negotiation-warm: #c44569;      /* Rubí - Ofrecer / Apertura */
-  --negotiation-cool: #2a6d9c;      /* Zafiro - Contraoferta / Estrategia */
-  --negotiation-gold: #d4a853;      /* Oro - Cierre / Ganancia */
-  --negotiation-neutral: #50565f;   /* Gris Pizarra - Neutral / Cerrar */
+  --negotiation-warm: #c44569;      /* Rubí - Ofrecer */
+  --negotiation-cool: #2a6d9c;      /* Zafiro - Contraoferta */
+  --negotiation-gold: #d4a853;      /* Oro - Cierre */
+  --negotiation-neutral: #50565f;   /* Gris Pizarra - Neutral */
 
   --text-primary: #f5f0e6;
   --text-secondary: #a69581;
   --text-mute: #6b5b51;
   --border-subtle: #3d3539;
 
-  /* Gradientes temáticos (no kinetic genérico) */
+  /* Gradientes temáticos */
   --grad-warm-cool: linear-gradient(135deg, #c44569 0%, #2a6d9c 100%);
   --grad-warm-gold: linear-gradient(135deg, #c44569 0%, #d4a853 50%, #2a6d9c 100%);
   --grad-card: radial-gradient(at 30% 20%, #2d2a3a, #1a1a1f);
   --grad-accent: linear-gradient(180deg, #e8d5b6 0%, #c44569 100%);
 
-  /* Sombras sutiles, no planas */
+  /* Sombras sutiles */
   --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
   --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -106,7 +108,7 @@ body {
 *:focus-visible {
   outline: 2px solid var(--negotiation-gold);
   outline-offset: 4px;
-  border-radius: var(--radius, 0.5rem);
+  border-radius: 0.5rem;
 }
 
 /* =========================================
@@ -129,11 +131,8 @@ p { line-height: var(--relaxed-leading); display: block; }
 .code { font-family: var(--font-mono); font-feature-settings: "liga" on; }
 
 /* =========================================
-   ESTRUCTURA: MENOS CARDS, MÁS SUSTANCIA
+   ESTRUCTURA: MENOR CARDS, MÁS SUSTANCIA
    ========================================= */
-/* Removed excessive card wrappers - using semantic structure instead */
-
-/* Card base - solo donde realmente necesario */
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
@@ -141,13 +140,12 @@ p { line-height: var(--relaxed-leading); display: block; }
   padding: var(--card-padding);
   box-shadow: var(--shadow-card);
   transition: var(--transition-base);
-  display: flex;
-  flex-direction: column;
 }
 
 .card:hover {
   border-color: var(--negotiation-warm);
   transform: translateY(-2px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5);
 }
 
 .card:active {
@@ -155,17 +153,9 @@ p { line-height: var(--relaxed-leading); display: block; }
 }
 
 /* Hero section - textos alineados a la izquierda */
-.hero-text {
-  text-align: left !important;
-}
+.game-body .intro { text-align: left; }
 
-.hero-text h1 { text-align: left; }
-.hero-text p { text-align: left; }
-.hero-text .lead { text-align: left; }
-
-/* =========================================
-   BOTONES CON SIGNIFICADO NEGOCIACIÓN
-   ========================================= */
+/* BOTONES CON SIGNIFICADO NEGOCIACIÓN */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -182,7 +172,6 @@ p { line-height: var(--relaxed-leading); display: block; }
   cursor: pointer;
   transition: var(--transition-base);
   user-select: none;
-  font-family: inherit;
 }
 
 .btn:hover {
@@ -199,7 +188,7 @@ p { line-height: var(--relaxed-leading); display: block; }
   background: #4a3228;
 }
 
-/* Variantes temáticas de negociación */
+/* Variantes temáticas */
 .btn-primary {
   background: var(--negotiation-warm);
   border-color: var(--negotiation-warm);
@@ -253,7 +242,6 @@ p { line-height: var(--relaxed-leading); display: block; }
   margin-bottom: var(--subsection-gap);
 }
 
-/* Progress bar con paleta negociación */
 .progress-bar {
   width: 100%;
   height: 0.5rem;
@@ -281,7 +269,7 @@ p { line-height: var(--relaxed-leading); display: block; }
   font-size: 0.65rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
   border-radius: 9999px;
   margin-bottom: 1rem;
 }
@@ -301,7 +289,7 @@ p { line-height: var(--relaxed-leading); display: block; }
 
 .choice:hover {
   border-color: var(--negotiation-warm);
-  background: #352d34;
+  background: #30282f;
 }
 
 .choice:focus-visible {
