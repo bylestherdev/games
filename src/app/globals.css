@@ -26,6 +26,7 @@
   --relaxed-leading: 1.7;
 
   /* --- Paleta de Negociación (con propósito) --- */
+  --color-canvas: #0d0d0d;
   --bg-primary: #0d0d0d;
   --bg-secondary: #1a1a1f;
   --bg-card: #212129;
@@ -166,7 +167,6 @@ p { line-height: var(--relaxed-leading); display: block; }
   font-family: var(--font-body);
   font-weight: 600;
   font-size: 0.875rem;
-  /* Padding base robusto - mínimo garantizado */
   padding: 0.875rem 1.75rem;
   border-radius: var(--radius);
   border: 1px solid var(--border-subtle);
@@ -175,10 +175,9 @@ p { line-height: var(--relaxed-leading); display: block; }
   cursor: pointer;
   transition: var(--transition-base);
   user-select: none;
-  /* Evita roturas de texto y asegura ancho mínimo */
   white-space: nowrap;
   min-width: fit-content;
-  min-width: 140px; /* Ancho mínimo para botones con texto corto */
+  min-width: 140px;
   text-align: center;
 }
 
@@ -259,7 +258,7 @@ p { line-height: var(--relaxed-leading); display: block; }
 }
 
 /* =========================================
-   UTILIDADES DE TAMAÑO DE BOTÓN (para overrides específicos)
+   UTILIDADES DE TAMAÑO DE BOTÓN
    ========================================= */
 .btn-sm {
   padding: 0.5rem 1rem;
@@ -350,7 +349,7 @@ p { line-height: var(--relaxed-leading); display: block; }
   background: var(--bg-secondary);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius);
-  padding: var(--spacing-sm, 0.75rem) var(--spacing-md, 1.25rem);
+  padding: 0.75rem 1.25rem;
   cursor: pointer;
   transition: var(--transition-base);
   display: flex;

@@ -39,11 +39,11 @@ export default function Navbar() {
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full md:top-4 md:left-1/2 md:-translate-x-1/2 md:max-w-[1100px] isolate z-[100] px-0 md:px-4 bg-[var(--color-canvas)] transition-colors">
+    <header className="fixed top-0 left-0 w-full md:top-4 md:left-1/2 md:-translate-x-1/2 md:max-w-[1100px] isolate z-[100] px-0 md:px-4 bg-[var(--color-canvas)]">
       <div className="w-full px-5 sm:px-6 h-16 md:h-16 flex items-center justify-between border-b border-[var(--border-subtle)] bg-[var(--color-canvas)]">
         <Link
           href="/"
-          onClick={() => setCategory("business")}
+          onClick={() => { setCategory("business"); if (open) setOpen(false); }}
           className="font-bold text-xl tracking-tight text-white transition-all duration-200 hover:drop-shadow-[0_0_8px_rgba(217,70,239,0.75)]"
         >
           ByLesther<span className="text-[#D946EF]">Games</span>
@@ -77,7 +77,7 @@ export default function Navbar() {
             type="button"
             onClick={() => setOpen((p) => !p)}
             className="md:hidden text-white p-2"
-            aria-label="Abrir menú"
+            aria-label={open ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={open}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7">
@@ -139,7 +139,7 @@ export default function Navbar() {
               )}
             </div>
           ))}
-          <a href="https://bylesther.dev" target="_blank" rel="noreferrer" className="text-[#C084FC] text-xl font-medium py-4 mt-4">
+          <a href="https://https://bylesther.dev" target="_blank" rel="noreferrer" className="text-[#C084FC] text-xl font-medium py-4 mt-4">
             bylesther.dev ↗
           </a>
         </nav>
