@@ -155,7 +155,9 @@ p { line-height: var(--relaxed-leading); display: block; }
 /* Hero section - textos alineados a la izquierda */
 .game-body .intro { text-align: left; }
 
-/* BOTONES CON SIGNIFICADO NEGOCIACIÓN */
+/* =========================================
+   BOTONES ROBUSTOS - Padding consistente, textos largos, sin roturas
+   ========================================= */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -164,7 +166,8 @@ p { line-height: var(--relaxed-leading); display: block; }
   font-family: var(--font-body);
   font-weight: 600;
   font-size: 0.875rem;
-  padding: 0.75rem 1.5rem;
+  /* Padding base robusto - mínimo garantizado */
+  padding: 0.875rem 1.75rem;
   border-radius: var(--radius);
   border: 1px solid var(--border-subtle);
   background: var(--bg-warm);
@@ -172,6 +175,19 @@ p { line-height: var(--relaxed-leading); display: block; }
   cursor: pointer;
   transition: var(--transition-base);
   user-select: none;
+  /* Evita roturas de texto y asegura ancho mínimo */
+  white-space: nowrap;
+  min-width: fit-content;
+  min-width: 140px; /* Ancho mínimo para botones con texto corto */
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .btn {
+    padding: 0.75rem 1.5rem;
+    min-width: 120px;
+    font-size: 0.8125rem;
+  }
 }
 
 .btn:hover {
@@ -217,6 +233,61 @@ p { line-height: var(--relaxed-leading); display: block; }
 
 .btn-gold:hover {
   background: #b89a3d;
+}
+
+/* Botón WhatsApp */
+.btn-whatsapp {
+  background: #25D366;
+  border-color: #25D366;
+  color: #fff;
+}
+
+.btn-whatsapp:hover {
+  background: #1db956;
+}
+
+/* Botón terciario */
+.btn-tertiary {
+  background: var(--bg-warm);
+  border-color: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.btn-tertiary:hover {
+  background: #5a3d2f;
+  border-color: #7a4a3a;
+}
+
+/* =========================================
+   UTILIDADES DE TAMAÑO DE BOTÓN (para overrides específicos)
+   ========================================= */
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  min-width: 100px;
+}
+
+@media (max-width: 640px) {
+  .btn-sm { padding: 0.5rem 0.875rem; min-width: 90px; }
+}
+
+.btn-lg {
+  padding: 1.125rem 2.25rem;
+  font-size: 1rem;
+  min-width: 180px;
+}
+
+@media (max-width: 640px) {
+  .btn-lg { padding: 1rem 1.75rem; min-width: 160px; }
+}
+
+/* Botón full width en mobile */
+.btn-full-mobile {
+  width: 100%;
+}
+
+@media (min-width: 641px) {
+  .btn-full-mobile { width: auto; }
 }
 
 /* =========================================
